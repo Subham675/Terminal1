@@ -1,0 +1,36 @@
+# ── Redirect all to public/index.php ──────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Allow direct static file access in /public/site/
+    RewriteRule ^public/site/ - [L]
+
+    # Front controller
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ public/index.php [QSA,L]
+</IfModule>
+
+# ── Security headers ───────────────────────────────────────
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ── Protect sensitive files ────────────────────────────────
+<FilesMatch "\.(env|log|sql|md|json|lock)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── Disable directory listing ─────────────────────────────
+Options -Indexes
+
+# ── Gzip ──────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json
+</IfModule>

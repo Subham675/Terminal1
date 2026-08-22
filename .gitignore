@@ -1,0 +1,25 @@
+﻿# Environment / secrets — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+/vendor/
+composer.lock
+
+# Logs
+storage/logs/*.log
+storage/logs/*.txt
+!storage/logs/.gitkeep
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Uploaded runtime images
+public/uploads/*
+!public/uploads/.gitkeep
