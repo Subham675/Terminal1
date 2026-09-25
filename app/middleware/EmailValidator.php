@@ -72,6 +72,16 @@ class EmailValidator {
             }
         }
 
+        // 6. External Email Verification API (if configured in .env)
+        $apiKey = function_exists('env') ? (string)env('EMAIL_VALIDATOR_API_KEY', '') : ($_ENV['EMAIL_VALIDATOR_API_KEY'] ?? (string)getenv('EMAIL_VALIDATOR_API_KEY'));
+        if (!empty($apiKey)) {
+            $provider = function_exists('env') ? (string)env('EMAIL_VALIDATOR_PROVIDER', 'auto') : ($_ENV['EMAIL_VALIDATOR_PROVIDER'] ?? 'auto');
+            $apiResult = self::checkExternalApi($email, $apiKey, $provider);
+            if ($apiResult !== null && !$apiResult[0]) {
+                return [false, $apiResult[1], $email];
+            }
+        }
+
         return [true, '', $email];
     }
 
@@ -107,6 +117,194 @@ class EmailValidator {
 
         if (!preg_match('/^[a-z0-9.]+$/', $username)) {
             return [false, 'Gmail username can only contain letters (a-z), numbers (0-9), and periods.'];
+        }
+
+        return [true, ''];
+    }
+
+    /**
+     * Queries an external Email Verification API (AbstractAPI, ZeroBounce, Hunter, Mailboxlayer, etc.)
+     * Returns:
+     * - [bool $isValid, string $errorMessage] if the API responded with a conclusive result
+     * - null if the API key is not recognized or the service is temporarily unreachable (falls back safely)
+     */
+    public static function checkExternalApi(string $email, string $apiKey, string $provider = 'auto'): ?array {
+        $apiKey = trim($apiKey);
+        if ($apiKey === '') return null;
+
+        $provider = strtolower(trim($provider));
+
+        if ($provider === 'abstractapi' || $provider === 'abstract') {
+            return self::callAbstractApi($email, $apiKey);
+        } elseif ($provider === 'zerobounce') {
+            return self::callZeroBounce($email, $apiKey);
+        } elseif ($provider === 'hunter') {
+            return self::callHunter($email, $apiKey);
+        } elseif ($provider === 'mailboxlayer') {
+            return self::callMailboxlayer($email, $apiKey);
+        } elseif ($provider === 'apivoid') {
+            return self::callApiVoid($email, $apiKey);
+        } elseif ($provider === 'apininjas') {
+            return self::callApiNinjas($email, $apiKey);
+        }
+
+        // Auto mode: probe supported providers in order of key popularity
+        $res = self::callAbstractApi($email, $apiKey);
+        if ($res !== null) return $res;
+
+        $res = self::callZeroBounce($email, $apiKey);
+        if ($res !== null) return $res;
+
+        $res = self::callMailboxlayer($email, $apiKey);
+        if ($res !== null) return $res;
+
+        $res = self::callHunter($email, $apiKey);
+        if ($res !== null) return $res;
+
+        $res = self::callApiVoid($email, $apiKey);
+        if ($res !== null) return $res;
+
+        $res = self::callApiNinjas($email, $apiKey);
+        if ($res !== null) return $res;
+
+        return null;
+    }
+
+    private static function httpGet(string $url, array $headers = [], int $timeout = 3): ?string {
+        $headerStr = "User-Agent: Terminal1/1.0\r\n";
+        foreach ($headers as $k => $v) {
+            $headerStr .= "{$k}: {$v}\r\n";
+        }
+        $ctx = stream_context_create([
+            'http' => [
+                'method'        => 'GET',
+                'header'        => $headerStr,
+                'timeout'       => $timeout,
+                'ignore_errors' => true,
+            ]
+        ]);
+        $result = @file_get_contents($url, false, $ctx);
+        return $result !== false ? $result : null;
+    }
+
+    private static function callAbstractApi(string $email, string $apiKey): ?array {
+        $url = "https://emailvalidation.abstractapi.com/v1/?api_key=" . urlencode($apiKey) . "&email=" . urlencode($email);
+        $raw = self::httpGet($url);
+        if (!$raw) return null;
+
+        $json = @json_decode($raw, true);
+        if (!is_array($json) || isset($json['error'])) return null;
+
+        if (isset($json['is_disposable_email']['value']) && $json['is_disposable_email']['value'] === true) {
+            return [false, 'Temporary or disposable email addresses are not permitted.'];
+        }
+
+        if (isset($json['deliverability'])) {
+            if ($json['deliverability'] === 'UNDELIVERABLE') {
+                return [false, "The email address '{$email}' cannot receive emails or does not exist."];
+            }
+        }
+
+        if (isset($json['is_valid_format']['value']) && $json['is_valid_format']['value'] === false) {
+            return [false, 'Please enter a valid email address format.'];
+        }
+
+        return [true, ''];
+    }
+
+    private static function callZeroBounce(string $email, string $apiKey): ?array {
+        $url = "https://api.zerobounce.net/v2/validate?api_key=" . urlencode($apiKey) . "&email=" . urlencode($email);
+        $raw = self::httpGet($url);
+        if (!$raw) return null;
+
+        $json = @json_decode($raw, true);
+        if (!is_array($json) || isset($json['error'])) return null;
+
+        $status = strtolower($json['status'] ?? '');
+        if ($status === 'invalid' || $status === 'spamtrap' || $status === 'abuse') {
+            $sub = $json['sub_status'] ?? 'undeliverable';
+            return [false, "The email address '{$email}' was flagged as invalid or unreachable ({$sub})."];
+        }
+
+        return [true, ''];
+    }
+
+    private static function callHunter(string $email, string $apiKey): ?array {
+        $url = "https://api.hunter.io/v2/email-verifier?email=" . urlencode($email) . "&api_key=" . urlencode($apiKey);
+        $raw = self::httpGet($url);
+        if (!$raw) return null;
+
+        $json = @json_decode($raw, true);
+        if (!is_array($json) || isset($json['errors'])) return null;
+
+        $result = $json['data']['result'] ?? '';
+        if ($result === 'undeliverable') {
+            return [false, "The email address '{$email}' could not be verified by mail servers."];
+        }
+        if (isset($json['data']['disposable']) && $json['data']['disposable'] === true) {
+            return [false, 'Disposable email addresses are not allowed.'];
+        }
+
+        return [true, ''];
+    }
+
+    private static function callMailboxlayer(string $email, string $apiKey): ?array {
+        $url = "http://apilayer.net/api/check?access_key=" . urlencode($apiKey) . "&email=" . urlencode($email);
+        $raw = self::httpGet($url);
+        if (!$raw) return null;
+
+        $json = @json_decode($raw, true);
+        if (!is_array($json) || !isset($json['format_valid'])) return null;
+
+        if ($json['format_valid'] === false) {
+            return [false, 'Invalid email format.'];
+        }
+        if (isset($json['disposable']) && $json['disposable'] === true) {
+            return [false, 'Disposable email addresses are not permitted.'];
+        }
+        if (isset($json['mx_found']) && $json['mx_found'] === false) {
+            return [false, 'The email domain has no mail servers configured.'];
+        }
+
+        return [true, ''];
+    }
+
+    private static function callApiVoid(string $email, string $apiKey): ?array {
+        $ctx = stream_context_create([
+            'http' => [
+                'method'        => 'POST',
+                'header'        => "Content-Type: application/json\r\nX-API-Key: {$apiKey}\r\n",
+                'content'       => json_encode(['email' => $email]),
+                'timeout'       => 3,
+                'ignore_errors' => true,
+            ]
+        ]);
+        $raw = @file_get_contents("https://api.apivoid.com/v2/email-verify", false, $ctx);
+        if (!$raw) return null;
+
+        $json = @json_decode($raw, true);
+        if (!is_array($json) || isset($json['error'])) return null;
+
+        if (isset($json['data']['is_disposable']) && $json['data']['is_disposable'] === true) {
+            return [false, 'Temporary or disposable email addresses are not permitted.'];
+        }
+
+        return [true, ''];
+    }
+
+    private static function callApiNinjas(string $email, string $apiKey): ?array {
+        $url = "https://api.api-ninjas.com/v1/validateemail?email=" . urlencode($email);
+        $raw = self::httpGet($url, ['X-Api-Key' => $apiKey]);
+        if (!$raw) return null;
+
+        $json = @json_decode($raw, true);
+        if (!is_array($json) || isset($json['error'])) return null;
+
+        if (isset($json['is_valid']) && $json['is_valid'] === false) {
+            return [false, "The email address '{$email}' is not valid."];
+        }
+        if (isset($json['is_disposable']) && $json['is_disposable'] === true) {
+            return [false, 'Disposable email addresses are not permitted.'];
         }
 
         return [true, ''];
