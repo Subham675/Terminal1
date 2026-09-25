@@ -12,12 +12,19 @@ class AuthController {
     // ── Email/password login ──
     public static function login(): void {
         verifyCsrf();
-        $email    = sanitize($_POST['email'] ?? '');
+        $rawEmail = sanitize($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $ip       = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
-        if(!$email || !$password){
+        if(!$rawEmail || !$password){
             flash('login','Email and password are required.','error');
+            redirect('/auth/login');
+        }
+
+        // Validate email format and check for domain typos
+        [$isValidEmail, $emailError, $email] = EmailValidator::validate($rawEmail);
+        if (!$isValidEmail) {
+            flash('login', $emailError, 'error');
             redirect('/auth/login');
         }
 
@@ -63,7 +70,11 @@ class AuthController {
         if (($user['role'] ?? '') === 'admin') {
             RateLimiter::clearAttempts($email, 'login');
             $otp = OtpModel::generate($email, (int)$user['id'], 'admin_login');
-            Mailer::sendOtp($email, $user['name'] ?? 'Admin', $otp, 'admin_login');
+            $sent = Mailer::sendOtp($email, $user['name'] ?? 'Admin', $otp, 'admin_login');
+            if (!$sent) {
+                flash('login', 'Could not deliver admin security verification code to your email. Please verify mail server settings.', 'error');
+                redirect('/auth/login');
+            }
             $_SESSION['otp_email'] = $email;
             $_SESSION['otp_purpose'] = 'admin_login';
             $_SESSION['admin_pending_user_id'] = $user['id'];
@@ -96,19 +107,33 @@ class AuthController {
         }
 
         $name     = sanitize($_POST['name'] ?? '');
-        $email    = filter_var(sanitize($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+        $rawEmail = sanitize($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm  = $_POST['confirm_password'] ?? '';
-        if(!$name||!$email||!$password){ flash('register','All fields required.','error'); redirect('/auth/register'); }
+        if(!$name||!$rawEmail||!$password){ flash('register','All fields required.','error'); redirect('/auth/register'); }
         if(strlen($password)<8){ flash('register','Password must be at least 8 characters.','error'); redirect('/auth/register'); }
         if($password!==$confirm){ flash('register','Passwords do not match.','error'); redirect('/auth/register'); }
+
+        // Comprehensive email validation (RFC, domain typos, disposable domains, Gmail username constraints, MX DNS)
+        [$isValidEmail, $emailError, $email] = EmailValidator::validate($rawEmail);
+        if (!$isValidEmail) {
+            flash('register', $emailError, 'error');
+            redirect('/auth/register');
+        }
 
         RateLimiter::recordAttempt($ip, 'register', false);
 
         if(User::findByEmail($email)){ flash('register','Email already registered.','error'); redirect('/auth/register'); }
         $userId = User::create(['name'=>$name,'email'=>$email,'password'=>password_hash($password,PASSWORD_DEFAULT),'is_verified'=>false]);
         $otp = OtpModel::generate($email, $userId, 'register');
-        Mailer::sendOtp($email, $name, $otp, 'register');
+        $sent = Mailer::sendOtp($email, $name, $otp, 'register');
+        if (!$sent) {
+            // Delete provisional unverified user to prevent ghost records and blocked retries
+            User::delete($userId);
+            flash('register', "Failed to deliver OTP to {$email}. Please verify that the email address is active, correctly spelled, and capable of receiving emails.", 'error');
+            redirect('/auth/register');
+        }
+
         $_SESSION['otp_email']   = $email;
         $_SESSION['otp_purpose'] = 'register';
         if (env('APP_ENV') === 'development') {
@@ -283,7 +308,12 @@ class AuthController {
 
         $user = User::findByEmail($email);
         $otp  = OtpModel::generate($email, $user['id']??null, $purpose);
-        Mailer::sendOtp($email, $user['name']??'User', $otp, $purpose);
+        $sent = Mailer::sendOtp($email, $user['name']??'User', $otp, $purpose);
+        if (!$sent) {
+            flash('otp', "Unable to deliver verification email to {$email}. Please verify your address or server email settings.", 'error');
+            redirect('/auth/otp');
+            return;
+        }
         if (env('APP_ENV') === 'development') {
             $_SESSION['dev_otp'] = $otp;
         }

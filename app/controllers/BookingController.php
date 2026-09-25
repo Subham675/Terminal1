@@ -19,13 +19,24 @@ class BookingController {
             return;
         }
 
+        $rawEmail = sanitize($_POST['email'] ?? '');
+        $email = '';
+        if ($rawEmail !== '') {
+            [$isValidEmail, $emailError, $email] = EmailValidator::validate($rawEmail);
+            if (!$isValidEmail) {
+                http_response_code(422);
+                echo json_encode(['success' => false, 'message' => $emailError]);
+                return;
+            }
+        }
+
         $depositAmount = (float) env('DEPOSIT_AMOUNT', 100);
 
         $id = Booking::create([
             'user_id'      => authUser()['id'] ?? null,
             'name'         => $name,
             'phone'        => $phone,
-            'email'        => sanitize($_POST['email']??''),
+            'email'        => $email,
             'occasion'     => sanitize($_POST['occasion']??''),
             'guests'       => (int)($_POST['guests']??1),
             'booking_date' => $date,

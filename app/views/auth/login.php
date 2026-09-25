@@ -47,7 +47,8 @@
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
       <div class="form-group">
         <label>Email Address</label>
-        <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+        <input type="email" name="email" id="loginEmail" class="form-control" placeholder="you@example.com" required autocomplete="email">
+        <div id="loginEmailFeedback" style="display:none;font-size:.78rem;margin-top:6px;line-height:1.4;"></div>
       </div>
       <div class="form-group">
         <label>Password</label>
@@ -105,6 +106,28 @@ function togglePasswordVisibility(btn, inputId) {
     btn.setAttribute('aria-label', 'Show password');
   }
 }
+
+const loginEmail = document.getElementById('loginEmail');
+const loginEmailFeedback = document.getElementById('loginEmailFeedback');
+const typoMap = {
+  'gmai.com': 'gmail.com', 'gamil.com': 'gmail.com', 'gmial.com': 'gmail.com',
+  'gmaill.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gmail.co': 'gmail.com',
+  'yaho.com': 'yahoo.com', 'yahooo.com': 'yahoo.com', 'hotmial.com': 'hotmail.com'
+};
+
+loginEmail.addEventListener('input', function() {
+  const val = (this.value || '').trim().toLowerCase();
+  const parts = val.split('@');
+  if (parts.length === 2 && typoMap[parts[1]]) {
+    loginEmailFeedback.style.display = 'block';
+    loginEmailFeedback.style.color = '#E8A820';
+    loginEmailFeedback.innerHTML = '💡 Did you mean <strong>@' + typoMap[parts[1]] + '</strong>?';
+    loginEmail.style.borderColor = '#E8A820';
+  } else {
+    loginEmailFeedback.style.display = 'none';
+    loginEmail.style.borderColor = '';
+  }
+});
 
 document.getElementById('loginForm').addEventListener('submit', function() {
   const btn = document.getElementById('loginBtn');
