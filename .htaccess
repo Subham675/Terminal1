@@ -33,4 +33,9 @@ Options -Indexes
 # ── Gzip ──────────────────────────────────────────────────
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json
+
+    # Never compress the real-time SSE streams — compression buffers output,
+    # which defeats the whole point of a live stream.
+    SetEnvIfNoCase Request_URI "^/track/stream"       no-gzip
+    SetEnvIfNoCase Request_URI "^/admin/track/stream" no-gzip
 </IfModule>

@@ -1,4 +1,11 @@
 -- ============================================================
+--  ⚠️ DEPRECATED — This is the OLD PostgreSQL schema.
+--  The application now uses MySQL/MariaDB (for XAMPP compatibility).
+--  Use database/schema_mysql.sql instead.
+--  This file is kept only for historical reference.
+-- ============================================================
+
+-- ============================================================
 --  Terminal 1 — The Startup Canteen  |  PostgreSQL Schema
 -- ============================================================
 
@@ -76,16 +83,11 @@ CREATE TABLE bookings (
     updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ── SEED: ADMIN USER ─────────────────────────────────────────
--- Password: Admin@1234  (change immediately after deploy!)
-INSERT INTO users (name, email, password, role, is_verified)
-VALUES (
-    'Terminal Admin',
-    'admin@terminal1.in',
-    '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-    'admin',
-    TRUE
-);
+-- ── ADMIN USER CREATION ──────────────────────────────────────
+-- Security Notice: No default admin account is seeded into this schema.
+-- To create your initial admin account securely, run via CLI:
+--   php scripts/create_admin.php
+
 
 -- ── SEED: MENU CATEGORIES ────────────────────────────────────
 INSERT INTO menu_categories (name, slug, sort_order) VALUES

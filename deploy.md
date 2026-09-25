@@ -1,5 +1,5 @@
 # Terminal 1 — Full VPS Deployment Guide
-## Ubuntu 22.04 LTS + Nginx + PHP 8.2 + PostgreSQL 15
+## Ubuntu 22.04 LTS + Nginx + PHP 8.2 + MySQL 8
 
 ---
 
@@ -33,7 +33,7 @@ ufw enable
 apt install -y software-properties-common
 add-apt-repository ppa:ondrej/php -y
 apt update
-apt install -y php8.2 php8.2-fpm php8.2-pgsql php8.2-curl \
+apt install -y php8.2 php8.2-fpm php8.2-mysql php8.2-curl \
   php8.2-mbstring php8.2-xml php8.2-zip php8.2-intl
 
 # Verify
@@ -42,20 +42,24 @@ php -v
 
 ---
 
-## 3. Install PostgreSQL 15
+## 3. Install MySQL 8
 
 ```bash
-apt install -y postgresql postgresql-contrib
+apt install -y mysql-server
+
+# Secure the installation (sets root password, removes test DB, etc.)
+mysql_secure_installation
 
 # Create DB and user
-sudo -u postgres psql << SQL
-CREATE USER terminal1_user WITH PASSWORD 'STRONG_PASSWORD_HERE';
-CREATE DATABASE terminal1_db OWNER terminal1_user;
-GRANT ALL PRIVILEGES ON DATABASE terminal1_db TO terminal1_user;
+mysql -u root -p << SQL
+CREATE DATABASE terminal1_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'terminal1_user'@'localhost' IDENTIFIED BY 'STRONG_PASSWORD_HERE';
+GRANT ALL PRIVILEGES ON terminal1_db.* TO 'terminal1_user'@'localhost';
+FLUSH PRIVILEGES;
 SQL
 
 # Run schema
-sudo -u postgres psql -d terminal1_db < /var/www/terminal1/database/schema.sql
+mysql -u terminal1_user -p terminal1_db < /var/www/terminal1/database/schema_mysql.sql
 ```
 
 ---
@@ -180,14 +184,15 @@ systemctl restart php8.2-fpm
 
 ---
 
-## 11. Admin Login
+## 11. Create Admin Account
 
-After deployment, log in at:  
+After deployment, initialize your administrator account via CLI:
+```bash
+php scripts/create_admin.php
+```
+
+Then log in at:  
 `https://yourdomain.com/auth/login`
-
-Default admin credentials (CHANGE IMMEDIATELY):
-- Email: `admin@terminal1.in`
-- Password: `Admin@1234`
 
 ---
 
@@ -203,7 +208,7 @@ Default admin credentials (CHANGE IMMEDIATELY):
 - [x] Session regeneration on login
 - [x] OTP expiry enforcement
 - [x] Google OAuth state parameter validation
-- [ ] Change default admin password immediately
+- [x] Admin created via CLI (no default password in seed)
 - [ ] Set up database backups (pg_dump cron)
 - [ ] Configure UFW firewall rules
 - [ ] Set up Fail2Ban

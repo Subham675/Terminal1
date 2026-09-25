@@ -9,36 +9,45 @@
 
 <div class="card">
   <div class="card-header"><div class="card-title">All Menu Items (<?= count($items) ?>)</div></div>
-  <table>
-    <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Veg</th><th>Available</th><th>Actions</th></tr></thead>
-    <tbody>
-    <?php foreach($items as $item): ?>
-    <tr>
-      <td><?= e($item['name']) ?></td>
-      <td><?= e($item['category_name'] ?? '—') ?></td>
-      <td>₹<?= number_format($item['price'],2) ?></td>
-      <td><?= $item['badge'] ? '<span class="badge badge-confirmed">'.e($item['badge']).'</span>' : '—' ?></td>
-      <td><?= $item['is_veg']?'<span style="color:#2da44e">🥦</span>':'<span style="color:#cf222e">🍗</span>' ?></td>
-      <td><?= $item['is_available']?'<span style="color:#2da44e">Yes</span>':'<span style="color:#cf222e">No</span>' ?></td>
-      <td style="display:flex;gap:6px">
-        <button class="btn btn-sm btn-primary" onclick='openEdit(<?= json_encode($item) ?>)'>Edit</button>
-        <form method="POST" action="/admin/menu/delete" onsubmit="return confirm('Delete item?')">
-          <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
-          <input type="hidden" name="id" value="<?= $item['id'] ?>">
-          <button class="btn btn-sm btn-danger">Delete</button>
-        </form>
-      </td>
-    </tr>
-    <?php endforeach; ?>
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table>
+      <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Badge</th><th>Veg</th><th>Available</th><th>Actions</th></tr></thead>
+      <tbody>
+      <?php foreach($items as $item): ?>
+      <tr>
+        <td>
+          <?php if(!empty($item['image_url'])): ?>
+            <img src="<?= e($item['image_url']) ?>" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:4px;">
+          <?php else: ?>
+            <span style="color:#8b949e;font-size:.75rem;">—</span>
+          <?php endif; ?>
+        </td>
+        <td><?= e($item['name']) ?></td>
+        <td><?= e($item['category_name'] ?? '—') ?></td>
+        <td>₹<?= number_format($item['price'],2) ?></td>
+        <td><?= $item['badge'] ? '<span class="badge badge-confirmed">'.e($item['badge']).'</span>' : '—' ?></td>
+        <td><?= $item['is_veg']?'<span style="color:#2da44e">🥦</span>':'<span style="color:#cf222e">🍗</span>' ?></td>
+        <td><?= $item['is_available']?'<span style="color:#2da44e">Yes</span>':'<span style="color:#cf222e">No</span>' ?></td>
+        <td style="display:flex;gap:6px">
+          <button class="btn btn-sm btn-primary" onclick='openEdit(<?= json_encode($item) ?>)'>Edit</button>
+          <form method="POST" action="<?= url('/admin/menu/delete') ?>" onsubmit="return confirm('Delete item?')">
+            <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+            <input type="hidden" name="id" value="<?= $item['id'] ?>">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <!-- ADD MODAL -->
 <div class="modal" id="addModal">
   <div class="modal-box">
     <div class="modal-title">Add Menu Item</div>
-    <form method="POST" action="/admin/menu/create">
+    <form method="POST" action="<?= url('/admin/menu/create') ?>" enctype="multipart/form-data">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
       <div class="form-grid">
         <div class="form-group">
@@ -61,6 +70,10 @@
         <div class="form-group">
           <label>Badge (e.g. New, Signature)</label>
           <input type="text" name="badge" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Image (JPG/PNG/WEBP, max 3MB)</label>
+          <input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/webp">
         </div>
       </div>
       <div class="form-group">
@@ -87,7 +100,7 @@
 <div class="modal" id="editModal">
   <div class="modal-box">
     <div class="modal-title">Edit Menu Item</div>
-    <form method="POST" action="/admin/menu/update">
+    <form method="POST" action="<?= url('/admin/menu/update') ?>" enctype="multipart/form-data">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
       <input type="hidden" name="id" id="edit_id">
       <div class="form-grid">
@@ -111,6 +124,10 @@
         <div class="form-group">
           <label>Badge</label>
           <input type="text" name="badge" id="edit_badge" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Replace Image (leave blank to keep current)</label>
+          <input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/webp">
         </div>
       </div>
       <div class="form-group">

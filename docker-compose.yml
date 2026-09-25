@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: terminal1_app
+    volumes:
+      - .:/var/www/terminal1
+    environment:
+      DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - terminal1_net
+
+  web:
+    image: nginx:alpine
+    container_name: terminal1_web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/terminal1
+      - ./nginx.local.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - terminal1_net
+
+  db:
+    image: mysql:8.0
+    container_name: terminal1_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: terminal1_db
+      MYSQL_USER: terminal1_user
+      MYSQL_PASSWORD: dev_password_change_me
+      MYSQL_ROOT_PASSWORD: dev_root_password_change_me
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./database/schema_mysql.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - terminal1_net
+
+volumes:
+  mysqldata:
+
+networks:
+  terminal1_net:
+    driver: bridge

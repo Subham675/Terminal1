@@ -35,24 +35,40 @@
     <?php $f=flash('otp'); if($f): ?>
       <div class="flash flash-<?= $f['type'] ?>"><?= e($f['message']) ?></div>
     <?php endif; ?>
-    <div class="otp-icon">🔐</div>
-    <div class="otp-title">Check your email</div>
+    <?php if (env('APP_ENV') === 'development' && !empty($_SESSION['dev_otp'])): ?>
+      <div style="background:rgba(200,134,10,.1);border:1px dashed #C8860A;border-radius:6px;padding:12px;margin-bottom:20px;color:#E8A820;text-align:center;">
+        <div style="font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px;">Development Mode Code</div>
+        <div style="font-family:monospace;font-size:1.4rem;font-weight:700;letter-spacing:4px;color:#fff;"><?= e($_SESSION['dev_otp']) ?></div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:4px;">(Visible on local environment for testing)</div>
+      </div>
+    <?php endif; ?>
+    <div class="otp-icon"><?= ($_SESSION['otp_purpose'] ?? '') === 'admin_login' ? '🛡️' : '🔐' ?></div>
+    <div class="otp-title"><?= ($_SESSION['otp_purpose'] ?? '') === 'admin_login' ? 'Admin Two-Factor Authentication' : 'Check your email' ?></div>
     <div class="otp-sub">
-      We sent a 6-digit OTP to<br>
+      <?php if (($_SESSION['otp_purpose'] ?? '') === 'admin_login'): ?>
+        Please enter the security verification code sent to your admin email address:<br>
+      <?php else: ?>
+        We sent a 6-digit OTP to<br>
+      <?php endif; ?>
       <strong style="color:rgba(255,255,255,.7)"><?= e($_SESSION['otp_email'] ?? '') ?></strong><br><br>
       Expires in <span id="timer">10:00</span>
     </div>
-    <form method="POST" action="/auth/otp/verify">
+    <form method="POST" action="<?= url('/auth/otp/verify') ?>" id="otpForm">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
       <div class="otp-inputs">
         <?php for($i=0;$i<6;$i++): ?>
-          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" required autocomplete="off">
         <?php endfor; ?>
       </div>
       <input type="hidden" name="otp" id="otpHidden">
-      <button type="submit" class="btn-verify" id="verifyBtn">Verify OTP</button>
+      <button type="submit" class="btn-verify" id="verifyBtn">Verify & Proceed</button>
     </form>
-    <span class="resend-link">Didn't receive it? <a href="/auth/otp/resend">Resend OTP</a></span>
+    <div style="margin-top:20px;font-size:.82rem;">
+      <span id="resendContainer" style="color:rgba(255,255,255,.4);">
+        Didn't receive it? <span id="resendWait">Resend in <span id="resendSecs">60</span>s</span>
+        <a id="resendBtn" href="<?= url('/auth/otp/resend') ?>" style="display:none;color:#C8860A;text-decoration:none;font-weight:600;">Resend OTP</a>
+      </span>
+    </div>
   </div>
 </div>
 <script>
@@ -75,7 +91,15 @@ inputs.forEach((inp, i) => {
 });
 function syncOtp(){ document.getElementById('otpHidden').value = [...inputs].map(i=>i.value).join(''); }
 
-// Countdown timer
+// Double-submit protection & sync
+document.getElementById('otpForm').addEventListener('submit', function(e) {
+  syncOtp();
+  const btn = document.getElementById('verifyBtn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+});
+
+// Countdown timer for expiry
 let secs = <?= (int)env('OTP_EXPIRY_MINUTES',10) ?> * 60;
 const t = setInterval(() => {
   secs--;
@@ -83,7 +107,23 @@ const t = setInterval(() => {
   const s = String(secs%60).padStart(2,'0');
   document.getElementById('timer').textContent = m+':'+s;
   if(secs <= 0){ clearInterval(t); document.getElementById('timer').textContent='Expired'; }
-},1000);
+}, 1000);
+
+// Client-side rate-limit cooldown for Resend button (60s)
+let resendSecs = 60;
+const resendWait = document.getElementById('resendWait');
+const resendBtn = document.getElementById('resendBtn');
+const resendSecsEl = document.getElementById('resendSecs');
+
+const resendTimer = setInterval(() => {
+  resendSecs--;
+  if (resendSecsEl) resendSecsEl.textContent = resendSecs;
+  if (resendSecs <= 0) {
+    clearInterval(resendTimer);
+    if (resendWait) resendWait.style.display = 'none';
+    if (resendBtn) resendBtn.style.display = 'inline';
+  }
+}, 1000);
 </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-﻿# Environment / secrets — NEVER commit these
+# Environment / secrets — NEVER commit these
 .env
 .env.local
 .env.*.local
@@ -20,6 +20,14 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Uploaded runtime images
+# Uploaded runtime images (menu photos)
 public/uploads/*
 !public/uploads/.gitkeep
+
+# Generated PDF invoices
+storage/invoices/*
+!storage/invoices/.gitkeep
+
+# PHPUnit cache
+.phpunit.cache/
+.phpunit.result.cache

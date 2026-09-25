@@ -16,6 +16,10 @@
     .form-group label{display:block;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:6px}
     .form-control{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:11px 14px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
     .form-control:focus{border-color:#C8860A}
+    .password-wrap{position:relative;display:flex;align-items:center}
+    .password-wrap .form-control{padding-right:44px}
+    .btn-toggle-pw{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;transition:color .2s;border-radius:4px}
+    .btn-toggle-pw:hover,.btn-toggle-pw:focus{color:#E8A820;outline:none}
     .btn-submit{width:100%;background:#C8860A;border:none;color:#fff;padding:13px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:6px}
     .btn-submit:hover{background:#E8A820}
     .flash{padding:10px 14px;border-radius:4px;margin-bottom:16px;font-size:.83rem}
@@ -31,16 +35,75 @@
     <?php $f=flash('register'); if($f): ?>
       <div class="flash flash-<?= $f['type'] ?>"><?= e($f['message']) ?></div>
     <?php endif; ?>
-    <form method="POST" action="/auth/register">
+    <form method="POST" action="<?= url('/auth/register') ?>" id="regForm">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
-      <div class="form-group"><label>Full Name</label><input type="text" name="name" class="form-control" required></div>
-      <div class="form-group"><label>Email Address</label><input type="email" name="email" class="form-control" required></div>
-      <div class="form-group"><label>Password (min 8 chars)</label><input type="password" name="password" class="form-control" required minlength="8"></div>
-      <div class="form-group"><label>Confirm Password</label><input type="password" name="confirm_password" class="form-control" required></div>
-      <button type="submit" class="btn-submit">Create Account & Verify Email</button>
+      <div class="form-group"><label>Full Name</label><input type="text" name="name" class="form-control" placeholder="Rajib Das" required></div>
+      <div class="form-group"><label>Email Address</label><input type="email" name="email" class="form-control" placeholder="you@example.com" required></div>
+      <div class="form-group">
+        <label>Password (min 8 chars)</label>
+        <div class="password-wrap">
+          <input type="password" name="password" id="regPassword" class="form-control" placeholder="••••••••" required minlength="8">
+          <button type="button" class="btn-toggle-pw" onclick="togglePasswordVisibility(this, 'regPassword')" aria-label="Show password" title="Show/hide password">
+            <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg class="icon-eye-off" style="display:none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+              <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+              <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+              <line x1="2" y1="2" x2="22" y2="22"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <div class="password-wrap">
+          <input type="password" name="confirm_password" id="regConfirmPassword" class="form-control" placeholder="••••••••" required>
+          <button type="button" class="btn-toggle-pw" onclick="togglePasswordVisibility(this, 'regConfirmPassword')" aria-label="Show password" title="Show/hide password">
+            <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg class="icon-eye-off" style="display:none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+              <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+              <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+              <line x1="2" y1="2" x2="22" y2="22"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit" id="regBtn">Create Account & Verify Email</button>
     </form>
   </div>
-  <div class="footer-link">Already have an account? <a class="link" href="/auth/login">Sign in</a></div>
+  <div class="footer-link">Already have an account? <a class="link" href="<?= url('/auth/login') ?>">Sign in</a></div>
 </div>
+<script>
+function togglePasswordVisibility(btn, inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const eye = btn.querySelector('.icon-eye');
+  const eyeOff = btn.querySelector('.icon-eye-off');
+  if (input.type === 'password') {
+    input.type = 'text';
+    eye.style.display = 'none';
+    eyeOff.style.display = 'block';
+    btn.setAttribute('aria-label', 'Hide password');
+  } else {
+    input.type = 'password';
+    eye.style.display = 'block';
+    eyeOff.style.display = 'none';
+    btn.setAttribute('aria-label', 'Show password');
+  }
+}
+
+document.getElementById('regForm').addEventListener('submit', function() {
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true;
+  btn.textContent = 'Creating account...';
+});
+</script>
 </body>
 </html>
