@@ -1,6 +1,6 @@
 {
     "name": "terminal1/canteen-booking",
-    "description": "Terminal 1 — The Startup Canteen: PHP/PostgreSQL booking system with Razorpay payments",
+    "description": "Terminal 1 — The Restaurant: PHP/MySQL booking system with Razorpay payments",
     "type": "project",
     "license": "MIT",
     "require": {

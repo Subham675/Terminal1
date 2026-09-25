@@ -243,7 +243,7 @@ $user = authUser();
   </div>
 
   <footer>
-    © <?= date('Y') ?> Terminal 1 — The Startup Canteen. All reservations strictly protected against IDOR & URL ID tampering.
+    © <?= date('Y') ?> Terminal 1 — The Restaurant. All reservations strictly protected against IDOR & URL ID tampering.
   </footer>
 </body>
 </html>

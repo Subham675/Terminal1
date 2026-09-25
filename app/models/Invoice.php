@@ -33,7 +33,7 @@ class Invoice {
         $date = date('d M Y');
         $bookingDate = $b['booking_date'] ? date('d M Y', strtotime($b['booking_date'])) : 'TBD';
         return "<html><body style='font-family:sans-serif;color:#222;padding:20px;'>
-            <h1 style='color:#C8860A;'>TERMINAL 1 — The Startup Canteen</h1>
+            <h1 style='color:#C8860A;'>TERMINAL 1 — The Restaurant</h1>
             <p style='color:#777;'>Invoice generated on {$date}</p>
             <hr>
             <h2>Invoice — Booking #{$b['id']}</h2>

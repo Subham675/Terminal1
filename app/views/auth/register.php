@@ -30,7 +30,7 @@
 </head>
 <body>
 <div class="box">
-  <div class="box-header"><h1>Create Account</h1><p>TERMINAL 1 — THE STARTUP CANTEEN</p></div>
+  <div class="box-header"><h1>Create Account</h1><p>TERMINAL 1 — THE RESTAURANT</p></div>
   <div class="box-body">
     <?php $f=flash('register'); if($f): ?>
       <div class="flash flash-<?= $f['type'] ?>"><?= e($f['message']) ?></div>

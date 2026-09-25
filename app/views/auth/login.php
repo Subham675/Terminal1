@@ -37,7 +37,7 @@
 <div class="box">
   <div class="box-header">
     <h1>Terminal 1</h1>
-    <p>THE STARTUP CANTEEN — ADMIN & USER LOGIN</p>
+    <p>THE RESTAURANT — ADMIN & USER LOGIN</p>
   </div>
   <div class="box-body">
     <?php $f=flash('login'); if($f): ?>

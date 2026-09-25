@@ -118,7 +118,7 @@ class Mailer {
               <p style='color:rgba(255,255,255,.4);font-size:13px;margin-top:24px;'>Your invoice is attached to this email. See you soon!</p>
             </div>
             <div style='padding:20px;border-top:1px solid rgba(255,255,255,.06);text-align:center;'>
-              <p style='color:rgba(255,255,255,.2);font-size:12px;margin:0;'>© Terminal 1 — The Startup Canteen, Cooch Behar</p>
+              <p style='color:rgba(255,255,255,.2);font-size:12px;margin:0;'>© Terminal 1 — The Restaurant, Cooch Behar</p>
             </div>
           </div>
         </body></html>";
@@ -136,7 +136,7 @@ class Mailer {
           <div style='max-width:520px;margin:0 auto;background:#1E1C18;border:1px solid #C8860A55;border-radius:8px;overflow:hidden;'>
             <div style='background:#C8860A;padding:28px;text-align:center;'>
               <h1 style='color:#fff;margin:0;letter-spacing:2px;'>TERMINAL 1</h1>
-              <p style='color:rgba(255,255,255,.7);margin:4px 0 0;font-size:12px;letter-spacing:3px;'>THE STARTUP CANTEEN</p>
+              <p style='color:rgba(255,255,255,.7);margin:4px 0 0;font-size:12px;letter-spacing:3px;'>THE RESTAURANT</p>
             </div>
             <div style='padding:40px;'>
               <p style='color:rgba(255,255,255,.7);font-size:15px;line-height:1.7;'>Hi <strong style='color:#fff;'>{$name}</strong>,<br><br>Use the OTP below to {$purposeText}:</p>
@@ -148,7 +148,7 @@ class Mailer {
               <p style='color:rgba(255,255,255,.4);font-size:13px;text-align:center;'>This OTP expires in <strong style='color:#C8860A;'>{$expiry} minutes</strong>. Do not share this code.</p>
             </div>
             <div style='padding:20px;border-top:1px solid rgba(255,255,255,.06);text-align:center;'>
-              <p style='color:rgba(255,255,255,.2);font-size:12px;margin:0;'>© Terminal 1 — The Startup Canteen, Cooch Behar</p>
+              <p style='color:rgba(255,255,255,.2);font-size:12px;margin:0;'>© Terminal 1 — The Restaurant, Cooch Behar</p>
             </div>
           </div>
         </body></html>";

@@ -253,7 +253,7 @@
   </div>
 
   <footer>
-    © <?= date('Y') ?> Terminal 1 — The Startup Canteen. All rights reserved.
+    © <?= date('Y') ?> Terminal 1 — The Restaurant. All rights reserved.
   </footer>
 </body>
 </html>

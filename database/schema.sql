@@ -6,7 +6,7 @@
 -- ============================================================
 
 -- ============================================================
---  Terminal 1 — The Startup Canteen  |  PostgreSQL Schema
+--  Terminal 1 — The Restaurant  |  PostgreSQL Schema
 -- ============================================================
 
 CREATE DATABASE terminal1_db;

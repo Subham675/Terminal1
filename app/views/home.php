@@ -14,7 +14,7 @@ $user = authUser();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Terminal 1 — The Startup Canteen</title>
+  <title>Terminal 1 — The Restaurant</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -286,7 +286,7 @@ $user = authUser();
 
 <!-- NAV -->
 <nav id="navbar">
-  <a class="nav-logo" href="<?= url('/') ?>">Terminal 1 <span>The Startup Canteen</span></a>
+  <a class="nav-logo" href="<?= url('/') ?>">Terminal 1 <span>The Restaurant</span></a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#gallery">Gallery</a></li>
@@ -343,7 +343,7 @@ $user = authUser();
   <div class="hero-line"></div>
   <div class="hero-content fade-up visible">
     <div class="hero-eyebrow">Cooch Behar, West Bengal</div>
-    <h1>Terminal<em>The Startup Canteen</em>1</h1>
+    <h1>Terminal<em>The Restaurant</em>1</h1>
     <p class="hero-sub">Where every meal is a celebration. Authentic Bengali flavors<br>with a soul that sparks stories.</p>
     <div class="hero-btns">
       <a class="btn-primary" href="#menu">Explore Menu</a>
@@ -358,9 +358,9 @@ $user = authUser();
   <div class="about-grid">
     <div class="about-text fade-up">
       <div class="section-tag">Our Story</div>
-      <h2 class="section-title">More than a canteen,<br>it's a vibe.</h2>
+      <h2 class="section-title">More than a restaurant,<br>it's a vibe.</h2>
       <div class="divider"></div>
-      <p>Terminal 1 — The Startup Canteen was born from a simple idea: great food, great company, and a space that feels alive. Tucked in the heart of Cooch Behar, we blend Bengali home-cooking with a quirky, artsy atmosphere.</p>
+      <p>Terminal 1 — The Restaurant was born from a simple idea: great food, great company, and a space that feels alive. Tucked in the heart of Cooch Behar, we blend Bengali home-cooking with a quirky, artsy atmosphere.</p>
       <p>Our walls tell stories. From black-and-white portraits to post-it notes written by hundreds of guests — Terminal 1 is a place people return to, again and again.</p>
       <div class="about-stats">
         <div class="stat-card"><div class="stat-num">500+</div><div class="stat-label">Happy Tables</div></div>
@@ -503,7 +503,7 @@ $user = authUser();
       <?php else: ?>
         <p>We'd love to have you. Walk in anytime, or reserve your table for special occasions.</p>
       <?php endif; ?>
-      <div class="info-item"><div class="info-icon">📍</div><div><div class="info-label">Address</div><div class="info-value">Terminal 1 — The Startup Canteen<br>Cooch Behar, West Bengal, India</div></div></div>
+      <div class="info-item"><div class="info-icon">📍</div><div><div class="info-label">Address</div><div class="info-value">Terminal 1 — The Restaurant<br>Cooch Behar, West Bengal, India</div></div></div>
       <div class="info-item"><div class="info-icon">🕐</div><div><div class="info-label">Hours</div><div class="info-value">Monday – Sunday<br>11:00 AM – 10:00 PM</div></div></div>
       <div class="info-item"><div class="info-icon">📞</div><div><div class="info-label">Phone</div><div class="info-value">Call us to enquire about<br>celebration packages</div></div></div>
     </div>
@@ -565,14 +565,14 @@ $user = authUser();
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo">Terminal 1<small>The Startup Canteen</small></div>
+    <div class="footer-logo">Terminal 1<small>The Restaurant</small></div>
     <div class="footer-links">
       <a href="#about">About</a><a href="#gallery">Gallery</a><a href="#menu">Menu</a>
       <a href="#celebrations">Celebrations</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a>
       <?php if($user && $user['role']==='admin'): ?><a href="<?= url('/admin') ?>">Admin</a><?php endif; ?>
     </div>
   </div>
-  <p class="footer-copy">© <?= date('Y') ?> Terminal 1 — The Startup Canteen, Cooch Behar. All rights reserved.</p>
+  <p class="footer-copy">© <?= date('Y') ?> Terminal 1 — The Restaurant, Cooch Behar. All rights reserved.</p>
 </footer>
 
 <script>

@@ -1,5 +1,5 @@
 -- ============================================================
---  Terminal 1 — The Startup Canteen  |  MySQL / MariaDB Schema
+--  Terminal 1 — The Restaurant  |  MySQL / MariaDB Schema
 --  For use with XAMPP (Apache + MySQL + PHP)
 --
 --  HOW TO IMPORT (phpMyAdmin):
