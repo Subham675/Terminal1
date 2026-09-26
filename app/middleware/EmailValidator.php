@@ -50,8 +50,8 @@ class EmailValidator {
             return [false, "Invalid domain '@{$domain}'. Did you mean '@{$suggested}'?", $email];
         }
 
-        // 3. Block known disposable/burner email services
-        if (in_array($domain, self::DISPOSABLE_DOMAINS, true)) {
+    // 3. Block known disposable/burner email services (75,000+ domain database)
+        if (self::isDisposableDomain($domain)) {
             return [false, 'Temporary or disposable email addresses are not permitted. Please use your permanent email.', $email];
         }
 
@@ -70,6 +70,12 @@ class EmailValidator {
             if (!$hasMx && !$hasA) {
                 return [false, "The domain '@{$domain}' does not exist or has no active mail servers.", $email];
             }
+        }
+
+        // 6. Disify Real-Time Disposable & Domain Check (Zero-key public verification)
+        $disifyResult = self::callDisify($email);
+        if ($disifyResult !== null && !$disifyResult[0]) {
+            return [false, $disifyResult[1], $email];
         }
 
         // 6. External Email Verification API (if configured in .env)
@@ -189,6 +195,48 @@ class EmailValidator {
     }
 
     /**
+     * Checks if a domain is in the 75,000+ disposable domain database.
+     */
+    public static function isDisposableDomain(string $domain): bool {
+        static $disposableMap = null;
+        if ($disposableMap === null) {
+            $file = __DIR__ . '/../config/disposable_domains.php';
+            if (file_exists($file)) {
+                $disposableMap = require $file;
+            } else {
+                $disposableMap = array_fill_keys(self::DISPOSABLE_DOMAINS, 1);
+            }
+        }
+        return isset($disposableMap[$domain]);
+    }
+
+    /**
+     * Queries Disify.com public verification endpoint (no API key required).
+     */
+    public static function callDisify(string $email): ?array {
+        $url = "https://disify.com/api/email/" . urlencode($email);
+        $raw = self::httpGet($url, [], 2);
+        if (!$raw) return null;
+
+        $json = @json_decode($raw, true);
+        if (!is_array($json) || !isset($json['format'])) return null;
+
+        if ($json['format'] === false) {
+            return [false, 'Please enter a valid email address format.'];
+        }
+
+        if (isset($json['disposable']) && $json['disposable'] === true) {
+            return [false, 'Temporary or disposable email addresses are not permitted. Please use your permanent email.'];
+        }
+
+        if (isset($json['dns']) && $json['dns'] === false) {
+            return [false, 'The email domain does not have valid mail server (DNS) records.'];
+        }
+
+        return [true, ''];
+    }
+
+    /**
      * Queries an external Email Verification API (AbstractAPI, ZeroBounce, Hunter, Mailboxlayer, etc.)
      * Returns:
      * - [bool $isValid, string $errorMessage] if the API responded with a conclusive result
@@ -259,7 +307,13 @@ class EmailValidator {
         if (!$raw) return null;
 
         $json = @json_decode($raw, true);
-        if (!is_array($json) || isset($json['error'])) return null;
+        if (!is_array($json)) return null;
+
+        if (isset($json['error'])) {
+            $err = $json['error']['message'] ?? 'API error';
+            error_log("[EmailValidator] Abstract API returned error: {$err}");
+            return null;
+        }
 
         if (isset($json['is_disposable_email']['value']) && $json['is_disposable_email']['value'] === true) {
             return [false, 'Temporary or disposable email addresses are not permitted.'];
