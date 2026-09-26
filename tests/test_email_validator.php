@@ -19,6 +19,8 @@ $testCases = [
     ['trailingdot.@gmail.com', false, 'Gmail ending with dot'],
     ['two..dots@gmail.com', false, 'Gmail consecutive dots'],
     ['invalid_char@gmail.com', false, 'Gmail invalid character underscore'],
+    ['xyznotrealemail12345@gmail.com', false, 'Non-existent Gmail mailbox (> 6 chars)'],
+    ['subhamkarmakar99999999fake@gmail.com', false, 'Non-existent Gmail mailbox with numbers'],
 ];
 
 $allPassed = true;

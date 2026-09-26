@@ -82,6 +82,12 @@ class EmailValidator {
             }
         }
 
+        // 7. Real-time direct SMTP mailbox verification (checks if mailbox exists on target mail server)
+        $mailboxCheck = self::verifyMailboxExistence($email, $domain);
+        if (!$mailboxCheck[0]) {
+            return [false, $mailboxCheck[1], $email];
+        }
+
         return [true, '', $email];
     }
 
@@ -117,6 +123,66 @@ class EmailValidator {
 
         if (!preg_match('/^[a-z0-9.]+$/', $username)) {
             return [false, 'Gmail username can only contain letters (a-z), numbers (0-9), and periods.'];
+        }
+
+        return [true, ''];
+    }
+
+    /**
+     * Connects directly to the recipient domain's primary MX server to verify
+     * whether the target mailbox actually exists (RCPT TO handshake).
+     * If the mail server responds with a 550/551/553 error (e.g. "The email account does not exist"),
+     * it immediately rejects the email without sending any message.
+     */
+    public static function verifyMailboxExistence(string $email, string $domain): array {
+        // Collect MX hosts
+        $mxHosts = [];
+        if (function_exists('getmxrr')) {
+            @getmxrr($domain, $mxHosts);
+        }
+        if (empty($mxHosts)) {
+            $mxHosts = [$domain];
+        }
+
+        $connected = false;
+        $sock = null;
+        foreach ($mxHosts as $host) {
+            $sock = @fsockopen($host, 25, $errno, $errstr, 3);
+            if ($sock) {
+                $connected = true;
+                break;
+            }
+        }
+
+        if (!$connected || !$sock) {
+            // Port 25 unreachable on network; allow through to avoid false rejections
+            return [true, ''];
+        }
+
+        stream_set_timeout($sock, 3);
+        $banner = @fgets($sock, 512);
+
+        $heloDomain = function_exists('env') ? parse_url((string)env('APP_URL', 'http://terminal1.in'), PHP_URL_HOST) : 'terminal1.in';
+        if (!$heloDomain || $heloDomain === 'localhost') $heloDomain = 'terminal1.in';
+
+        @fputs($sock, "HELO {$heloDomain}\r\n");
+        $heloRes = @fgets($sock, 512);
+
+        $fromAddress = function_exists('env') ? (string)env('MAIL_FROM_ADDRESS', 'noreply@terminal1.in') : 'noreply@terminal1.in';
+        @fputs($sock, "MAIL FROM:<{$fromAddress}>\r\n");
+        $fromRes = @fgets($sock, 512);
+
+        @fputs($sock, "RCPT TO:<{$email}>\r\n");
+        $rcptRes = @fgets($sock, 512);
+
+        @fputs($sock, "QUIT\r\n");
+        @fclose($sock);
+
+        $code = (int)substr(trim((string)$rcptRes), 0, 3);
+
+        // Explicit rejection codes from mail servers (e.g. Google's 550 5.1.1 "The email account that you tried to reach does not exist")
+        if (in_array($code, [550, 551, 552, 553, 554], true)) {
+            return [false, "The email account '{$email}' does not exist on mail servers. Please enter a valid, active email address."];
         }
 
         return [true, ''];
