@@ -1,8 +1,21 @@
 <?php
 class AuthController {
+    public static function getSafeRedirect(?string $target = null): string {
+        $raw = $target ?? $_POST['redirect'] ?? $_GET['redirect'] ?? ($_SESSION['auth_redirect'] ?? '/');
+        unset($_SESSION['auth_redirect']);
+        if (is_string($raw) && str_starts_with($raw, '/') && !str_starts_with($raw, '//') && !str_contains($raw, '\\')) {
+            return $raw;
+        }
+        return '/';
+    }
+
     // ── Show login page ──
     public static function showLogin(): void {
-        if(isLoggedIn()) redirect(isAdmin() ? '/admin' : '/');
+        $redirect = $_GET['redirect'] ?? null;
+        if ($redirect && str_starts_with($redirect, '/') && !str_starts_with($redirect, '//') && !str_contains($redirect, '\\')) {
+            $_SESSION['auth_redirect'] = $redirect;
+        }
+        if(isLoggedIn()) redirect(isAdmin() ? '/admin' : self::getSafeRedirect());
         $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
         $requiresCaptcha = RateLimiter::requiresCaptcha($ip, 'login_ip', 2);
         $captcha = $requiresCaptcha ? RateLimiter::getCaptchaChallenge() : null;
@@ -88,11 +101,16 @@ class AuthController {
 
         RateLimiter::clearAttempts($email, 'login');
         self::loginSession($user);
-        redirect('/');
+        $target = self::getSafeRedirect($_POST['redirect'] ?? null);
+        redirect(isAdmin() ? '/admin' : $target);
     }
 
     // ── Show register ──
     public static function showRegister(): void {
+        $redirect = $_GET['redirect'] ?? null;
+        if ($redirect && str_starts_with($redirect, '/') && !str_starts_with($redirect, '//') && !str_contains($redirect, '\\')) {
+            $_SESSION['auth_redirect'] = $redirect;
+        }
         require APP_ROOT.'/app/views/auth/register.php';
     }
 
@@ -116,6 +134,10 @@ class AuthController {
     // ── Register ──
     public static function register(): void {
         verifyCsrf();
+        $redirect = $_POST['redirect'] ?? null;
+        if ($redirect && str_starts_with($redirect, '/') && !str_starts_with($redirect, '//') && !str_contains($redirect, '\\')) {
+            $_SESSION['auth_redirect'] = $redirect;
+        }
         $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
         if (RateLimiter::isBlocked($ip, 'register', 5, 60)) {
             $mins = RateLimiter::remainingCooldownMinutes($ip, 'register', 60);
@@ -322,7 +344,8 @@ class AuthController {
 
         unset($_SESSION['otp_email'],$_SESSION['otp_purpose'],$_SESSION['oauth_state'],$_SESSION['dev_otp']);
         self::loginSession($user);
-        redirect(isAdmin() ? '/admin' : '/');
+        $target = self::getSafeRedirect();
+        redirect(isAdmin() ? '/admin' : $target);
     }
 
     // ── Resend OTP ──

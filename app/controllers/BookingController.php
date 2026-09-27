@@ -2,11 +2,25 @@
 class BookingController {
     public static function store(): void {
         verifyCsrf();
-        $name  = sanitize($_POST['name'] ?? '');
+
+        // ── Strictly require customer login before reserving a table ──
+        if (!isLoggedIn()) {
+            http_response_code(401);
+            echo json_encode([
+                'success'       => false,
+                'require_login' => true,
+                'redirect'      => url('/auth/login?redirect=' . urlencode('/#contact')),
+                'message'       => 'Please sign in or create an account first to reserve a table.'
+            ]);
+            return;
+        }
+
+        $user  = authUser();
+        $name  = sanitize($_POST['name'] ?? '') ?: ($user['name'] ?? '');
         $phone = sanitize($_POST['phone'] ?? '');
         if(!$name || !$phone){
             http_response_code(422);
-            echo json_encode(['success'=>false,'message'=>'Name and phone are required.']);
+            echo json_encode(['success'=>false,'message'=>'Name and phone number are required to reserve your table.']);
             return;
         }
 
@@ -19,21 +33,13 @@ class BookingController {
             return;
         }
 
-        $rawEmail = sanitize($_POST['email'] ?? '');
-        $email = '';
-        if ($rawEmail !== '') {
-            [$isValidEmail, $emailError, $email] = EmailValidator::validate($rawEmail);
-            if (!$isValidEmail) {
-                http_response_code(422);
-                echo json_encode(['success' => false, 'message' => $emailError]);
-                return;
-            }
-        }
+        // Use the authenticated user's verified account email
+        $email = $user['email'] ?? sanitize($_POST['email'] ?? '');
 
         $depositAmount = (float) env('DEPOSIT_AMOUNT', 100);
 
         $id = Booking::create([
-            'user_id'      => authUser()['id'] ?? null,
+            'user_id'      => (int)$user['id'],
             'name'         => $name,
             'phone'        => $phone,
             'email'        => $email,

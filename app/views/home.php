@@ -300,13 +300,14 @@ $user = authUser();
         <a class="nav-link-ghost" href="<?= url('/admin') ?>">Admin Dashboard</a>
       <?php endif; ?>
       <span class="nav-user">Hi, <?= e(explode(' ', $user['name'])[0]) ?></span>
+      <a class="nav-cta" href="#contact">Reserve a Table</a>
       <form method="POST" action="<?= url('/auth/logout') ?>" style="display:inline">
         <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
-        <button type="submit" class="nav-cta" style="cursor:pointer;font:inherit;">Logout</button>
+        <button type="submit" class="nav-link-ghost" style="background:none;border:none;cursor:pointer;font:inherit;">Logout</button>
       </form>
     <?php else: ?>
       <a class="nav-link-ghost" href="<?= url('/auth/login') ?>">Login</a>
-      <a class="nav-cta" href="#contact">Reserve a Table</a>
+      <a class="nav-cta" href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>">Reserve a Table</a>
     <?php endif; ?>
   </div>
   <div class="hamburger" onclick="openMenu()">
@@ -322,8 +323,8 @@ $user = authUser();
   <a href="#menu" onclick="closeMenu()">Menu</a>
   <a href="#celebrations" onclick="closeMenu()">Celebrations</a>
   <a href="#standards" onclick="closeMenu()">Standards</a>
-  <a href="#contact" onclick="closeMenu()">Reserve</a>
   <?php if($user): ?>
+    <a href="#contact" onclick="closeMenu()">Reserve a Table</a>
     <a href="<?= url('/my-bookings') ?>" onclick="closeMenu()">My Bookings</a>
     <?php if($user['role']==='admin'): ?><a href="<?= url('/admin') ?>" onclick="closeMenu()">Admin Dashboard</a><?php endif; ?>
     <form method="POST" action="<?= url('/auth/logout') ?>">
@@ -331,7 +332,9 @@ $user = authUser();
       <button type="submit" style="background:none;border:none;cursor:pointer;font:inherit;color:inherit;padding:0;">Logout</button>
     </form>
   <?php else: ?>
+    <a href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>" onclick="closeMenu()">Reserve a Table</a>
     <a href="<?= url('/auth/login') ?>" onclick="closeMenu()">Login</a>
+    <a href="<?= url('/auth/register') ?>" onclick="closeMenu()">Register</a>
   <?php endif; ?>
 </div>
 
@@ -346,7 +349,11 @@ $user = authUser();
     <p class="hero-sub">North Bengal culinary tradition, slow-cooked tandoori roasts, and authentic regional gravies. Prepared fresh daily in Cooch Behar for family dining and private celebrations.</p>
     <div class="hero-btns">
       <a class="btn-primary" href="#menu">Explore Menu</a>
-      <a class="btn-ghost" href="#contact">Book Your Table</a>
+      <?php if($user): ?>
+        <a class="btn-ghost" href="#contact">Book Your Table</a>
+      <?php else: ?>
+        <a class="btn-ghost" href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>">Book Your Table</a>
+      <?php endif; ?>
     </div>
   </div>
   <div class="hero-scroll"><div class="scroll-dot"></div>Scroll</div>
@@ -528,9 +535,9 @@ $user = authUser();
       <h2 class="section-title">Visit Terminal 1</h2>
       <div class="divider"></div>
       <?php if($user): ?>
-        <p>Welcome back, <strong style="color:rgba(255,255,255,.8)"><?= e($user['name']) ?></strong>. Fill in the details below to reserve your table.</p>
+        <p>Welcome back, <strong style="color:rgba(255,255,255,.8)"><?= e($user['name']) ?></strong>. Fill in your dining details below to reserve your table.</p>
       <?php else: ?>
-        <p>Walk in anytime during operational hours, or submit an advance table reservation below for guaranteed seating.</p>
+        <p>Advance table reservations require an authenticated account. Sign in to your account below to book your table.</p>
       <?php endif; ?>
       <div class="info-item">
         <div class="info-icon">
@@ -561,6 +568,7 @@ $user = authUser();
       </div>
     </div>
 
+    <?php if($user): ?>
     <div class="contact-form fade-up">
       <!-- Hidden CSRF token injected from PHP session -->
       <input type="hidden" id="csrf_token" value="<?= csrfToken() ?>">
@@ -569,17 +577,17 @@ $user = authUser();
         <div class="form-group">
           <label>Your Name</label>
           <input type="text" id="fname" placeholder="Rajib Das"
-                 value="<?= $user ? e($user['name']) : '' ?>"/>
+                 value="<?= e($user['name']) ?>" required/>
         </div>
         <div class="form-group">
-          <label>Phone Number</label>
-          <input type="tel" id="fphone" placeholder="+91 98765 00000"/>
+          <label>Phone Number *</label>
+          <input type="tel" id="fphone" placeholder="+91 98765 00000" required/>
         </div>
       </div>
       <div class="form-group">
-        <label>Email (optional)</label>
-        <input type="email" id="femail" placeholder="you@example.com"
-               value="<?= $user ? e($user['email']) : '' ?>"/>
+        <label>Account Email</label>
+        <input type="email" id="femail" value="<?= e($user['email']) ?>" readonly
+               style="background:rgba(255,255,255,.02);color:rgba(255,255,255,.5);cursor:not-allowed;"/>
       </div>
       <div class="form-group">
         <label>Occasion</label>
@@ -595,7 +603,7 @@ $user = authUser();
       <div class="form-row">
         <div class="form-group">
           <label>Number of Guests</label>
-          <input type="number" id="fguests" placeholder="e.g. 4" min="1"/>
+          <input type="number" id="fguests" placeholder="e.g. 4" min="1" value="2"/>
         </div>
         <div class="form-group">
           <label>Preferred Date</label>
@@ -612,6 +620,25 @@ $user = authUser();
         <div class="spinner" id="btnSpinner"></div>
       </button>
     </div>
+    <?php else: ?>
+    <div class="contact-form fade-up" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:52px 30px;">
+      <div style="width:62px;height:62px;border-radius:2px;background:rgba(200,134,10,.12);border:1px solid rgba(200,134,10,.3);display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:#C8860A;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h3 style="font-family:var(--font-display);font-size:1.5rem;color:#fff;margin-bottom:12px;">Sign In to Reserve a Table</h3>
+      <p style="color:rgba(255,255,255,.65);font-size:0.92rem;line-height:1.6;max-width:390px;margin-bottom:28px;">
+        To guarantee your table reservation, link your dining deposit, and receive live preparation updates, please sign in or register before booking.
+      </p>
+      <div style="display:flex;gap:12px;width:100%;max-width:340px;flex-direction:column;">
+        <a href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>" class="btn-primary" style="text-align:center;padding:14px;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:block;">
+          Sign In to Reserve Table
+        </a>
+        <a href="<?= url('/auth/register?redirect=' . urlencode('/#contact')) ?>" class="btn-ghost" style="text-align:center;padding:13px;font-size:0.82rem;letter-spacing:1px;text-transform:uppercase;text-decoration:none;display:block;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.8);">
+          Create New Account
+        </a>
+      </div>
+    </div>
+    <?php endif; ?>
   </div>
 </section>
 
@@ -621,7 +648,12 @@ $user = authUser();
     <div class="footer-logo">Terminal 1<small>The Restaurant</small></div>
     <div class="footer-links">
       <a href="#about">About</a><a href="#gallery">Gallery</a><a href="#menu">Menu</a>
-      <a href="#celebrations">Celebrations</a><a href="#standards">Standards</a><a href="#contact">Reserve</a>
+      <a href="#celebrations">Celebrations</a><a href="#standards">Standards</a>
+      <?php if($user): ?>
+        <a href="#contact">Reserve</a>
+      <?php else: ?>
+        <a href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>">Reserve</a>
+      <?php endif; ?>
       <a href="<?= url('/privacy') ?>">Privacy Policy</a>
       <a href="<?= url('/terms') ?>">Terms &amp; Conditions</a>
       <?php if($user && $user['role']==='admin'): ?><a href="<?= url('/admin') ?>">Admin Dashboard</a><?php endif; ?>
@@ -806,6 +838,12 @@ async function submitBooking() {
     });
 
     const data = await res.json();
+
+    if (data.require_login && data.redirect) {
+      showToast(data.message || 'Please log in to reserve a table.', 'error');
+      setTimeout(() => { window.location.href = data.redirect; }, 1000);
+      return;
+    }
 
     if(data.success) {
       showToast(data.message, 'success');

@@ -42,11 +42,23 @@
     <p>THE RESTAURANT: ACCOUNT LOGIN</p>
   </div>
   <div class="box-body">
+    <?php 
+      $redir = $_GET['redirect'] ?? $_SESSION['auth_redirect'] ?? '';
+      if ($redir && str_contains($redir, '#contact')): 
+    ?>
+      <div style="background:rgba(200,134,10,.12);border:1px solid rgba(200,134,10,.3);border-radius:2px;padding:12px 14px;margin-bottom:16px;font-size:0.83rem;color:#E8A820;display:flex;align-items:center;gap:10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Please sign in to your account to reserve your table.</span>
+      </div>
+    <?php endif; ?>
     <?php $f=flash('login'); if($f): ?>
       <div class="flash flash-<?= $f['type'] ?>"><?= e($f['message']) ?></div>
     <?php endif; ?>
     <form method="POST" action="<?= url('/auth/login') ?>" id="loginForm">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+      <?php if($redir): ?>
+        <input type="hidden" name="redirect" value="<?= e($redir) ?>">
+      <?php endif; ?>
       <div class="form-group">
         <label>Email Address</label>
         <input type="email" name="email" id="loginEmail" class="form-control" placeholder="you@example.com" required autocomplete="email">
@@ -87,7 +99,7 @@
     </a>
   </div>
   <div class="footer-link">
-    No account? <a class="link" href="<?= url('/auth/register') ?>">Create one</a>
+    No account? <a class="link" href="<?= url('/auth/register' . ($redir ? '?redirect=' . urlencode($redir) : '')) ?>">Create one</a>
     <div style="margin-top:10px;font-size:0.75rem;">
       <a href="<?= url('/privacy') ?>" style="color:rgba(255,255,255,0.4);text-decoration:none;">Privacy Policy</a> &bull;
       <a href="<?= url('/terms') ?>" style="color:rgba(255,255,255,0.4);text-decoration:none;">Terms &amp; Conditions</a>
