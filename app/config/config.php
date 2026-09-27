@@ -98,18 +98,20 @@ function renderSecurityError(int $code, string $title, string $message): string 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>' . e($title) . ' — Terminal 1</title>
+  <title>' . e($title) . ' | Terminal 1</title>
+  <link rel="icon" type="image/svg+xml" href="' . asset('favicon.svg') . '">
+  <link rel="alternate icon" href="' . asset('favicon.ico') . '">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
-    body { margin:0; min-height:100vh; background:#0B0A08; color:#fff; font-family:"Plus Jakarta Sans",sans-serif; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
-    .err-card { background:#14120E; border:1px solid rgba(207,34,46,.35); border-radius:8px; max-width:540px; width:100%; padding:44px 34px; text-align:center; box-shadow:0 24px 48px rgba(0,0,0,.7); }
-    .err-icon { width:68px; height:68px; border-radius:50%; background:rgba(207,34,46,.15); color:#cf222e; display:inline-flex; align-items:center; justify-content:center; font-size:2.2rem; margin-bottom:20px; border:1px solid rgba(207,34,46,.35); }
+    body { margin:0; min-height:100vh; background:#0B0A08; color:#fff; font-family:"DM Sans",sans-serif; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
+    .err-card { background:#14120E; border:1px solid rgba(207,34,46,.35); border-radius:4px; max-width:540px; width:100%; padding:44px 34px; text-align:center; box-shadow:0 24px 48px rgba(0,0,0,.7); }
+    .err-icon { width:60px; height:60px; border-radius:2px; background:rgba(207,34,46,.15); color:#cf222e; display:inline-flex; align-items:center; justify-content:center; margin-bottom:20px; border:1px solid rgba(207,34,46,.35); }
     .err-code { font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; color:#cf222e; font-weight:700; margin-bottom:8px; }
-    h1 { font-family:"Cinzel",serif; font-size:1.8rem; color:#fff; margin:0 0 16px; line-height:1.2; }
+    h1 { font-family:"Playfair Display",serif; font-size:1.8rem; color:#fff; margin:0 0 16px; line-height:1.2; }
     p { color:rgba(255,255,255,.65); line-height:1.6; font-size:0.95rem; margin:0 0 28px; }
     .err-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-    .btn { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:4px; font-size:0.85rem; letter-spacing:1px; text-transform:uppercase; text-decoration:none; font-weight:600; transition:all .2s; }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:2px; font-size:0.85rem; letter-spacing:1px; text-transform:uppercase; text-decoration:none; font-weight:600; transition:all .2s; }
     .btn-gold { background:#C8860A; color:#fff; }
     .btn-gold:hover { background:#E8A820; }
     .btn-ghost { background:transparent; border:1px solid rgba(255,255,255,.2); color:rgba(255,255,255,.8); }
@@ -119,13 +121,15 @@ function renderSecurityError(int $code, string $title, string $message): string 
 </head>
 <body>
   <div class="err-card">
-    <div class="err-icon">🛡️</div>
+    <div class="err-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
     <div class="err-code">HTTP ' . $code . ' Security Policy Violation</div>
     <h1>' . e($title) . '</h1>
     <p>' . e($message) . '</p>
     <div class="err-actions">
-      <a href="/" class="btn btn-gold">← Return to Home</a>
-      <a href="/my-bookings" class="btn btn-ghost">My Bookings</a>
+      <a href="' . url('/') . '" class="btn btn-gold">Return to Home</a>
+      <a href="' . url('/my-bookings') . '" class="btn btn-ghost">My Bookings</a>
     </div>
     <div class="security-note">
       Terminal 1 Security Engine • Incident timestamp: ' . date('Y-m-d H:i:s') . ' • IP: ' . e($_SERVER['REMOTE_ADDR'] ?? 'unknown') . '
@@ -201,7 +205,7 @@ function verifyBookingOwnership(int $bookingId, ?string $token = null): array {
 
     die(renderSecurityError(
         403,
-        'Access Denied — Security Violation',
+        'Access Denied: Security Violation',
         "Server-Side Security Check Failed: You do not have permission to view or manipulate Order #{$bookingId}. Attempting to change or forge IDs in the URL or request parameters is strictly forbidden. This incident has been recorded for security audit."
     ));
 }

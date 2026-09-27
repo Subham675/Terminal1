@@ -33,6 +33,8 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $routes = [
     'GET' => [
         '/'                    => fn() => require APP_ROOT.'/app/views/home.php',
+        '/privacy'             => fn() => require APP_ROOT.'/app/views/legal/privacy.php',
+        '/terms'               => fn() => require APP_ROOT.'/app/views/legal/terms.php',
         '/my-bookings'         => [BookingController::class, 'myBookings'],
         '/bookings/view'       => [BookingController::class, 'viewBooking'],
         '/order'               => [BookingController::class, 'viewBooking'],

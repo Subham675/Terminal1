@@ -4,9 +4,12 @@
 <?php endif; ?>
 
 <div id="liveBookingAlert" style="display:none;margin-bottom:16px;padding:12px 18px;background:#1a3a2a;
-     border:1px solid #2da44e;border-radius:8px;color:#4caf70;display:flex;align-items:center;gap:10px;">
+     border:1px solid #2da44e;border-radius:4px;color:#4caf70;display:flex;align-items:center;gap:10px;">
   <span style="width:8px;height:8px;border-radius:50%;background:#2da44e;display:inline-block;animation:pulseDot 1.5s infinite;"></span>
-  <span id="liveBookingAlertText">🔔 A new booking just came in!</span>
+  <span id="liveBookingAlertText" style="display:flex;align-items:center;gap:6px;">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <span>A new booking was received!</span>
+  </span>
   <button onclick="location.reload()" class="btn btn-sm btn-success" style="margin-left:auto;">Refresh to view</button>
 </div>
 <style>@keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:.3;} }</style>
@@ -73,14 +76,13 @@ const bookingEvents = new EventSource('/admin/track/stream');
 
 bookingEvents.addEventListener('new_booking', (e) => {
   const data = JSON.parse(e.data);
-  const alertBox = document.getElementById('liveBookingAlert');
-  document.getElementById('liveBookingAlertText').textContent =
-    `🔔 A new booking just came in! (${data.pending_count} pending total)`;
+  document.getElementById('liveBookingAlertText').innerHTML =
+    `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span>A new booking just came in! (${data.pending_count} pending total)</span>`;
   alertBox.style.display = 'flex';
 
   // Optional: browser notification if the tab isn't focused
   if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
-    new Notification('Terminal 1 — New Booking', { body: `${data.pending_count} bookings pending review.` });
+    new Notification('Terminal 1 | New Booking', { body: `${data.pending_count} bookings pending review.` });
   }
 });
 

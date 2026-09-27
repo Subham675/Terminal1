@@ -16,12 +16,12 @@
 </div>
 
 <div class="card">
-  <div class="card-header"><div class="card-title">Revenue — Last 14 Days</div></div>
+  <div class="card-header"><div class="card-title">Revenue: Last 14 Days</div></div>
   <canvas id="revenueChart" height="80"></canvas>
 </div>
 
 <div class="card">
-  <div class="card-header"><div class="card-title">Bookings — Last 14 Days</div></div>
+  <div class="card-header"><div class="card-title">Bookings: Last 14 Days</div></div>
   <canvas id="bookingsChart" height="80"></canvas>
 </div>
 

@@ -6,7 +6,9 @@ $user = authUser();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Bookings — Terminal 1</title>
+  <title>My Bookings | Terminal 1</title>
+  <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
+  <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -192,16 +194,18 @@ $user = authUser();
     <div class="header-box">
       <div>
         <h1>My Reservations</h1>
-        <p class="subtitle">Secure Order & Booking Ledger for <?= e($user['name']) ?></p>
+        <p class="subtitle">Order &amp; Booking Ledger for <?= e($user['name']) ?></p>
       </div>
       <div class="security-badge">
-        <span>🛡️ Session-Verified Private Vault</span>
+        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Verified Account Ledger</span>
       </div>
     </div>
 
     <?php if(empty($bookings)): ?>
       <div class="empty-state">
-        <div style="font-size: 2.5rem; margin-bottom: 12px;">🍽️</div>
+        <div style="margin-bottom: 16px; color: var(--gold);">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+        </div>
         <h3>No reservations found</h3>
         <p>You have not made any table reservations yet.</p>
         <a href="<?= url('/#contact') ?>" class="btn-track">Reserve a Table Now</a>
@@ -217,12 +221,12 @@ $user = authUser();
                 <span class="badge badge-<?= e($b['payment_status'] ?? 'unpaid') ?>">Deposit: <?= ucfirst(e($b['payment_status'] ?? 'unpaid')) ?></span>
               </div>
               <div class="b-meta">
-                <span>📅 <?= $b['booking_date'] ? date('D, d M Y', strtotime($b['booking_date'])) : date('D, d M Y', strtotime($b['created_at'])) ?></span>
+                <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg><?= $b['booking_date'] ? date('D, d M Y', strtotime($b['booking_date'])) : date('D, d M Y', strtotime($b['created_at'])) ?></span>
                 <?php if($b['booking_time']): ?>
-                  <span>⏰ <?= date('h:i A', strtotime($b['booking_time'])) ?></span>
+                  <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><?= date('h:i A', strtotime($b['booking_time'])) ?></span>
                 <?php endif; ?>
-                <span>👥 <?= (int)$b['guests'] ?> <?= (int)$b['guests'] > 1 ? 'Guests' : 'Guest' ?></span>
-                <span>📞 <?= e($b['phone']) ?></span>
+                <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><?= (int)$b['guests'] ?> <?= (int)$b['guests'] > 1 ? 'Guests' : 'Guest' ?></span>
+                <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><?= e($b['phone']) ?></span>
               </div>
               <?php if(!empty($b['message'])): ?>
                 <div style="font-size:0.8rem;color:rgba(255,255,255,0.45);font-style:italic;">
@@ -231,9 +235,8 @@ $user = authUser();
               <?php endif; ?>
             </div>
             <div>
-              <!-- Security Note: Link uses cryptographically secure non-sequential tracking_token -->
               <a href="<?= url('/bookings/view?id=' . $b['id'] . '&token=' . urlencode($b['tracking_token'] ?? '')) ?>" class="btn-track">
-                View & Track →
+                View &amp; Track &rarr;
               </a>
             </div>
           </div>
@@ -243,7 +246,7 @@ $user = authUser();
   </div>
 
   <footer>
-    © <?= date('Y') ?> Terminal 1 — The Restaurant. All reservations strictly protected against IDOR & URL ID tampering.
+    &copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved. &bull; <a href="<?= url('/privacy') ?>" style="color:inherit;text-decoration:none;">Privacy Policy</a> &bull; <a href="<?= url('/terms') ?>" style="color:inherit;text-decoration:none;">Terms &amp; Conditions</a>
   </footer>
 </body>
 </html>

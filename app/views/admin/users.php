@@ -14,7 +14,7 @@
         <td><?= e($u['name']) ?></td>
         <td><?= e($u['email']) ?></td>
         <td><span class="badge badge-<?= $u['role'] ?>"><?= $u['role'] ?></span></td>
-        <td><?= $u['is_verified']?'<span style="color:#2da44e">✓</span>':'<span style="color:#cf222e">✗</span>' ?></td>
+        <td><?= $u['is_verified'] ? '<span class="badge badge-confirmed">Yes</span>' : '<span class="badge badge-cancelled">No</span>' ?></td>
         <td><?= date('d M Y', strtotime($u['created_at'])) ?></td>
         <td style="display:flex;gap:6px">
           <?php if($u['id']!==(int)authUser()['id']): ?>

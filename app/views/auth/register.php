@@ -2,27 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Register — Terminal 1</title>
+  <title>Create Account | Terminal 1</title>
+  <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
+  <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{background:#0F0E0B;font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .box{width:100%;max-width:440px;background:#1A1814;border:1px solid rgba(200,134,10,.2);border-radius:8px;overflow:hidden}
+    .box{width:100%;max-width:440px;background:#1A1814;border:1px solid rgba(200,134,10,.2);border-radius:4px;overflow:hidden}
     .box-header{background:#C8860A;padding:24px;text-align:center}
     .box-header h1{font-family:'Playfair Display',serif;color:#fff;font-size:1.6rem}
     .box-header p{color:rgba(255,255,255,.7);font-size:.72rem;letter-spacing:2px;margin-top:3px}
     .box-body{padding:30px}
     .form-group{margin-bottom:16px}
     .form-group label{display:block;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:6px}
-    .form-control{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:11px 14px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
+    .form-control{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:11px 14px;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
     .form-control:focus{border-color:#C8860A}
     .password-wrap{position:relative;display:flex;align-items:center}
     .password-wrap .form-control{padding-right:44px}
-    .btn-toggle-pw{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;transition:color .2s;border-radius:4px}
+    .btn-toggle-pw{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;transition:color .2s;border-radius:2px}
     .btn-toggle-pw:hover,.btn-toggle-pw:focus{color:#E8A820;outline:none}
-    .btn-submit{width:100%;background:#C8860A;border:none;color:#fff;padding:13px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:6px}
+    .btn-submit{width:100%;background:#C8860A;border:none;color:#fff;padding:13px;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:6px}
     .btn-submit:hover{background:#E8A820}
-    .flash{padding:10px 14px;border-radius:4px;margin-bottom:16px;font-size:.83rem}
+    .flash{padding:10px 14px;border-radius:2px;margin-bottom:16px;font-size:.83rem}
     .flash-error{background:rgba(207,34,46,.15);border:1px solid rgba(207,34,46,.3);color:#cf222e}
     .footer-link{text-align:center;padding:0 30px 22px;color:rgba(255,255,255,.3);font-size:.82rem}
     .link{color:#C8860A;text-decoration:none}
@@ -30,7 +32,7 @@
 </head>
 <body>
 <div class="box">
-  <div class="box-header"><h1>Create Account</h1><p>TERMINAL 1 — THE RESTAURANT</p></div>
+  <div class="box-header"><h1>Create Account</h1><p>TERMINAL 1: THE RESTAURANT</p></div>
   <div class="box-body">
     <?php $f=flash('register'); if($f): ?>
       <div class="flash flash-<?= $f['type'] ?>"><?= e($f['message']) ?></div>
@@ -82,7 +84,13 @@
       <button type="submit" class="btn-submit" id="regBtn">Create Account & Verify Email</button>
     </form>
   </div>
-  <div class="footer-link">Already have an account? <a class="link" href="<?= url('/auth/login') ?>">Sign in</a></div>
+  <div class="footer-link">
+    Already have an account? <a class="link" href="<?= url('/auth/login') ?>">Sign in</a>
+    <div style="margin-top:10px;font-size:0.75rem;">
+      <a href="<?= url('/privacy') ?>" style="color:rgba(255,255,255,0.4);text-decoration:none;">Privacy Policy</a> &bull;
+      <a href="<?= url('/terms') ?>" style="color:rgba(255,255,255,0.4);text-decoration:none;">Terms &amp; Conditions</a>
+    </div>
+  </div>
 </div>
 <script>
 function togglePasswordVisibility(btn, inputId) {
@@ -138,7 +146,7 @@ function validateEmailInput(val) {
   if (typoMap[domain]) {
     emailFeedback.style.display = 'block';
     emailFeedback.style.color = '#E8A820';
-    emailFeedback.innerHTML = '💡 Did you mean <strong>@' + typoMap[domain] + '</strong>?';
+    emailFeedback.innerHTML = 'Suggested correction: Did you mean <strong>@' + typoMap[domain] + '</strong>?';
     regEmail.style.borderColor = '#E8A820';
     return { valid: false, reason: 'typo' };
   }
@@ -146,7 +154,7 @@ function validateEmailInput(val) {
   if (disposableSet.has(domain)) {
     emailFeedback.style.display = 'block';
     emailFeedback.style.color = '#cf222e';
-    emailFeedback.textContent = '⚠️ Disposable email addresses are not permitted.';
+    emailFeedback.textContent = 'Disposable email addresses are not permitted.';
     regEmail.style.borderColor = '#cf222e';
     return { valid: false, reason: 'disposable' };
   }
@@ -156,28 +164,28 @@ function validateEmailInput(val) {
     if (rawUser.length < 6) {
       emailFeedback.style.display = 'block';
       emailFeedback.style.color = '#cf222e';
-      emailFeedback.textContent = `⚠️ Gmail username must have at least 6 characters ('${user}' has only ${rawUser.length}).`;
+      emailFeedback.textContent = `Gmail username must have at least 6 characters ('${user}' has only ${rawUser.length}).`;
       regEmail.style.borderColor = '#cf222e';
       return { valid: false, reason: 'gmail_too_short' };
     }
     if (user.length > 30) {
       emailFeedback.style.display = 'block';
       emailFeedback.style.color = '#cf222e';
-      emailFeedback.textContent = '⚠️ Gmail username cannot exceed 30 characters.';
+      emailFeedback.textContent = 'Gmail username cannot exceed 30 characters.';
       regEmail.style.borderColor = '#cf222e';
       return { valid: false, reason: 'gmail_too_long' };
     }
     if (!/^[a-z0-9.]+$/.test(user)) {
       emailFeedback.style.display = 'block';
       emailFeedback.style.color = '#cf222e';
-      emailFeedback.textContent = '⚠️ Gmail username can only contain letters, numbers, and periods.';
+      emailFeedback.textContent = 'Gmail username can only contain letters, numbers, and periods.';
       regEmail.style.borderColor = '#cf222e';
       return { valid: false, reason: 'gmail_invalid_chars' };
     }
     if (user.startsWith('.') || user.endsWith('.') || user.includes('..')) {
       emailFeedback.style.display = 'block';
       emailFeedback.style.color = '#cf222e';
-      emailFeedback.textContent = '⚠️ Gmail username cannot start, end, or have consecutive periods.';
+      emailFeedback.textContent = 'Gmail username cannot start, end, or have consecutive periods.';
       regEmail.style.borderColor = '#cf222e';
       return { valid: false, reason: 'gmail_dots' };
     }
@@ -196,7 +204,7 @@ function verifyWithServer(email, callback) {
   isCheckingServer = true;
   emailFeedback.style.display = 'block';
   emailFeedback.style.color = 'rgba(255,255,255,0.6)';
-  emailFeedback.innerHTML = '⏳ Verifying email existence on mail servers...';
+  emailFeedback.innerHTML = 'Verifying email existence on mail servers...';
   regEmail.style.borderColor = '#C8860A';
 
   fetch('<?= url('/auth/check-email') ?>?email=' + encodeURIComponent(email))
@@ -208,14 +216,14 @@ function verifyWithServer(email, callback) {
         isEmailVerifiedOnServer = false;
         emailFeedback.style.display = 'block';
         emailFeedback.style.color = '#cf222e';
-        emailFeedback.textContent = '⚠️ ' + data.message;
+        emailFeedback.textContent = data.message;
         regEmail.style.borderColor = '#cf222e';
         if (callback) callback(false);
       } else {
         isEmailVerifiedOnServer = true;
         emailFeedback.style.display = 'block';
         emailFeedback.style.color = '#2da44e';
-        emailFeedback.textContent = '✓ Real & active mailbox verified on mail servers.';
+        emailFeedback.textContent = 'Real and active mailbox verified on mail servers.';
         regEmail.style.borderColor = '#2da44e';
         if (callback) callback(true);
       }

@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reservation #<?= e($booking['id']) ?> — Terminal 1</title>
+  <title>Reservation #<?= e($booking['id']) ?> | Terminal 1</title>
+  <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
+  <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -182,7 +184,7 @@
   <div class="container">
     <div class="detail-card">
       <div class="header-tag">
-        <span>🔒 Verified Reservation</span>
+        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Verified Reservation</span>
       </div>
       <h1>Reservation Details</h1>
 
@@ -247,13 +249,13 @@
       </div>
 
       <div class="security-note">
-        🛡️ Ownership verified by Terminal 1 Server Engine. Unauthorized URL tampering is actively monitored and blocked.
+        Ownership verified by Terminal 1 Server Engine. Unauthorized access is actively logged and restricted.
       </div>
     </div>
   </div>
 
   <footer>
-    © <?= date('Y') ?> Terminal 1 — The Restaurant. All rights reserved.
+    &copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved. &bull; <a href="<?= url('/privacy') ?>" style="color:inherit;text-decoration:none;">Privacy Policy</a> &bull; <a href="<?= url('/terms') ?>" style="color:inherit;text-decoration:none;">Terms &amp; Conditions</a>
   </footer>
 </body>
 </html>

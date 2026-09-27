@@ -26,7 +26,7 @@
         <td><?= e($item['category_name'] ?? '—') ?></td>
         <td>₹<?= number_format($item['price'],2) ?></td>
         <td><?= $item['badge'] ? '<span class="badge badge-confirmed">'.e($item['badge']).'</span>' : '—' ?></td>
-        <td><?= $item['is_veg']?'<span style="color:#2da44e">🥦</span>':'<span style="color:#cf222e">🍗</span>' ?></td>
+        <td><?= $item['is_veg'] ? '<span class="badge" style="background:rgba(45,164,78,.15);color:#2da44e;">Veg</span>' : '<span class="badge" style="background:rgba(207,34,46,.15);color:#cf222e;">Non-Veg</span>' ?></td>
         <td><?= $item['is_available']?'<span style="color:#2da44e">Yes</span>':'<span style="color:#cf222e">No</span>' ?></td>
         <td style="display:flex;gap:6px">
           <button class="btn btn-sm btn-primary" onclick='openEdit(<?= json_encode($item) ?>)'>Edit</button>

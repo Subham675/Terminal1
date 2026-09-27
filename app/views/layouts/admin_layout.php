@@ -3,7 +3,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title><?= e($pageTitle ?? 'Admin') ?> — Terminal 1</title>
+  <title><?= e($pageTitle ?? 'Admin') ?> | Terminal 1</title>
+  <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
+  <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -29,10 +31,10 @@
     .nav-label{font-size:var(--text-xs);letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.2);padding:8px 24px}
     .nav-item{display:flex;align-items:center;gap:12px;padding:10px 24px;color:rgba(255,255,255,.5);text-decoration:none;font-size:var(--text-sm);transition:all .2s;border-left:2px solid transparent}
     .nav-item:hover,.nav-item.active{color:#fff;background:rgba(200,134,10,.08);border-left-color:var(--gold)}
-    .nav-item .icon{font-size:1rem;width:18px;text-align:center}
+    .nav-item .icon{width:18px;display:flex;align-items:center;justify-content:center}
     .sidebar-footer{margin-top:auto;padding:20px 24px;border-top:1px solid rgba(255,255,255,.06)}
     .user-info{display:flex;align-items:center;gap:10px}
-    .user-avatar{width:34px;height:34px;border-radius:50%;background:rgba(200,134,10,.2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:var(--text-sm)}
+    .user-avatar{width:34px;height:34px;border-radius:2px;background:rgba(200,134,10,.2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:var(--text-sm)}
     .user-name{font-size:var(--text-sm);color:rgba(255,255,255,.7)}
     .user-role{font-size:var(--text-xs);color:var(--gold);letter-spacing:1px;text-transform:uppercase}
     /* MAIN */
@@ -42,17 +44,17 @@
     .btn-menu-toggle{display:none;background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;padding:4px}
     .page-title{font-family:var(--font-display);font-size:var(--text-lg);color:#fff}
     .topbar-right{display:flex;align-items:center;gap:12px}
-    .btn-logout{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);padding:7px 16px;border-radius:4px;font-size:var(--text-xs);cursor:pointer;text-decoration:none;transition:all .2s}
+    .btn-logout{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);padding:7px 16px;border-radius:2px;font-size:var(--text-xs);cursor:pointer;text-decoration:none;transition:all .2s}
     .btn-logout:hover{border-color:var(--danger);color:var(--danger)}
     .content{padding:28px;flex:1;max-width:100%;box-sizing:border-box}
     /* CARDS */
     .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:28px}
-    .stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:20px 22px}
+    .stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:20px 22px}
     .stat-num{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:900;color:var(--gold-lt)}
     .stat-label{font-size:var(--text-xs);letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:4px}
     /* TABLE & RESPONSIVE CONTAINER */
     .table-responsive{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:hidden;margin-bottom:24px}
+    .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:4px;overflow:hidden;margin-bottom:24px}
     .card-header{padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
     .card-title{font-size:var(--text-base);font-weight:600;color:#fff;letter-spacing:.3px}
     table{width:100%;border-collapse:collapse;min-width:600px}
@@ -61,7 +63,7 @@
     tr:last-child td{border-bottom:none}
     tr:hover td{background:rgba(255,255,255,.02)}
     /* BADGES */
-    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:var(--text-xs);letter-spacing:1px;text-transform:uppercase;font-weight:500}
+    .badge{display:inline-block;padding:3px 8px;border-radius:2px;font-size:var(--text-xs);letter-spacing:1px;text-transform:uppercase;font-weight:500}
     .badge-pending{background:rgba(210,153,34,.15);color:#d29922}
     .badge-confirmed{background:rgba(45,164,78,.15);color:#2da44e}
     .badge-cancelled{background:rgba(207,34,46,.15);color:#cf222e}
@@ -69,7 +71,7 @@
     .badge-admin{background:rgba(200,134,10,.15);color:var(--gold-lt)}
     .badge-user{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
     /* BUTTONS */
-    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:4px;font-size:var(--text-sm);letter-spacing:.5px;cursor:pointer;border:none;text-decoration:none;font-family:var(--font-body);transition:all .2s}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:2px;font-size:var(--text-sm);letter-spacing:.5px;cursor:pointer;border:none;text-decoration:none;font-family:var(--font-body);transition:all .2s}
     .btn-primary{background:var(--gold);color:#fff}.btn-primary:hover{background:var(--gold-lt)}
     .btn-danger{background:rgba(207,34,46,.15);color:#cf222e;border:1px solid rgba(207,34,46,.3)}.btn-danger:hover{background:rgba(207,34,46,.3)}
     .btn-success{background:rgba(45,164,78,.15);color:#2da44e;border:1px solid rgba(45,164,78,.3)}.btn-success:hover{background:rgba(45,164,78,.3)}
@@ -78,17 +80,17 @@
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .form-group{margin-bottom:16px}
     .form-group label{display:block;font-size:var(--text-xs);letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:6px}
-    .form-control{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:10px 14px;border-radius:4px;font-family:var(--font-body);font-size:var(--text-sm);outline:none;transition:border-color .2s}
+    .form-control{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:10px 14px;border-radius:2px;font-family:var(--font-body);font-size:var(--text-sm);outline:none;transition:border-color .2s}
     .form-control:focus{border-color:var(--gold)}
     .form-control option{background:#1a1814}
     /* FLASH */
-    .flash{padding:12px 18px;border-radius:4px;margin-bottom:20px;font-size:var(--text-sm)}
+    .flash{padding:12px 18px;border-radius:2px;margin-bottom:20px;font-size:var(--text-sm)}
     .flash-success{background:rgba(45,164,78,.15);border:1px solid rgba(45,164,78,.3);color:#2da44e}
     .flash-error{background:rgba(207,34,46,.15);border:1px solid rgba(207,34,46,.3);color:#cf222e}
     /* MODAL */
     .modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.7);align-items:center;justify-content:center}
     .modal.open{display:flex}
-    .modal-box{background:#1a1814;border:1px solid rgba(200,134,10,.2);border-radius:8px;padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+    .modal-box{background:#1a1814;border:1px solid rgba(200,134,10,.2);border-radius:4px;padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
     .modal-title{font-family:var(--font-display);font-size:var(--text-lg);color:#fff;margin-bottom:20px}
     .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:85}
     @media(max-width:768px){
@@ -113,17 +115,32 @@
   </div>
   <div class="nav-section">
     <div class="nav-label">Overview</div>
-    <a class="nav-item <?= $activePage==='dashboard'?'active':'' ?>" href="<?= url('/admin') ?>"><span class="icon">⬡</span> Dashboard</a>
+    <a class="nav-item <?= $activePage==='dashboard'?'active':'' ?>" href="<?= url('/admin') ?>">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span>
+      Dashboard
+    </a>
   </div>
   <div class="nav-section">
     <div class="nav-label">Manage</div>
-    <a class="nav-item <?= $activePage==='bookings'?'active':'' ?>" href="<?= url('/admin/bookings') ?>"><span class="icon">📅</span> Bookings</a>
-    <a class="nav-item <?= $activePage==='menu'?'active':'' ?>" href="<?= url('/admin/menu') ?>"><span class="icon">🍽</span> Menu</a>
-    <a class="nav-item <?= $activePage==='users'?'active':'' ?>" href="<?= url('/admin/users') ?>"><span class="icon">👥</span> Users</a>
+    <a class="nav-item <?= $activePage==='bookings'?'active':'' ?>" href="<?= url('/admin/bookings') ?>">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="1"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
+      Bookings
+    </a>
+    <a class="nav-item <?= $activePage==='menu'?'active':'' ?>" href="<?= url('/admin/menu') ?>">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2v20"/><path d="M21 15V2v0a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3v7"/><path d="M8 2v20"/><path d="M4 2v7a4 4 0 0 0 8 0V2"/></svg></span>
+      Menu
+    </a>
+    <a class="nav-item <?= $activePage==='users'?'active':'' ?>" href="<?= url('/admin/users') ?>">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+      Users
+    </a>
   </div>
   <div class="nav-section">
     <div class="nav-label">Site</div>
-    <a class="nav-item" href="<?= url('/') ?>" target="_blank"><span class="icon">↗</span> View Website</a>
+    <a class="nav-item" href="<?= url('/') ?>" target="_blank">
+      <span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg></span>
+      View Website
+    </a>
   </div>
   <div class="sidebar-footer">
     <div class="user-info">

@@ -14,7 +14,9 @@ $user = authUser();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Terminal 1 — The Restaurant</title>
+  <title>Terminal 1 | Authentic Dining in Cooch Behar</title>
+  <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>"/>
+  <link rel="alternate icon" href="<?= asset('favicon.ico') ?>"/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,7 +81,7 @@ $user = authUser();
     .hero-grain { position:absolute; inset:0; opacity:.04; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:200px; pointer-events:none; contain:strict; }
     .hero-line { position:absolute; left:50%; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,transparent,rgba(200,134,10,.4),transparent); pointer-events:none; }
     .hero-content { position:relative; z-index:2; max-width:760px; width:100%; }
-    .hero-eyebrow { display:inline-block; font-size:var(--text-xs); letter-spacing:var(--tracking-widest); text-transform:uppercase; color:var(--gold); border:1px solid rgba(200,134,10,.4); padding:6px 18px; border-radius:50px; margin-bottom:28px; }
+    .hero-eyebrow { display:inline-block; font-size:var(--text-xs); letter-spacing:var(--tracking-widest); text-transform:uppercase; color:var(--gold); border:1px solid rgba(200,134,10,.4); padding:6px 18px; border-radius:2px; margin-bottom:28px; }
     .hero h1 { font-family:var(--font-display); font-size:var(--text-hero); font-weight:900; line-height:.95; color:#fff; letter-spacing:-1px; margin-bottom:10px; }
     .hero h1 em { font-style:italic; font-weight:400; color:var(--gold-lt); display:block; font-size:.55em; line-height:1.2; }
     .hero-sub { font-family:var(--font-accent); font-style:italic; font-size:var(--text-xl); color:rgba(255,255,255,.65); margin:20px 0 40px; letter-spacing:.5px; line-height:var(--leading-normal); }
@@ -106,10 +108,10 @@ $user = authUser();
     .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; max-width:1100px; margin:0 auto; width:100%; }
     .about-text .section-title { color:#fff; }
     .about-text p { color:rgba(255,255,255,.6); line-height:var(--leading-relaxed); font-size:var(--text-base); margin-bottom:18px; }
-    .about-stats { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:40px; }
-    .stat-card { border:1px solid rgba(200,134,10,.25); padding:24px; border-radius:4px; background:rgba(200,134,10,.05); }
-    .stat-num { font-family:var(--font-display); font-size:var(--text-2xl); font-weight:900; color:var(--gold-lt); line-height:1; }
-    .stat-label { font-size:var(--text-xs); letter-spacing:var(--tracking-wider); text-transform:uppercase; color:rgba(255,255,255,.4); margin-top:6px; }
+    .about-pillars { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:36px; }
+    .pillar-card { border:1px solid rgba(200,134,10,.25); padding:20px 22px; border-radius:2px; background:rgba(200,134,10,.04); }
+    .pillar-title { font-family:var(--font-display); font-size:var(--text-base); font-weight:700; color:var(--gold-lt); margin-bottom:6px; }
+    .pillar-desc { font-size:var(--text-xs); color:rgba(255,255,255,.6); line-height:var(--leading-normal); }
     .about-visual { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:220px 220px; gap:12px; width:100%; }
     .av-1 { grid-column:1/3; }
     .photo-card { border-radius:4px; overflow:hidden; background:var(--charcoal); position:relative; transform:translateZ(0); }
@@ -144,7 +146,7 @@ $user = authUser();
     .mi-left { flex:1; min-width:0; }
     .mi-name { font-family:var(--font-display); font-size:var(--text-lg); color:#fff; margin-bottom:4px; word-break:break-word; }
     .mi-desc { font-size:var(--text-sm); color:rgba(255,255,255,.4); line-height:var(--leading-normal); }
-    .mi-badge { font-size:var(--text-2xs); letter-spacing:1px; text-transform:uppercase; background:rgba(200,134,10,.2); color:var(--gold); padding:2px 8px; border-radius:20px; margin-left:8px; vertical-align:middle; display:inline-block; }
+    .mi-badge { font-size:var(--text-2xs); letter-spacing:1px; text-transform:uppercase; background:rgba(200,134,10,.2); color:var(--gold); padding:2px 8px; border-radius:2px; margin-left:8px; vertical-align:middle; display:inline-block; }
     .mi-veg { display:inline-block; width:12px; height:12px; border:1.5px solid #2da44e; border-radius:2px; position:relative; margin-left:6px; vertical-align:middle; flex-shrink:0; }
     .mi-veg::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:6px; height:6px; background:#2da44e; border-radius:50%; }
     .mi-price { font-family:var(--font-display); font-size:var(--text-lg); font-weight:700; color:var(--gold-lt); white-space:nowrap; }
@@ -163,19 +165,16 @@ $user = authUser();
     .cm-item { border-radius:4px; overflow:hidden; transform:translateZ(0); }
     .cm-item img { width:100%; height:100%; object-fit:cover; display:block; }
 
-    /* ─── REVIEWS ─── */
-    #reviews { background:var(--charcoal); }
-    .reviews-header { text-align:center; margin-bottom:60px; }
-    .reviews-header .section-title { color:#fff; }
-    .reviews-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:1100px; margin:0 auto; width:100%; }
-    .review-card { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:4px; padding:32px; transition:border-color .3s ease, transform .3s ease; will-change:transform; }
-    .review-card:hover { border-color:rgba(200,134,10,.4); transform:translate3d(0, -4px, 0); }
-    .stars { color:var(--gold-lt); font-size:1rem; margin-bottom:18px; }
-    .review-text { color:rgba(255,255,255,.7); line-height:var(--leading-relaxed); margin-bottom:24px; font-family:var(--font-accent); font-style:italic; font-size:var(--text-lg); }
-    .review-author { display:flex; align-items:center; gap:12px; }
-    .author-avatar { width:40px; height:40px; border-radius:50%; background:rgba(200,134,10,.2); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); color:var(--gold); font-weight:700; font-size:var(--text-base); flex-shrink:0; }
-    .author-name { color:#fff; font-size:var(--text-sm); font-weight:500; }
-    .author-date { color:rgba(255,255,255,.3); font-size:var(--text-xs); margin-top:2px; }
+    /* ─── STANDARDS ─── */
+    #standards { background:var(--charcoal); }
+    .standards-header { text-align:center; margin-bottom:60px; }
+    .standards-header .section-title { color:#fff; }
+    .standards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:1100px; margin:0 auto; width:100%; }
+    .standard-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:2px; padding:32px; transition:border-color .3s ease; }
+    .standard-card:hover { border-color:rgba(200,134,10,.35); }
+    .standard-icon { width:32px; height:32px; color:var(--gold); margin-bottom:18px; }
+    .standard-title { color:#fff; font-family:var(--font-display); font-size:var(--text-lg); font-weight:700; margin-bottom:10px; }
+    .standard-text { color:rgba(255,255,255,.65); line-height:var(--leading-relaxed); font-size:var(--text-sm); }
 
     /* ─── CONTACT ─── */
     #contact { background:var(--dark); }
@@ -292,13 +291,13 @@ $user = authUser();
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#menu">Menu</a></li>
     <li><a href="#celebrations">Celebrations</a></li>
-    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#standards">Standards</a></li>
   </ul>
   <div class="nav-right">
     <?php if($user): ?>
       <a class="nav-link-ghost" href="<?= url('/my-bookings') ?>">My Bookings</a>
       <?php if($user['role'] === 'admin'): ?>
-        <a class="nav-link-ghost" href="<?= url('/admin') ?>">⬡ Admin Panel</a>
+        <a class="nav-link-ghost" href="<?= url('/admin') ?>">Admin Dashboard</a>
       <?php endif; ?>
       <span class="nav-user">Hi, <?= e(explode(' ', $user['name'])[0]) ?></span>
       <form method="POST" action="<?= url('/auth/logout') ?>" style="display:inline">
@@ -322,11 +321,11 @@ $user = authUser();
   <a href="#gallery" onclick="closeMenu()">Gallery</a>
   <a href="#menu" onclick="closeMenu()">Menu</a>
   <a href="#celebrations" onclick="closeMenu()">Celebrations</a>
-  <a href="#reviews" onclick="closeMenu()">Reviews</a>
+  <a href="#standards" onclick="closeMenu()">Standards</a>
   <a href="#contact" onclick="closeMenu()">Reserve</a>
   <?php if($user): ?>
     <a href="<?= url('/my-bookings') ?>" onclick="closeMenu()">My Bookings</a>
-    <?php if($user['role']==='admin'): ?><a href="<?= url('/admin') ?>" onclick="closeMenu()">Admin Panel</a><?php endif; ?>
+    <?php if($user['role']==='admin'): ?><a href="<?= url('/admin') ?>" onclick="closeMenu()">Admin Dashboard</a><?php endif; ?>
     <form method="POST" action="<?= url('/auth/logout') ?>">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
       <button type="submit" style="background:none;border:none;cursor:pointer;font:inherit;color:inherit;padding:0;">Logout</button>
@@ -344,7 +343,7 @@ $user = authUser();
   <div class="hero-content fade-up visible">
     <div class="hero-eyebrow">Cooch Behar, West Bengal</div>
     <h1>Terminal<em>The Restaurant</em>1</h1>
-    <p class="hero-sub">Where every meal is a celebration. Authentic Bengali flavors<br>with a soul that sparks stories.</p>
+    <p class="hero-sub">North Bengal culinary tradition, slow-cooked tandoori roasts, and authentic regional gravies. Prepared fresh daily in Cooch Behar for family dining and private celebrations.</p>
     <div class="hero-btns">
       <a class="btn-primary" href="#menu">Explore Menu</a>
       <a class="btn-ghost" href="#contact">Book Your Table</a>
@@ -357,22 +356,34 @@ $user = authUser();
 <section id="about">
   <div class="about-grid">
     <div class="about-text fade-up">
-      <div class="section-tag">Our Story</div>
-      <h2 class="section-title">More than a restaurant,<br>it's a vibe.</h2>
+      <div class="section-tag">Our Culinary Craft</div>
+      <h2 class="section-title">Rooted in Tradition,<br>Crafted for Dining</h2>
       <div class="divider"></div>
-      <p>Terminal 1 — The Restaurant was born from a simple idea: great food, great company, and a space that feels alive. Tucked in the heart of Cooch Behar, we blend Bengali home-cooking with a quirky, artsy atmosphere.</p>
-      <p>Our walls tell stories. From black-and-white portraits to post-it notes written by hundreds of guests — Terminal 1 is a place people return to, again and again.</p>
-      <div class="about-stats">
-        <div class="stat-card"><div class="stat-num">500+</div><div class="stat-label">Happy Tables</div></div>
-        <div class="stat-card"><div class="stat-num"><?= !empty($menuGrouped) ? array_sum(array_map('count',$menuGrouped)) : '30+' ?></div><div class="stat-label">Menu Items</div></div>
-        <div class="stat-card"><div class="stat-num">4.7★</div><div class="stat-label">Google Rating</div></div>
-        <div class="stat-card"><div class="stat-num">100%</div><div class="stat-label">Made with Love</div></div>
+      <p>Terminal 1: The Restaurant was founded on a straightforward principle: authentic North Bengal recipes, uncompromising ingredient freshness, and honest table hospitality. Located in Cooch Behar, our kitchen specializes in slow-reduced Bengali gravies, fragrantly spiced rice specialties, and wood-charcoal tandoori roasts.</p>
+      <p>Every preparation is freshly seasoned to order with stone-ground spice blends. From intimate evening gatherings to celebratory family feasts, our dining room provides a comfortable, welcoming environment where genuine cooking takes center stage.</p>
+      <div class="about-pillars">
+        <div class="pillar-card">
+          <div class="pillar-title">Market-Fresh Sourcing</div>
+          <div class="pillar-desc">Daily morning selection of poultry, regional fish, and seasonal vegetables from Cooch Behar markets.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-title">Natural Charcoal Tandoor</div>
+          <div class="pillar-desc">Traditional clay oven roasting over lump charcoal for genuine smoky char and tender cuts.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-title">In-House Spice Blends</div>
+          <div class="pillar-desc">Whole spices roasted and stone-ground in-house; zero commercial pastes or artificial colorants.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-title">Private Celebration Dining</div>
+          <div class="pillar-desc">Dedicated floor seating arrangements, floral table decor, and customized party feast platters.</div>
+        </div>
       </div>
     </div>
     <div class="about-visual fade-up">
       <div class="photo-card av-1" style="height:220px"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Terminal 1 Starters Platter" onerror="this.parentElement.classList.add('ph')"/></div>
       <div class="photo-card" style="height:220px"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Special Dhonkami Chicken" onerror="this.parentElement.classList.add('ph')"/></div>
-      <div class="photo-card" style="height:220px"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao & Biryani" onerror="this.parentElement.classList.add('ph')"/></div>
+      <div class="photo-card" style="height:220px"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao and Biryani" onerror="this.parentElement.classList.add('ph')"/></div>
     </div>
   </div>
 </section>
@@ -380,15 +391,15 @@ $user = authUser();
 <!-- GALLERY -->
 <section id="gallery">
   <div class="gallery-header fade-up">
-    <div class="section-tag" style="justify-content:center">Our World</div>
-    <h2 class="section-title">Moments at Terminal 1</h2>
+    <div class="section-tag" style="justify-content:center">Our Kitchen</div>
+    <h2 class="section-title">Signatures &amp; Preparations</h2>
     <div class="divider" style="margin:20px auto"></div>
   </div>
   <div class="gallery-grid fade-up">
     <div class="g-item g1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Signature Dhonkami Chicken" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Chef's Signature Chicken</span></div></div>
-    <div class="g-item g2"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao & Biryani" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Kashmiri Polao & Biryani</span></div></div>
+    <div class="g-item g2"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao and Biryani" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Kashmiri Polao and Biryani</span></div></div>
     <div class="g-item g3"><img src="<?= asset('images/fried_rice.jpg') ?>" alt="Egg Chicken Fried Rice" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Egg Chicken Fried Rice</span></div></div>
-    <div class="g-item g4"><img src="<?= asset('images/noodles.jpg') ?>" alt="Hakka Noodles & Mughlai Paratha" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Hakka Noodles & Breads</span></div></div>
+    <div class="g-item g4"><img src="<?= asset('images/noodles.jpg') ?>" alt="Hakka Noodles and Breads" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Hakka Noodles and Breads</span></div></div>
     <div class="g-item g5"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Tandoori Starters Platter</span></div></div>
   </div>
 </section>
@@ -396,9 +407,9 @@ $user = authUser();
 <!-- MENU — loaded live from DB -->
 <section id="menu">
   <div class="menu-header fade-up">
-    <div class="section-tag" style="justify-content:center">What We Serve</div>
-    <h2 class="section-title">Terminal's Menu</h2>
-    <p>From fiery Dhonkami Chicken to perfectly fragrant Kashmiri Polao — every dish is crafted with care.</p>
+    <div class="section-tag" style="justify-content:center">Our Offerings</div>
+    <h2 class="section-title">Terminal 1 Menu</h2>
+    <p>From slow-roasted Dhonkami Chicken to fragrant Kashmiri Polao, every dish is seasoned to order.</p>
   </div>
 
   <?php if(!empty($menuGrouped)): ?>
@@ -437,7 +448,7 @@ $user = authUser();
   <!-- Fallback static menu if DB not connected -->
   <div class="menu-tabs fade-up">
     <button class="tab-btn active" onclick="switchTab('specials',this)">Chef's Specials</button>
-    <button class="tab-btn" onclick="switchTab('rice',this)">Rice & Polao</button>
+    <button class="tab-btn" onclick="switchTab('rice',this)">Rice &amp; Polao</button>
   </div>
   <div class="menu-panel active" id="tab-specials">
     <?php foreach([['Dhonkami Chicken 4.0','2 Naan + 1 Kulcha + 2 Corn','850','Signature'],['Dhonkami Chicken','Our legendary smoky bold chicken','690',''],['Sendori Chicken','Rich slow-cooked chicken','600',''],['Jangli Chicken','Wild-spiced rustic chicken','630','']] as $r): ?>
@@ -457,37 +468,55 @@ $user = authUser();
   <div class="cel-grid">
     <div class="cel-text fade-up">
       <div class="section-tag">Special Occasions</div>
-      <h2 class="section-title">Celebrate every<br>milestone here</h2>
+      <h2 class="section-title">Celebrate Important<br>Milestones With Us</h2>
       <div class="divider"></div>
-      <p>Whether it's a birthday, anniversary, or simply a gathering with loved ones — Terminal 1 transforms your table into an experience.</p>
+      <p>Whether planning a birthday, family anniversary, or festive get-together, Terminal 1 coordinates dedicated table arrangements and banquet dining options.</p>
       <ul class="cel-features">
-        <li>Marigold & floral table decoration</li>
-        <li>Customised birthday cake arrangements</li>
-        <li>Traditional Bengali celebration thali</li>
-        <li>Intimate couple's dining setup</li>
-        <li>Group family feast packages</li>
-        <li>Photography-friendly ambience</li>
+        <li>Traditional floral and celebration table styling</li>
+        <li>Custom anniversary and birthday cake arrangements</li>
+        <li>Authentic regional celebration spreads</li>
+        <li>Dedicated family and group seating sections</li>
+        <li>Curated party platters and customized banquet menus</li>
+        <li>Quiet, climate-controlled dining ambience</li>
       </ul>
     </div>
     <div class="cel-mosaic fade-up">
-      <div class="cm-item cm1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Special Celebration Feast" style="height:100%;width:100%;object-fit:cover;" onerror="this.style.background='#d4c9b0'"/></div>
+      <div class="cm-item cm1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Celebration Feast" style="height:100%;width:100%;object-fit:cover;" onerror="this.style.background='#d4c9b0'"/></div>
       <div class="cm-item"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" style="height:200px;width:100%;object-fit:cover;" onerror="this.style.background='#c8b898'"/></div>
       <div class="cm-item"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao Celebration Spread" style="height:200px;width:100%;object-fit:cover;" onerror="this.style.background='#bfac8c'"/></div>
     </div>
   </div>
 </section>
 
-<!-- REVIEWS -->
-<section id="reviews">
-  <div class="reviews-header fade-up">
-    <div class="section-tag" style="justify-content:center">Guest Stories</div>
-    <h2 class="section-title">What our guests say</h2>
+<!-- STANDARDS -->
+<section id="standards">
+  <div class="standards-header fade-up">
+    <div class="section-tag" style="justify-content:center">Our Principles</div>
+    <h2 class="section-title">Dining &amp; Kitchen Standards</h2>
     <div class="divider" style="margin:20px auto"></div>
   </div>
-  <div class="reviews-grid fade-up">
-    <div class="review-card"><div class="stars">★★★★★</div><p class="review-text">"The Dhonkami Chicken is like nothing else in Cooch Behar. The celebration setup they did for my wife's birthday was absolutely magical!"</p><div class="review-author"><div class="author-avatar">R</div><div><div class="author-name">Rajib Chakraborty</div><div class="author-date">Google Review</div></div></div></div>
-    <div class="review-card"><div class="stars">★★★★★</div><p class="review-text">"Came for lunch, stayed for three hours. The vibe here is incredible — the post-it note wall, the portraits, the food. Terminal 1 is a gem."</p><div class="review-author"><div class="author-avatar">S</div><div><div class="author-name">Sunita Das</div><div class="author-date">Google Review</div></div></div></div>
-    <div class="review-card"><div class="stars">★★★★★</div><p class="review-text">"The Bengali Thali here is an event in itself. Clay pots, fish curry, warm rice — it took me straight back to my grandmother's kitchen."</p><div class="review-author"><div class="author-avatar">A</div><div><div class="author-name">Ananya Roy</div><div class="author-date">Google Review</div></div></div></div>
+  <div class="standards-grid fade-up">
+    <div class="standard-card">
+      <div class="standard-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="standard-title">Honest Pricing &amp; Value</div>
+      <p class="standard-text">All portions and charges are clearly listed with no hidden service markups or undisclosed fees. Transparent hospitality is our priority.</p>
+    </div>
+    <div class="standard-card">
+      <div class="standard-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="standard-title">Hygiene &amp; Prep Integrity</div>
+      <p class="standard-text">Strict sanitation across cooking stations, dedicated prep areas for vegetarian orders, and continuous compliance with food safety protocols.</p>
+    </div>
+    <div class="standard-card">
+      <div class="standard-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="standard-title">Reserved Seating Assurance</div>
+      <p class="standard-text">Confirmed table reservations enjoy an assured 15-minute arrival grace period so your dining party is seated promptly without crowd bottlenecks.</p>
+    </div>
   </div>
 </section>
 
@@ -499,13 +528,37 @@ $user = authUser();
       <h2 class="section-title">Visit Terminal 1</h2>
       <div class="divider"></div>
       <?php if($user): ?>
-        <p>Welcome back, <strong style="color:rgba(255,255,255,.8)"><?= e($user['name']) ?></strong>! Fill in the details below to reserve your table.</p>
+        <p>Welcome back, <strong style="color:rgba(255,255,255,.8)"><?= e($user['name']) ?></strong>. Fill in the details below to reserve your table.</p>
       <?php else: ?>
-        <p>We'd love to have you. Walk in anytime, or reserve your table for special occasions.</p>
+        <p>Walk in anytime during operational hours, or submit an advance table reservation below for guaranteed seating.</p>
       <?php endif; ?>
-      <div class="info-item"><div class="info-icon">📍</div><div><div class="info-label">Address</div><div class="info-value">Terminal 1 — The Restaurant<br>Cooch Behar, West Bengal, India</div></div></div>
-      <div class="info-item"><div class="info-icon">🕐</div><div><div class="info-label">Hours</div><div class="info-value">Monday – Sunday<br>11:00 AM – 10:00 PM</div></div></div>
-      <div class="info-item"><div class="info-icon">📞</div><div><div class="info-label">Phone</div><div class="info-value">Call us to enquire about<br>celebration packages</div></div></div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <div class="info-label">Address</div>
+          <div class="info-value">Terminal 1: The Restaurant<br>Cooch Behar, West Bengal, India</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="info-label">Hours</div>
+          <div class="info-value">Monday to Sunday<br>11:00 AM – 10:00 PM</div>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div>
+          <div class="info-label">Contact</div>
+          <div class="info-value">Inquiries &amp; Celebration Packages<br><a href="mailto:contact@terminal1.in" style="color:#C8860A;text-decoration:none;">contact@terminal1.in</a></div>
+        </div>
+      </div>
     </div>
 
     <div class="contact-form fade-up">
@@ -568,11 +621,13 @@ $user = authUser();
     <div class="footer-logo">Terminal 1<small>The Restaurant</small></div>
     <div class="footer-links">
       <a href="#about">About</a><a href="#gallery">Gallery</a><a href="#menu">Menu</a>
-      <a href="#celebrations">Celebrations</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a>
-      <?php if($user && $user['role']==='admin'): ?><a href="<?= url('/admin') ?>">Admin</a><?php endif; ?>
+      <a href="#celebrations">Celebrations</a><a href="#standards">Standards</a><a href="#contact">Reserve</a>
+      <a href="<?= url('/privacy') ?>">Privacy Policy</a>
+      <a href="<?= url('/terms') ?>">Terms &amp; Conditions</a>
+      <?php if($user && $user['role']==='admin'): ?><a href="<?= url('/admin') ?>">Admin Dashboard</a><?php endif; ?>
     </div>
   </div>
-  <p class="footer-copy">© <?= date('Y') ?> Terminal 1 — The Restaurant, Cooch Behar. All rights reserved.</p>
+  <p class="footer-copy">&copy; <?= date('Y') ?> Terminal 1: The Restaurant, Cooch Behar. All rights reserved.</p>
 </footer>
 
 <script>
@@ -673,15 +728,15 @@ function startLiveTracking(bookingId, trackingToken) {
   liveTrackerSource = new EventSource(url);
 
   const statusLabels = {
-    pending:   { text: '🕒 Pending confirmation',    color: '#d29922' },
-    confirmed: { text: '✅ Table confirmed!',         color: '#4caf70' },
-    cancelled: { text: '❌ Booking cancelled',        color: '#e5534b' },
-    completed: { text: '🎉 Visit completed — thanks!',color: '#4caf70' },
+    pending:   { text: 'Pending Confirmation',    color: '#d29922' },
+    confirmed: { text: 'Table Confirmed',         color: '#4caf70' },
+    cancelled: { text: 'Booking Cancelled',        color: '#e5534b' },
+    completed: { text: 'Visit Completed',          color: '#4caf70' },
   };
   const paymentLabels = {
-    unpaid:    'Deposit: not yet paid',
-    paid:      'Deposit: ✓ paid',
-    refunded:  'Deposit: refunded',
+    unpaid:    'Deposit: Pending Payment',
+    paid:      'Deposit: Confirmed Paid',
+    refunded:  'Deposit: Refunded',
   };
 
   liveTrackerSource.addEventListener('status_update', (e) => {
@@ -753,7 +808,7 @@ async function submitBooking() {
     const data = await res.json();
 
     if(data.success) {
-      showToast('✦ ' + data.message, 'success');
+      showToast(data.message, 'success');
       document.getElementById('fphone').value = '';
       document.getElementById('foccasion').selectedIndex = 0;
       document.getElementById('fguests').value = '';
