@@ -55,6 +55,8 @@ class TrackingController {
         // Strict server-side ownership check: if ID was modified or tampered with, server blocks immediately
         $booking = verifyBookingOwnership($id, $token);
 
+        session_write_close(); // release the session lock so other customer tabs/page navigations are never blocked while this stream is open
+
         self::startStream();
         $lastSnapshot = null;
         $start = time();

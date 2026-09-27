@@ -72,7 +72,7 @@
 
 <script>
 // ── Live "new booking" alert via Server-Sent Events ──
-const bookingEvents = new EventSource('/admin/track/stream');
+const bookingEvents = new EventSource('<?= url('/admin/track/stream') ?>');
 
 bookingEvents.addEventListener('new_booking', (e) => {
   const data = JSON.parse(e.data);

@@ -17,6 +17,8 @@ $user = authUser();
   <title>Terminal 1 | Authentic Dining in Cooch Behar</title>
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>"/>
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -388,9 +390,9 @@ $user = authUser();
       </div>
     </div>
     <div class="about-visual fade-up">
-      <div class="photo-card av-1" style="height:220px"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Terminal 1 Starters Platter" onerror="this.parentElement.classList.add('ph')"/></div>
-      <div class="photo-card" style="height:220px"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Special Dhonkami Chicken" onerror="this.parentElement.classList.add('ph')"/></div>
-      <div class="photo-card" style="height:220px"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao and Biryani" onerror="this.parentElement.classList.add('ph')"/></div>
+      <div class="photo-card av-1" style="height:220px"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Terminal 1 Starters Platter" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('ph')"/></div>
+      <div class="photo-card" style="height:220px"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Special Dhonkami Chicken" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('ph')"/></div>
+      <div class="photo-card" style="height:220px"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao and Biryani" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('ph')"/></div>
     </div>
   </div>
 </section>
@@ -403,11 +405,11 @@ $user = authUser();
     <div class="divider" style="margin:20px auto"></div>
   </div>
   <div class="gallery-grid fade-up">
-    <div class="g-item g1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Signature Dhonkami Chicken" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Chef's Signature Chicken</span></div></div>
-    <div class="g-item g2"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao and Biryani" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Kashmiri Polao and Biryani</span></div></div>
-    <div class="g-item g3"><img src="<?= asset('images/fried_rice.jpg') ?>" alt="Egg Chicken Fried Rice" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Egg Chicken Fried Rice</span></div></div>
-    <div class="g-item g4"><img src="<?= asset('images/noodles.jpg') ?>" alt="Hakka Noodles and Breads" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Hakka Noodles and Breads</span></div></div>
-    <div class="g-item g5"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Tandoori Starters Platter</span></div></div>
+    <div class="g-item g1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Signature Dhonkami Chicken" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Chef's Signature Chicken</span></div></div>
+    <div class="g-item g2"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao and Biryani" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Kashmiri Polao and Biryani</span></div></div>
+    <div class="g-item g3"><img src="<?= asset('images/fried_rice.jpg') ?>" alt="Egg Chicken Fried Rice" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Egg Chicken Fried Rice</span></div></div>
+    <div class="g-item g4"><img src="<?= asset('images/noodles.jpg') ?>" alt="Hakka Noodles and Breads" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Hakka Noodles and Breads</span></div></div>
+    <div class="g-item g5"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Tandoori Starters Platter</span></div></div>
   </div>
 </section>
 
@@ -488,9 +490,9 @@ $user = authUser();
       </ul>
     </div>
     <div class="cel-mosaic fade-up">
-      <div class="cm-item cm1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Celebration Feast" style="height:100%;width:100%;object-fit:cover;" onerror="this.style.background='#d4c9b0'"/></div>
-      <div class="cm-item"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" style="height:200px;width:100%;object-fit:cover;" onerror="this.style.background='#c8b898'"/></div>
-      <div class="cm-item"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao Celebration Spread" style="height:200px;width:100%;object-fit:cover;" onerror="this.style.background='#bfac8c'"/></div>
+      <div class="cm-item cm1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Celebration Feast" style="height:100%;width:100%;object-fit:cover;" loading="lazy" decoding="async" onerror="this.style.background='#d4c9b0'"/></div>
+      <div class="cm-item"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" style="height:200px;width:100%;object-fit:cover;" loading="lazy" decoding="async" onerror="this.style.background='#c8b898'"/></div>
+      <div class="cm-item"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao Celebration Spread" style="height:200px;width:100%;object-fit:cover;" loading="lazy" decoding="async" onerror="this.style.background='#bfac8c'"/></div>
     </div>
   </div>
 </section>
@@ -713,37 +715,7 @@ function showToast(msg, type = 'success') {
   toastTimer = setTimeout(() => { t.className = ''; }, 4500);
 }
 
-// ── 6. Intent-based Speculative Prefetching ──
-const prefetchedHrefs = new Set();
-function prefetchUrl(url) {
-  if (!url || prefetchedHrefs.has(url)) return;
-  try {
-    const u = new URL(url, window.location.href);
-    if (u.origin !== window.location.origin) return;
-    if (u.pathname === window.location.pathname && u.search === window.location.search) return;
-    if (u.pathname.includes('/auth/logout')) return;
-    prefetchedHrefs.add(url);
-    const link = document.createElement('link');
-    link.rel = 'prefetch';
-    link.href = url;
-    document.head.appendChild(link);
-  } catch(e) {}
-}
-
-let hoverTimer = null;
-document.addEventListener('mouseover', (e) => {
-  const a = e.target.closest('a');
-  if (!a || !a.href) return;
-  clearTimeout(hoverTimer);
-  hoverTimer = setTimeout(() => prefetchUrl(a.href), 60);
-}, { passive: true });
-
-document.addEventListener('touchstart', (e) => {
-  const a = e.target.closest('a');
-  if (a && a.href) prefetchUrl(a.href);
-}, { passive: true });
-
-// ── 7. Real-time booking tracker (Server-Sent Events) ──
+// ── 6. Real-time booking tracker (Server-Sent Events) ──
 let liveTrackerSource = null;
 let lastKnownStatus   = null;
 let lastKnownPayment  = null;
@@ -920,6 +892,6 @@ async function startPayment(bookingId, csrf, trackingToken) {
   }
 }
 </script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 </body>
 </html>

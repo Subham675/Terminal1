@@ -12,6 +12,7 @@ loadEnv(dirname(__DIR__,2).'/.env');
 function env(string $k, mixed $d=null): mixed { return $_ENV[$k] ?? getenv($k) ?: $d; }
 date_default_timezone_set(env('APP_TIMEZONE', 'Asia/Kolkata'));
 if(session_status()===PHP_SESSION_NONE){
+    session_cache_limiter('');
     ini_set('session.cookie_httponly','1');
     ini_set('session.cookie_secure', env('APP_ENV')==='production'?'1':'0');
     ini_set('session.cookie_samesite','Lax');
