@@ -140,11 +140,21 @@ class EmailValidator {
      * If the mail server responds with a 550/551/553 error (e.g. "The email account does not exist"),
      * it immediately rejects the email without sending any message.
      */
+    /**
+     * Connects directly to the recipient domain's primary MX server to verify
+     * whether the target mailbox actually exists (RCPT TO handshake).
+     * If the mail server responds with a 550/551/553 error (e.g. "The email account does not exist"),
+     * it immediately rejects the email without sending any message.
+     */
     public static function verifyMailboxExistence(string $email, string $domain): array {
-        // Collect MX hosts
+        // Collect MX hosts and sort by preference/weight
         $mxHosts = [];
+        $weights = [];
         if (function_exists('getmxrr')) {
-            @getmxrr($domain, $mxHosts);
+            @getmxrr($domain, $mxHosts, $weights);
+            if (!empty($weights) && count($weights) === count($mxHosts)) {
+                array_multisort($weights, $mxHosts);
+            }
         }
         if (empty($mxHosts)) {
             $mxHosts = [$domain];
@@ -165,21 +175,23 @@ class EmailValidator {
             return [true, ''];
         }
 
-        stream_set_timeout($sock, 3);
-        $banner = @fgets($sock, 512);
+        stream_set_timeout($sock, 4);
+        $banner = self::readSmtpResponse($sock);
 
         $heloDomain = function_exists('env') ? parse_url((string)env('APP_URL', 'http://terminal1.in'), PHP_URL_HOST) : 'terminal1.in';
         if (!$heloDomain || $heloDomain === 'localhost') $heloDomain = 'terminal1.in';
 
         @fputs($sock, "HELO {$heloDomain}\r\n");
-        $heloRes = @fgets($sock, 512);
+        $heloRes = self::readSmtpResponse($sock);
 
         $fromAddress = function_exists('env') ? (string)env('MAIL_FROM_ADDRESS', 'noreply@terminal1.in') : 'noreply@terminal1.in';
+        if (empty($fromAddress)) $fromAddress = 'noreply@terminal1.in';
+
         @fputs($sock, "MAIL FROM:<{$fromAddress}>\r\n");
-        $fromRes = @fgets($sock, 512);
+        $fromRes = self::readSmtpResponse($sock);
 
         @fputs($sock, "RCPT TO:<{$email}>\r\n");
-        $rcptRes = @fgets($sock, 512);
+        $rcptRes = self::readSmtpResponse($sock);
 
         @fputs($sock, "QUIT\r\n");
         @fclose($sock);
@@ -192,6 +204,24 @@ class EmailValidator {
         }
 
         return [true, ''];
+    }
+
+    /**
+     * Reads a full SMTP response, including multi-line responses (RFC 5321).
+     */
+    private static function readSmtpResponse($sock): string {
+        $response = '';
+        while ($line = @fgets($sock, 512)) {
+            $response .= $line;
+            // The final line of an SMTP reply has the 3-digit code followed by a space or CRLF (not a hyphen)
+            if (strlen($line) >= 4 && substr($line, 3, 1) === ' ') {
+                break;
+            }
+            if (strlen($line) < 4) {
+                break;
+            }
+        }
+        return $response;
     }
 
     /**

@@ -41,7 +41,10 @@ function url(string $path = ''): string {
 function asset(string $path): string {
     return url($path);
 }
-function sanitize(string $s): string { return trim(strip_tags($s)); }
+function sanitize(string $s): string {
+    $s = (string)preg_replace('@<script[^>]*?>.*?</script>@si', '', $s);
+    return trim(strip_tags($s));
+}
 function flash(string $k, string $msg='', string $type='success'): ?array {
     if($msg){ $_SESSION['flash'][$k]=['message'=>$msg,'type'=>$type]; return null; }
     $f=$_SESSION['flash'][$k]??null; unset($_SESSION['flash'][$k]); return $f;

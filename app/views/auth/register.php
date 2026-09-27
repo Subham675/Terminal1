@@ -112,6 +112,11 @@ const typoMap = {
 };
 const disposableSet = new Set(['mailinator.com','tempmail.com','10minutemail.com','guerrillamail.com','trashmail.com','temp-mail.org']);
 
+let debounceTimer = null;
+let lastCheckedEmail = '';
+let isEmailVerifiedOnServer = false;
+let isCheckingServer = false;
+
 function validateEmailInput(val) {
   val = (val || '').trim().toLowerCase();
   if (!val) {
@@ -178,29 +183,106 @@ function validateEmailInput(val) {
     }
   }
 
-  emailFeedback.style.display = 'none';
-  regEmail.style.borderColor = '#2da44e';
   return { valid: true };
 }
 
+function verifyWithServer(email, callback) {
+  email = (email || '').trim().toLowerCase();
+  if (lastCheckedEmail === email && isEmailVerifiedOnServer) {
+    if (callback) callback(true);
+    return;
+  }
+
+  isCheckingServer = true;
+  emailFeedback.style.display = 'block';
+  emailFeedback.style.color = 'rgba(255,255,255,0.6)';
+  emailFeedback.innerHTML = '⏳ Verifying email existence on mail servers...';
+  regEmail.style.borderColor = '#C8860A';
+
+  fetch('<?= url('/auth/check-email') ?>?email=' + encodeURIComponent(email))
+    .then(r => r.json())
+    .then(data => {
+      isCheckingServer = false;
+      lastCheckedEmail = email;
+      if (!data.valid) {
+        isEmailVerifiedOnServer = false;
+        emailFeedback.style.display = 'block';
+        emailFeedback.style.color = '#cf222e';
+        emailFeedback.textContent = '⚠️ ' + data.message;
+        regEmail.style.borderColor = '#cf222e';
+        if (callback) callback(false);
+      } else {
+        isEmailVerifiedOnServer = true;
+        emailFeedback.style.display = 'block';
+        emailFeedback.style.color = '#2da44e';
+        emailFeedback.textContent = '✓ Real & active mailbox verified on mail servers.';
+        regEmail.style.borderColor = '#2da44e';
+        if (callback) callback(true);
+      }
+    })
+    .catch(() => {
+      isCheckingServer = false;
+      isEmailVerifiedOnServer = true;
+      if (callback) callback(true);
+    });
+}
+
 regEmail.addEventListener('input', function() {
-  validateEmailInput(this.value);
+  clearTimeout(debounceTimer);
+  const val = this.value.trim().toLowerCase();
+  isEmailVerifiedOnServer = false;
+
+  const sync = validateEmailInput(val);
+  if (!sync.valid) return;
+
+  if (val.includes('@') && val.split('@')[1].includes('.')) {
+    debounceTimer = setTimeout(() => {
+      verifyWithServer(val);
+    }, 600);
+  }
 });
 
 regEmail.addEventListener('blur', function() {
-  validateEmailInput(this.value);
+  clearTimeout(debounceTimer);
+  const val = this.value.trim().toLowerCase();
+  const sync = validateEmailInput(val);
+  if (sync.valid && val.includes('@') && val.split('@')[1].includes('.')) {
+    if (lastCheckedEmail !== val || !isEmailVerifiedOnServer) {
+      verifyWithServer(val);
+    }
+  }
 });
 
 document.getElementById('regForm').addEventListener('submit', function(e) {
-  const result = validateEmailInput(regEmail.value);
-  if (!result.valid && result.reason !== 'incomplete') {
+  const val = regEmail.value.trim().toLowerCase();
+  const sync = validateEmailInput(val);
+  if (!sync.valid && sync.reason !== 'incomplete') {
     e.preventDefault();
     regEmail.focus();
     return;
   }
-  const btn = document.getElementById('regBtn');
-  btn.disabled = true;
-  btn.textContent = 'Creating account...';
+
+  if (!isEmailVerifiedOnServer) {
+    e.preventDefault();
+    const btn = document.getElementById('regBtn');
+    btn.disabled = true;
+    btn.textContent = 'Verifying email...';
+
+    verifyWithServer(val, function(isValid) {
+      if (isValid) {
+        btn.textContent = 'Creating account...';
+        document.getElementById('regForm').submit();
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Create Account & Verify Email';
+        regEmail.focus();
+      }
+    });
+  } else {
+    const btn = document.getElementById('regBtn');
+    btn.disabled = true;
+    btn.textContent = 'Creating account...';
+  }
 });
 </script>
 </body>

@@ -96,6 +96,23 @@ class AuthController {
         require APP_ROOT.'/app/views/auth/register.php';
     }
 
+    // ── Real-Time Live Email Verification (AJAX) ──
+    public static function checkEmail(): void {
+        header('Content-Type: application/json');
+        $rawEmail = trim($_REQUEST['email'] ?? '');
+        if (!$rawEmail) {
+            echo json_encode(['valid' => false, 'message' => 'Please enter an email address.']);
+            return;
+        }
+
+        [$isValid, $message, $email] = EmailValidator::validate($rawEmail);
+        echo json_encode([
+            'valid'   => $isValid,
+            'message' => $message,
+            'email'   => $email,
+        ]);
+    }
+
     // ── Register ──
     public static function register(): void {
         verifyCsrf();
@@ -123,8 +140,23 @@ class AuthController {
 
         RateLimiter::recordAttempt($ip, 'register', false);
 
-        if(User::findByEmail($email)){ flash('register','Email already registered.','error'); redirect('/auth/register'); }
-        $userId = User::create(['name'=>$name,'email'=>$email,'password'=>password_hash($password,PASSWORD_DEFAULT),'is_verified'=>false]);
+        $existing = User::findByEmail($email);
+        if ($existing) {
+            if (!empty($existing['is_verified'])) {
+                flash('register', 'Email already registered. Please sign in with your password.', 'error');
+                redirect('/auth/login');
+                return;
+            }
+            // Existing user is still unverified: update name & password, generate a fresh OTP
+            User::update((int)$existing['id'], [
+                'name'     => $name,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+            ]);
+            $userId = (int)$existing['id'];
+        } else {
+            $userId = User::create(['name'=>$name,'email'=>$email,'password'=>password_hash($password,PASSWORD_DEFAULT),'is_verified'=>false]);
+        }
+
         $otp = OtpModel::generate($email, $userId, 'register');
         $sent = Mailer::sendOtp($email, $name, $otp, 'register');
         if (!$sent) {

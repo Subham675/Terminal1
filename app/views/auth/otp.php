@@ -68,6 +68,9 @@
         Didn't receive it? <span id="resendWait">Resend in <span id="resendSecs">60</span>s</span>
         <a id="resendBtn" href="<?= url('/auth/otp/resend') ?>" style="display:none;color:#C8860A;text-decoration:none;font-weight:600;">Resend OTP</a>
       </span>
+      <div style="margin-top:14px;">
+        <a href="<?= url('/auth/register') ?>" style="color:rgba(255,255,255,.4);text-decoration:none;font-size:.78rem;transition:color .2s;">← Mistyped your email? Re-enter</a>
+      </div>
     </div>
   </div>
 </div>
