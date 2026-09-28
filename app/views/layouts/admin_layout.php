@@ -3,8 +3,11 @@ requireLogin();
 requireAdmin(); 
 $adminUser = authUser();
 $pendingBookingsCount = 0;
+$reviewsCount = 0;
 try {
     $pendingBookingsCount = Booking::countByStatus('pending');
+    $reviewsStats = Review::stats();
+    $reviewsCount = $reviewsStats['total'];
 } catch (\Throwable $e) {}
 ?>
 <!DOCTYPE html>
@@ -216,6 +219,15 @@ try {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </span>
       User Ledger
+    </a>
+    <a class="nav-item <?= $activePage==='reviews'?'active':'' ?>" href="<?= url('/admin/reviews') ?>">
+      <span class="icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </span>
+      Guest Reviews
+      <?php if ($reviewsCount > 0): ?>
+        <span class="nav-badge" style="background:rgba(200,134,10,0.18);color:var(--gold-lt);border-color:var(--border-gold);"><?= $reviewsCount ?></span>
+      <?php endif; ?>
     </a>
   </div>
   <div class="nav-section">

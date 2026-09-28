@@ -7,6 +7,14 @@ try {
     // DB not yet connected — will show empty menu gracefully
 }
 
+// Load guestbook reviews and statistics
+$reviewsList = [];
+$reviewStats = ['total' => 0, 'compliments' => 0, 'complaints' => 0, 'avg_rating' => 5.0];
+try {
+    $reviewsList = Review::all(null, 'approved', 24);
+    $reviewStats = Review::stats();
+} catch(\Throwable $e) {}
+
 // Flat list of all items for interactive cards
 $allItems = [];
 if (!empty($menuGrouped)) {
@@ -963,6 +971,403 @@ $user = authUser();
       transform: translateY(0);
     }
 
+    /* ─── AVELINE GUESTBOOK & REFLECTIONS (COMPLIMENTS & COMPLAINTS) ─── */
+    .guestbook-section {
+      background: #0E0D0B;
+      border-top: 1px solid var(--border-dark);
+      border-bottom: 1px solid var(--border-dark);
+      position: relative;
+    }
+    .guestbook-header-wrap {
+      max-width: 900px;
+      margin-bottom: 40px;
+    }
+    .guestbook-summary-bar {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      background: #141310;
+      border: 1px solid var(--border-dark);
+      padding: 18px 26px;
+      border-radius: 2px;
+    }
+    .guestbook-rating-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .rating-stars-large {
+      color: var(--gold-accent);
+      font-size: 1.25rem;
+      letter-spacing: 2px;
+    }
+    .rating-score {
+      font-size: 0.88rem;
+      color: var(--text-light-muted);
+    }
+    .rating-score strong {
+      font-size: 1.18rem;
+      color: #FFFFFF;
+      font-family: var(--font-serif);
+      font-weight: 600;
+    }
+    .guestbook-counts-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .count-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-light-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .count-pill.pill-compliments .pill-number {
+      color: #5eead4;
+      font-weight: 700;
+    }
+    .count-pill.pill-complaints .pill-number {
+      color: #fbbf24;
+      font-weight: 700;
+    }
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+    .pill-dot.green {
+      background: #34d399;
+      box-shadow: 0 0 6px #34d399;
+    }
+    .pill-dot.amber {
+      background: #f59e0b;
+      box-shadow: 0 0 6px #f59e0b;
+    }
+    .btn-write-review {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold-accent);
+      color: #121110;
+      border: 1px solid var(--gold-accent);
+      padding: 10px 22px;
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all .2s ease;
+    }
+    .btn-write-review:hover {
+      background: transparent;
+      color: var(--gold-accent);
+    }
+    .guestbook-filter-tabs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .gb-tab-btn {
+      background: transparent;
+      border: 1px solid var(--border-dark);
+      color: var(--text-light-muted);
+      padding: 8px 18px;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all .2s ease;
+    }
+    .gb-tab-btn:hover {
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .gb-tab-btn.active {
+      background: rgba(200, 134, 10, 0.12);
+      border-color: var(--gold-accent);
+      color: var(--gold-accent);
+      font-weight: 600;
+    }
+
+    /* Guestbook Cards Grid */
+    .guestbook-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      margin-top: 36px;
+    }
+    .guestbook-card {
+      background: #141310;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 30px 26px;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all .25s ease;
+    }
+    .guestbook-card:hover {
+      border-color: rgba(200, 134, 10, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    }
+    .guestbook-card.is-compliment {
+      border-left: 2px solid #5eead4;
+    }
+    .guestbook-card.is-complaint {
+      border-left: 2px solid #f59e0b;
+    }
+    .gb-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .gb-type-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tag-compliment {
+      background: rgba(45, 212, 191, 0.12);
+      color: #5eead4;
+      border: 1px solid rgba(45, 212, 191, 0.25);
+    }
+    .tag-complaint {
+      background: rgba(245, 158, 11, 0.12);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+    .gb-card-stars {
+      color: var(--gold-accent);
+      font-size: 0.88rem;
+      letter-spacing: 2px;
+    }
+    .gb-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      color: #FFFFFF;
+      font-weight: 500;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      letter-spacing: 0.01em;
+    }
+    .gb-card-quote {
+      color: var(--text-light-muted);
+      font-size: 0.88rem;
+      line-height: 1.65;
+      font-weight: 300;
+      flex: 1;
+      margin-bottom: 20px;
+    }
+    .gb-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 14px;
+      margin-top: auto;
+    }
+    .gb-author-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .gb-author-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(200, 134, 10, 0.15);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .gb-author-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      display: block;
+    }
+    .gb-meta-date {
+      font-size: 0.72rem;
+      color: var(--text-light-dim);
+    }
+    .gb-verified-badge {
+      font-size: 0.65rem;
+      color: var(--gold-accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Management Response in card */
+    .gb-admin-reply {
+      margin-top: 14px;
+      background: rgba(200, 134, 10, 0.05);
+      border-left: 2px solid var(--gold-accent);
+      padding: 10px 14px;
+      border-radius: 0 2px 2px 0;
+    }
+    .reply-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .reply-crest {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--gold-accent);
+      border: 1px solid var(--border-gold);
+      padding: 1px 4px;
+      border-radius: 2px;
+      letter-spacing: 0.5px;
+    }
+    .reply-header strong {
+      font-size: 0.72rem;
+      color: var(--gold-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .reply-text {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.45;
+      font-style: italic;
+    }
+
+    /* Review Modal Styling */
+    #reviewModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 12, 11, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #reviewModal.active {
+      display: flex;
+    }
+    .review-modal-box {
+      background: #171511;
+      border: 1px solid rgba(200, 134, 10, 0.3);
+      width: 100%;
+      max-width: 580px;
+      max-height: 92vh;
+      overflow-y: auto;
+      border-radius: 4px;
+      padding: 36px 32px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+    .review-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--text-light-muted);
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+      transition: color .2s;
+    }
+    .review-modal-close:hover {
+      color: #FFFFFF;
+    }
+    .type-switcher-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .type-switch-btn {
+      background: #12100C;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-light-muted);
+      padding: 12px;
+      border-radius: 2px;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s ease;
+    }
+    .type-switch-btn:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+    .type-switch-btn.active-compliment {
+      background: rgba(45, 212, 191, 0.12);
+      border-color: #2dd4bf;
+      color: #5eead4;
+      box-shadow: 0 0 16px rgba(45, 212, 191, 0.15);
+    }
+    .type-switch-btn.active-complaint {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: #f59e0b;
+      color: #fbbf24;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.15);
+    }
+    .star-rating-picker {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+    }
+    .star-rating-picker .star-item {
+      transition: color .15s;
+    }
+    .star-rating-picker .star-item.selected,
+    .star-rating-picker .star-item.hovered {
+      color: var(--gold-accent);
+    }
+    .rating-label-hint {
+      font-size: 0.74rem;
+      color: var(--gold-accent);
+      margin-left: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
     /* ─── RESPONSIVE BREAKPOINTS ─── */
     @media (max-width: 1024px) {
       .aveline-hero {
@@ -1032,6 +1437,14 @@ $user = authUser();
       }
       .footer-columns-grid {
         grid-template-columns: 1fr 1fr;
+      }
+      .guestbook-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .guestbook-summary-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
       }
     }
 
@@ -1144,6 +1557,19 @@ $user = authUser();
         padding: 8px 12px;
         font-size: 0.68rem;
       }
+      .type-switcher-grid {
+        grid-template-columns: 1fr;
+      }
+      .guestbook-filter-tabs {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .gb-tab-btn {
+        text-align: center;
+      }
+      .review-modal-box {
+        padding: 24px 18px;
+      }
     }
   </style>
 </head>
@@ -1158,6 +1584,7 @@ $user = authUser();
     <li><a href="#experiences">Experiences</a></li>
     <li><a href="#menu">Menu</a></li>
     <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#reviews">Reviews</a></li>
     <li><a href="#contact">Reservations</a></li>
   </ul>
 
@@ -1445,6 +1872,120 @@ $user = authUser();
   </div>
 </section>
 
+<!-- AVELINE GUESTBOOK & REFLECTIONS SECTION (COMPLIMENTS & COMPLAINTS) -->
+<section class="aveline-section guestbook-section" id="reviews">
+  <div class="guestbook-header-wrap">
+    <span class="section-eyebrow">AUTHENTIC GUEST EXPERIENCES</span>
+    <h2 class="section-serif-title">THE GUESTBOOK &mdash; PRAISE &amp; CRITIQUES</h2>
+    <p class="section-desc">
+      A transparent ledger of our culinary craft. We honor every compliment that inspires our brigade, and take accountability for every critique to refine our craftsmanship.
+    </p>
+
+    <!-- Metrics Bar & Submission Trigger -->
+    <div class="guestbook-summary-bar">
+      <div class="guestbook-rating-badge">
+        <div class="rating-stars-large">
+          <?php 
+          $starsCount = (int)round($reviewStats['avg_rating'] ?? 5);
+          echo str_repeat('★', $starsCount) . '<span style="opacity:0.25;">' . str_repeat('★', max(0, 5 - $starsCount)) . '</span>';
+          ?>
+        </div>
+        <div class="rating-score">
+          <strong id="gbOverallScore"><?= number_format($reviewStats['avg_rating'] ?? 5.0, 1) ?></strong> <span>/ 5.0 Rating</span>
+        </div>
+      </div>
+
+      <div class="guestbook-counts-group">
+        <div class="count-pill pill-compliments">
+          <span class="pill-dot green"></span>
+          <span class="pill-number" id="gbComplimentsCount"><?= $reviewStats['compliments'] ?></span>
+          <span class="pill-label">Compliments</span>
+        </div>
+        <div class="count-pill pill-complaints">
+          <span class="pill-dot amber"></span>
+          <span class="pill-number" id="gbComplaintsCount"><?= $reviewStats['complaints'] ?></span>
+          <span class="pill-label">Critiques &amp; Feedback</span>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" class="btn-write-review" onclick="openReviewModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          LEAVE A REFLECTION
+        </button>
+      </div>
+    </div>
+
+    <!-- Segment Filter Tabs -->
+    <div class="guestbook-filter-tabs">
+      <button type="button" class="gb-tab-btn active" id="gbTabAll" onclick="filterGuestbook('all', this)">
+        All Reflections (<?= count($reviewsList) ?>)
+      </button>
+      <button type="button" class="gb-tab-btn" id="gbTabCompliment" onclick="filterGuestbook('compliment', this)">
+        ★ Compliments &amp; Praise (<?= $reviewStats['compliments'] ?>)
+      </button>
+      <button type="button" class="gb-tab-btn" id="gbTabComplaint" onclick="filterGuestbook('complaint', this)">
+        ⚠ Critiques &amp; Concerns (<?= $reviewStats['complaints'] ?>)
+      </button>
+    </div>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="guestbook-cards-grid" id="guestbookCardsGrid">
+    <?php if (empty($reviewsList)): ?>
+      <div style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; color: var(--text-light-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 2px;">
+        <p style="font-family: var(--font-serif); font-size: 1.4rem; color: #fff; margin-bottom: 8px;">Be the First to Inscribe Your Memory</p>
+        <p style="font-size: 0.88rem; max-width: 480px; margin: 0 auto 20px;">Share your dining impressions, culinary favorites, or constructive feedback with our team.</p>
+        <button type="button" class="btn-write-review" onclick="openReviewModal()">Write a Reflection</button>
+      </div>
+    <?php else: ?>
+      <?php foreach ($reviewsList as $rev): ?>
+        <div class="guestbook-card <?= $rev['type'] === 'complaint' ? 'is-complaint' : 'is-compliment' ?>" data-type="<?= e($rev['type']) ?>">
+          <div class="gb-card-top">
+            <?php if ($rev['type'] === 'compliment'): ?>
+              <span class="gb-type-tag tag-compliment">★ Compliment</span>
+            <?php else: ?>
+              <span class="gb-type-tag tag-complaint">⚠ Critique / Feedback</span>
+            <?php endif; ?>
+            <div class="gb-card-stars">
+              <?= str_repeat('★', (int)$rev['rating']) ?><span style="opacity:0.25;"><?= str_repeat('★', 5 - (int)$rev['rating']) ?></span>
+            </div>
+          </div>
+
+          <h3 class="gb-card-title"><?= e($rev['title'] ?: ($rev['type'] === 'compliment' ? 'Exquisite Dining Experience' : 'Dining Reflection & Service Notes')) ?></h3>
+
+          <p class="gb-card-quote">“<?= nl2br(e($rev['content'])) ?>”</p>
+
+          <?php if (!empty($rev['admin_reply'])): ?>
+            <div class="gb-admin-reply">
+              <div class="reply-header">
+                <span class="reply-crest">T1</span>
+                <strong>Management Response</strong>
+              </div>
+              <p class="reply-text"><?= nl2br(e($rev['admin_reply'])) ?></p>
+            </div>
+          <?php endif; ?>
+
+          <div class="gb-card-footer">
+            <div class="gb-author-info">
+              <div class="gb-author-avatar">
+                <?= strtoupper(substr($rev['name'] ?? 'G', 0, 1)) ?>
+              </div>
+              <div>
+                <span class="gb-author-name"><?= e($rev['name']) ?></span>
+                <span class="gb-meta-date"><?= date('F Y', strtotime($rev['created_at'])) ?></span>
+              </div>
+            </div>
+            <?php if (!empty($rev['user_id'])): ?>
+              <span class="gb-verified-badge">&#10003; Verified Diner</span>
+            <?php endif; ?>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+</section>
+
 <!-- AVELINE RESERVATION SECTION ("BOOK YOUR EXPERIENCE") -->
 <section class="aveline-section reservation-section" id="contact">
   <div class="reservation-container">
@@ -1595,6 +2136,7 @@ $user = authUser();
     <div class="footer-col">
       <h5>NAVIGATION</h5>
       <ul class="footer-nav-list">
+        <li><a href="#reviews">Guestbook &amp; Reviews</a></li>
         <li><a href="<?= url('/menu') ?>">Full Digital Menu</a></li>
         <li><a href="<?= url('/my-bookings') ?>">Track Live Allocation</a></li>
         <li><a href="<?= url('/legal/privacy') ?>">Privacy Policy</a></li>
@@ -1608,6 +2150,123 @@ $user = authUser();
     <div>AVELINE EDITORIAL RESTAURANT SYSTEM</div>
   </div>
 </footer>
+
+<!-- REVIEW SUBMISSION MODAL (COMPLIMENTS & COMPLAINTS) -->
+<div id="reviewModal" onclick="closeReviewModal(event)">
+  <div class="review-modal-box" onclick="event.stopPropagation()">
+    <button type="button" class="review-modal-close" onclick="closeReviewModal()">&times;</button>
+    
+    <div style="margin-bottom: 20px;">
+      <span class="section-eyebrow" style="color:var(--gold-accent); margin-bottom:6px;">GUESTBOOK REFLECTION</span>
+      <h3 style="font-family:var(--font-serif); font-size:1.8rem; font-weight:400; color:#FFFFFF; margin-bottom:8px;">INSCRIBE YOUR THOUGHTS</h3>
+      <p style="font-size:0.84rem; color:var(--text-light-muted); line-height:1.55;">
+        Whether celebrating our culinary craft with a compliment or guiding us with a candid critique, your reflection directly reaches our brigade.
+      </p>
+    </div>
+
+    <form id="reviewSubmitForm" onsubmit="handleReviewSubmit(event)">
+      <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+      <input type="hidden" name="type" id="formReviewType" value="compliment">
+      <input type="hidden" name="rating" id="formReviewRating" value="5">
+
+      <!-- Segmented Type Selector -->
+      <label style="display:block; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-light-dim); margin-bottom:8px; font-weight:600;">
+        CHOOSE NATURE OF REFLECTION
+      </label>
+      <div class="type-switcher-grid">
+        <button type="button" id="btnTypeCompliment" class="type-switch-btn active-compliment" onclick="setReviewType('compliment')">
+          <span style="font-size:1.15rem;">★</span>
+          <span>Compliment / Praise</span>
+        </button>
+        <button type="button" id="btnTypeComplaint" class="type-switch-btn" onclick="setReviewType('complaint')">
+          <span style="font-size:1.15rem;">⚠</span>
+          <span>Critique / Concern</span>
+        </button>
+      </div>
+
+      <!-- Dynamic Prompt Hint -->
+      <div id="reviewPromptHint" style="background:rgba(45,212,191,0.08); border-left:2px solid #5eead4; padding:8px 12px; font-size:0.78rem; color:#5eead4; margin-bottom:18px; border-radius:0 2px 2px 0;">
+        Share what delighted your palate, from dish execution to hospitable table service.
+      </div>
+
+      <!-- Star Rating Picker -->
+      <div style="margin-bottom: 18px;">
+        <label style="display:block; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-light-dim); margin-bottom:8px; font-weight:600;">
+          OVERALL DINING RATING
+        </label>
+        <div style="display:flex; align-items:center;">
+          <div class="star-rating-picker" id="starPicker">
+            <span class="star-item selected" data-value="1" onmouseover="hoverStars(1)" onmouseout="resetStars()" onclick="selectRating(1)">★</span>
+            <span class="star-item selected" data-value="2" onmouseover="hoverStars(2)" onmouseout="resetStars()" onclick="selectRating(2)">★</span>
+            <span class="star-item selected" data-value="3" onmouseover="hoverStars(3)" onmouseout="resetStars()" onclick="selectRating(3)">★</span>
+            <span class="star-item selected" data-value="4" onmouseover="hoverStars(4)" onmouseout="resetStars()" onclick="selectRating(4)">★</span>
+            <span class="star-item selected" data-value="5" onmouseover="hoverStars(5)" onmouseout="resetStars()" onclick="selectRating(5)">★</span>
+          </div>
+          <span class="rating-label-hint" id="ratingLabelHint">5 &mdash; Exceptional</span>
+        </div>
+      </div>
+
+      <!-- Guest Name & Email Grid -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-bottom:14px;">
+        <div>
+          <label style="display:block; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light-dim); margin-bottom:6px; font-weight:600;">
+            YOUR NAME *
+          </label>
+          <input type="text" name="name" required value="<?= e($user['name'] ?? '') ?>" placeholder="e.g. Ananya Sen" style="width:100%; background:#100F0D; border:1px solid rgba(255,255,255,0.12); color:#fff; padding:10px 12px; font-size:0.84rem; border-radius:2px; outline:none;">
+        </div>
+
+        <div>
+          <label style="display:block; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light-dim); margin-bottom:6px; font-weight:600;">
+            EMAIL <span style="font-weight:400; opacity:0.6;">(CONFIDENTIAL)</span>
+          </label>
+          <input type="email" name="email" value="<?= e($user['email'] ?? '') ?>" placeholder="ananya@example.com" style="width:100%; background:#100F0D; border:1px solid rgba(255,255,255,0.12); color:#fff; padding:10px 12px; font-size:0.84rem; border-radius:2px; outline:none;">
+        </div>
+      </div>
+
+      <!-- Title & Dining Date Grid -->
+      <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:14px; margin-bottom:14px;">
+        <div>
+          <label style="display:block; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light-dim); margin-bottom:6px; font-weight:600;">
+            HEADLINE / SUBJECT
+          </label>
+          <input type="text" name="title" id="reviewHeadline" placeholder="e.g. Saffron Polao &amp; Ambience" style="width:100%; background:#100F0D; border:1px solid rgba(255,255,255,0.12); color:#fff; padding:10px 12px; font-size:0.84rem; border-radius:2px; outline:none;">
+        </div>
+
+        <div>
+          <label style="display:block; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light-dim); margin-bottom:6px; font-weight:600;">
+            DATE OF VISIT
+          </label>
+          <input type="date" name="visit_date" max="<?= date('Y-m-d') ?>" style="width:100%; background:#100F0D; border:1px solid rgba(255,255,255,0.12); color:#fff; padding:10px 12px; font-size:0.84rem; border-radius:2px; outline:none;">
+        </div>
+      </div>
+
+      <!-- Reflection Content -->
+      <div style="margin-bottom: 20px;">
+        <label style="display:block; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-light-dim); margin-bottom:6px; font-weight:600;">
+          YOUR REFLECTION / REMARKS *
+        </label>
+        <textarea name="content" id="reviewTextarea" rows="4" required placeholder="Describe your experience in detail..." style="width:100%; background:#100F0D; border:1px solid rgba(255,255,255,0.12); color:#fff; padding:12px; font-family:inherit; font-size:0.85rem; line-height:1.5; border-radius:2px; resize:vertical; outline:none;"></textarea>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <span style="font-size:0.72rem; color:var(--text-light-dim);">
+          Your entry is verified and recorded to the public ledger.
+        </span>
+
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button type="button" class="btn-parchment-outline" onclick="closeReviewModal()" style="padding:10px 18px; font-size:0.72rem; color:#FFFFFF; border-color:rgba(255,255,255,0.2);">
+            CANCEL
+          </button>
+          <button type="submit" id="btnSubmitReview" class="btn-write-review" style="padding:11px 22px;">
+            <span id="btnReviewSpinner" style="display:none; width:12px; height:12px; border:2px solid #121110; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; margin-right:6px;"></span>
+            <span id="btnReviewText">PUBLISH REFLECTION</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 
 <div id="aveline-toast"></div>
 
@@ -1722,6 +2381,212 @@ async function handleAvelineBooking(e) {
     txt.textContent = 'REQUEST A TABLE';
     spn.style.display = 'none';
   }
+}
+
+// ─── 6. GUESTBOOK REFLECTIONS & REVIEWS ───
+let currentSelectedRating = 5;
+const ratingLabels = {
+  1: '1 — Critical / Highly Dissatisfied',
+  2: '2 — Disappointing / Needs Improvement',
+  3: '3 — Average / Mixed Thoughts',
+  4: '4 — Very Good / Enjoyable',
+  5: '5 — Exceptional / Exquisite'
+};
+
+function openReviewModal() {
+  document.getElementById('reviewModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeReviewModal(e) {
+  if (e && e.target !== e.currentTarget && !e.target.classList.contains('review-modal-close')) return;
+  document.getElementById('reviewModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function setReviewType(type) {
+  document.getElementById('formReviewType').value = type;
+  const btnComp = document.getElementById('btnTypeCompliment');
+  const btnCrit = document.getElementById('btnTypeComplaint');
+  const hint = document.getElementById('reviewPromptHint');
+  const headline = document.getElementById('reviewHeadline');
+  const textarea = document.getElementById('reviewTextarea');
+
+  if (type === 'compliment') {
+    btnComp.classList.add('active-compliment');
+    btnCrit.classList.remove('active-complaint');
+    hint.style.background = 'rgba(45,212,191,0.08)';
+    hint.style.borderLeftColor = '#5eead4';
+    hint.style.color = '#5eead4';
+    hint.textContent = 'Share what delighted your palate, from dish execution to hospitable table service.';
+    headline.placeholder = 'e.g. Saffron Polao & Ambience Perfection';
+    textarea.placeholder = 'Describe the flavours, courses, or moments that made your visit memorable...';
+    if (currentSelectedRating < 4) {
+      selectRating(5);
+    }
+  } else {
+    btnCrit.classList.add('active-complaint');
+    btnComp.classList.remove('active-compliment');
+    hint.style.background = 'rgba(245,158,11,0.08)';
+    hint.style.borderLeftColor = '#f59e0b';
+    hint.style.color = '#fbbf24';
+    hint.textContent = 'Tell us candidly where our service, food, or timing fell short so management can take corrective action.';
+    headline.placeholder = 'e.g. Starter Pacing on Saturday Evening';
+    textarea.placeholder = 'Please share specific details regarding table service, timing, or flavors...';
+    if (currentSelectedRating > 3) {
+      selectRating(3);
+    }
+  }
+}
+
+function hoverStars(val) {
+  const stars = document.querySelectorAll('#starPicker .star-item');
+  stars.forEach((s, i) => {
+    if (i < val) {
+      s.classList.add('hovered');
+    } else {
+      s.classList.remove('hovered');
+    }
+  });
+  document.getElementById('ratingLabelHint').textContent = ratingLabels[val] || '';
+}
+
+function resetStars() {
+  const stars = document.querySelectorAll('#starPicker .star-item');
+  stars.forEach(s => s.classList.remove('hovered'));
+  selectRating(currentSelectedRating);
+}
+
+function selectRating(val) {
+  currentSelectedRating = val;
+  document.getElementById('formReviewRating').value = val;
+  const stars = document.querySelectorAll('#starPicker .star-item');
+  stars.forEach((s, i) => {
+    if (i < val) {
+      s.classList.add('selected');
+    } else {
+      s.classList.remove('selected');
+    }
+  });
+  document.getElementById('ratingLabelHint').textContent = ratingLabels[val] || '';
+}
+
+function filterGuestbook(type, btn) {
+  document.querySelectorAll('.gb-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.guestbook-card');
+  cards.forEach(c => {
+    if (type === 'all' || c.getAttribute('data-type') === type) {
+      c.style.display = 'flex';
+    } else {
+      c.style.display = 'none';
+    }
+  });
+}
+
+async function handleReviewSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('reviewSubmitForm');
+  const btn = document.getElementById('btnSubmitReview');
+  const txt = document.getElementById('btnReviewText');
+  const spn = document.getElementById('btnReviewSpinner');
+
+  if (btn.disabled) return;
+  btn.disabled = true;
+  txt.textContent = 'RECORDING REFLECTION...';
+  spn.style.display = 'inline-block';
+
+  try {
+    const formData = new FormData(form);
+    const res = await fetch('<?= url('/reviews') ?>', {
+      method: 'POST',
+      headers: { 
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
+      },
+      body: formData
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showAvelineToast(data.message);
+      closeReviewModal();
+      form.reset();
+      setReviewType('compliment');
+      selectRating(5);
+
+      // Prepend newly created card to the grid
+      if (data.review) {
+        const rev = data.review;
+        const grid = document.getElementById('guestbookCardsGrid');
+        const card = document.createElement('div');
+        const isCompliment = rev.type === 'compliment';
+        card.className = 'guestbook-card ' + (isCompliment ? 'is-compliment' : 'is-complaint');
+        card.setAttribute('data-type', rev.type);
+
+        const starsStr = '★'.repeat(parseInt(rev.rating)) + '<span style="opacity:0.25;">' + '★'.repeat(Math.max(0, 5 - parseInt(rev.rating))) + '</span>';
+        const tagBadge = isCompliment
+          ? '<span class="gb-type-tag tag-compliment">★ Compliment</span>'
+          : '<span class="gb-type-tag tag-complaint">⚠ Critique / Feedback</span>';
+
+        card.innerHTML = `
+          <div class="gb-card-top">
+            ${tagBadge}
+            <div class="gb-card-stars">${starsStr}</div>
+          </div>
+          <h3 class="gb-card-title">${escapeHtml(rev.title || (isCompliment ? 'Exquisite Dining Experience' : 'Dining Reflection & Service Notes'))}</h3>
+          <p class="gb-card-quote">“${escapeHtml(rev.content)}”</p>
+          <div class="gb-card-footer">
+            <div class="gb-author-info">
+              <div class="gb-author-avatar">${escapeHtml((rev.name || 'G').charAt(0).toUpperCase())}</div>
+              <div>
+                <span class="gb-author-name">${escapeHtml(rev.name)}</span>
+                <span class="gb-meta-date">Just Now</span>
+              </div>
+            </div>
+            <span class="gb-verified-badge">&#10003; Verified Diner</span>
+          </div>
+        `;
+
+        // Remove empty state message if present
+        const emptyState = grid.querySelector('div[style*="border: 1px dashed"]');
+        if (emptyState) emptyState.remove();
+
+        grid.prepend(card);
+
+        // Update counts
+        if (data.stats) {
+          const compEl = document.getElementById('gbComplimentsCount');
+          const critEl = document.getElementById('gbComplaintsCount');
+          const scoreEl = document.getElementById('gbOverallScore');
+          if (compEl) compEl.textContent = data.stats.compliments;
+          if (critEl) critEl.textContent = data.stats.complaints;
+          if (scoreEl) scoreEl.textContent = parseFloat(data.stats.avg_rating).toFixed(1);
+
+          const tabAll = document.getElementById('gbTabAll');
+          const tabComp = document.getElementById('gbTabCompliment');
+          const tabCrit = document.getElementById('gbTabComplaint');
+          if (tabAll) tabAll.textContent = `All Reflections (${grid.querySelectorAll('.guestbook-card').length})`;
+          if (tabComp) tabComp.textContent = `★ Compliments & Praise (${data.stats.compliments})`;
+          if (tabCrit) tabCrit.textContent = `⚠ Critiques & Concerns (${data.stats.complaints})`;
+        }
+      }
+    } else {
+      const errMsg = data.errors ? data.errors.join(' ') : (data.message || 'Submission could not be completed.');
+      showAvelineToast('ERROR: ' + errMsg);
+    }
+  } catch(err) {
+    showAvelineToast('Network error while recording reflection.');
+  } finally {
+    btn.disabled = false;
+    txt.textContent = 'PUBLISH REFLECTION';
+    spn.style.display = 'none';
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 </script>
 </body>

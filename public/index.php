@@ -49,6 +49,8 @@ $routes = [
         '/admin/bookings'      => [AdminController::class, 'bookings'],
         '/admin/users'         => [AdminController::class, 'users'],
         '/admin/menu'          => [AdminController::class, 'menu'],
+        '/admin/reviews'       => [AdminController::class, 'reviews'],
+        '/api/reviews'         => [ReviewController::class, 'apiList'],
         '/track/stream'        => [TrackingController::class, 'customerStream'],
         '/admin/track/stream'  => [TrackingController::class, 'adminStream'],
     ],
@@ -59,6 +61,7 @@ $routes = [
         '/auth/otp/verify'         => [AuthController::class, 'verifyOtp'],
         '/auth/logout'             => [AuthController::class, 'logout'],
         '/bookings'                => [BookingController::class, 'store'],
+        '/reviews'                 => [ReviewController::class, 'submit'],
         '/payments/create-order'   => [PaymentController::class, 'createOrder'],
         '/payments/verify'         => [PaymentController::class, 'verify'],
         '/payments/webhook'        => [PaymentController::class, 'webhook'],
@@ -70,6 +73,9 @@ $routes = [
         '/admin/menu/create'       => [AdminController::class, 'createMenuItem'],
         '/admin/menu/update'       => [AdminController::class, 'updateMenuItem'],
         '/admin/menu/delete'       => [AdminController::class, 'deleteMenuItem'],
+        '/admin/reviews/status'    => [AdminController::class, 'updateReviewStatus'],
+        '/admin/reviews/reply'     => [AdminController::class, 'replyReview'],
+        '/admin/reviews/delete'    => [AdminController::class, 'deleteReview'],
     ],
 ];
 

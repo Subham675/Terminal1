@@ -11,8 +11,10 @@ class AdminController {
             'revenue'     => Payment::totalRevenue(),
             'paid_count'  => Payment::countByStatus('paid'),
             'refunded_count' => Payment::countByStatus('refunded'),
+            'reviews'     => Review::stats(),
         ];
         $recent_bookings = Booking::recent(8);
+        $recent_reviews  = Review::all(null, null, 6);
         $revenue_by_day   = Payment::revenueByDay(14);
         $bookings_by_day  = Booking::bookingsByDay(14);
         require APP_ROOT.'/app/views/admin/dashboard.php';
@@ -151,4 +153,48 @@ class AdminController {
         }
         redirect('/admin/menu');
     }
+
+    // ── GUEST REVIEWS (COMPLIMENTS & COMPLAINTS) ───────────
+    public static function reviews(): void {
+        requireLogin(); requireAdmin();
+        $reviews = Review::allForAdmin();
+        $stats   = Review::stats();
+        require APP_ROOT.'/app/views/admin/reviews.php';
+    }
+
+    public static function updateReviewStatus(): void {
+        requireLogin(); requireAdmin(); verifyCsrf();
+        $id     = (int)($_POST['id'] ?? 0);
+        $status = sanitize($_POST['status'] ?? '');
+        if ($id && in_array($status, ['approved', 'pending', 'hidden'], true)) {
+            Review::updateStatus($id, $status);
+            auditLog('UPDATE_REVIEW_STATUS', "Review #{$id} status set to {$status}");
+            flash('reviews', "Review #{$id} status updated to {$status}.", 'success');
+        }
+        redirect('/admin/reviews');
+    }
+
+    public static function replyReview(): void {
+        requireLogin(); requireAdmin(); verifyCsrf();
+        $id    = (int)($_POST['id'] ?? 0);
+        $reply = trim(sanitize($_POST['admin_reply'] ?? ''));
+        if ($id) {
+            Review::updateReply($id, !empty($reply) ? $reply : null);
+            auditLog('REPLY_REVIEW', "Official response saved for Review #{$id}");
+            flash('reviews', "Official management response saved for Review #{$id}.", 'success');
+        }
+        redirect('/admin/reviews');
+    }
+
+    public static function deleteReview(): void {
+        requireLogin(); requireAdmin(); verifyCsrf();
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            Review::delete($id);
+            auditLog('DELETE_REVIEW', "Deleted Review #{$id}");
+            flash('reviews', "Review #{$id} removed successfully.", 'success');
+        }
+        redirect('/admin/reviews');
+    }
 }
+
