@@ -30,8 +30,15 @@
   </div>
 </nav>
 
-<!-- MOBILE SLIDE-DOWN DRAWER -->
+<!-- MOBILE BACKDROP OVERLAY -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay" onclick="closeMobileNav()"></div>
+
+<!-- MOBILE SLIDE-IN DRAWER -->
 <div class="mobile-nav-drawer" id="mobileNavDrawer">
+  <div class="mobile-drawer-header">
+    <span class="mobile-drawer-brand">Terminal 1</span>
+    <button type="button" class="mobile-drawer-close" onclick="closeMobileNav()" aria-label="Close navigation">✕</button>
+  </div>
   <div class="mobile-nav-links">
     <a href="#about" onclick="closeMobileNav()">About Terminal 1</a>
     <a href="#experiences" onclick="closeMobileNav()">Experiences</a>
@@ -39,16 +46,19 @@
     <a href="#philosophy" onclick="closeMobileNav()">Culinary Philosophy</a>
     <a href="#contact" onclick="closeMobileNav()">Book a Table</a>
     <a href="#reviews" onclick="closeMobileNav()">Praise & Critiques</a>
-    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+    <hr class="mobile-nav-divider">
     <?php if($user): ?>
       <a href="<?= url('/my-bookings') ?>" onclick="closeMobileNav()">My Reservations (<?= e($user['name']) ?>)</a>
       <?php if(($user['role'] ?? '') === 'admin'): ?>
         <a href="<?= url('/admin/dashboard') ?>" onclick="closeMobileNav()" style="color:var(--gold-accent);">Admin Dashboard</a>
       <?php endif; ?>
-      <a href="<?= url('/auth/logout') ?>" style="color:#ef4444;">Sign Out</a>
+      <a href="<?= url('/auth/logout') ?>" data-signout>Sign Out</a>
     <?php else: ?>
       <a href="<?= url('/auth/login') ?>" onclick="closeMobileNav()">Sign In</a>
       <a href="<?= url('/auth/register') ?>" onclick="closeMobileNav()">Create an Account</a>
     <?php endif; ?>
+  </div>
+  <div class="mobile-drawer-footer">
+    <div class="mobile-drawer-footer-text">A Fine Dining Experience</div>
   </div>
 </div>

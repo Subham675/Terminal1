@@ -556,26 +556,29 @@ function escapeHtml(str) {
 // ─── 7. MOBILE NAVIGATION DRAWER TOGGLE ───
 function toggleMobileNav() {
   const drawer = document.getElementById('mobileNavDrawer');
+  const overlay = document.getElementById('mobileNavOverlay');
   const btn = document.getElementById('mobileNavToggle');
   if (!drawer || !btn) return;
-  drawer.classList.toggle('open');
-  btn.classList.toggle('open');
+  const willOpen = !drawer.classList.contains('open');
+  drawer.classList.toggle('open', willOpen);
+  btn.classList.toggle('open', willOpen);
+  if (overlay) overlay.classList.toggle('open', willOpen);
+  // Lock body scroll when drawer is open
+  document.body.style.overflow = willOpen ? 'hidden' : '';
 }
 
 function closeMobileNav() {
   const drawer = document.getElementById('mobileNavDrawer');
+  const overlay = document.getElementById('mobileNavOverlay');
   const btn = document.getElementById('mobileNavToggle');
   if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
   if (btn) btn.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-document.addEventListener('click', (e) => {
-  const drawer = document.getElementById('mobileNavDrawer');
-  const btn = document.getElementById('mobileNavToggle');
-  if (drawer && drawer.classList.contains('open')) {
-    if (!drawer.contains(e.target) && !btn.contains(e.target)) {
-      closeMobileNav();
-    }
-  }
+// Close drawer on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeMobileNav();
 });
 </script>

@@ -1561,51 +1561,214 @@
       background: var(--gold-accent);
     }
 
-    /* Mobile Nav Drawer */
+    /* ── Mobile Nav Backdrop Overlay ── */
+    .mobile-nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      z-index: 997;
+      pointer-events: none;
+      transition: background 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mobile-nav-overlay.open {
+      background: rgba(0, 0, 0, 0.55);
+      pointer-events: auto;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    /* ── Mobile Nav Drawer (full-height, right-side slide) ── */
     .mobile-nav-drawer {
       display: none;
       position: fixed;
-      top: 60px;
-      left: 0;
+      top: 0;
       right: 0;
-      background: rgba(13, 12, 11, 0.98);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--border-dark);
-      padding: 24px 6% 30px;
-      z-index: 998;
-      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.7);
-      transform: translateY(-12px);
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      bottom: 0;
+      width: min(85vw, 380px);
+      background: linear-gradient(175deg, rgba(18, 16, 14, 0.99) 0%, rgba(10, 9, 8, 0.995) 100%);
+      backdrop-filter: blur(40px) saturate(1.3);
+      -webkit-backdrop-filter: blur(40px) saturate(1.3);
+      border-left: 1px solid rgba(193, 154, 91, 0.12);
+      z-index: 999;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      box-shadow: -20px 0 80px rgba(0, 0, 0, 0.6);
+      transform: translateX(102%);
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .mobile-nav-drawer.open {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
+      transform: translateX(0);
     }
-    .mobile-nav-links {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .mobile-nav-links a {
-      color: var(--text-light);
-      font-size: 0.9rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      transition: all 0.2s ease;
+
+    /* Drawer header area with close button */
+    .mobile-drawer-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid rgba(193, 154, 91, 0.08);
     }
-    .mobile-nav-links a:hover {
+    .mobile-drawer-brand {
+      font-family: var(--font-heading);
       color: var(--gold-accent);
-      padding-left: 6px;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .mobile-drawer-close {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--text-light);
+      font-size: 1rem;
+    }
+    .mobile-drawer-close:hover {
+      border-color: var(--gold-accent);
+      color: var(--gold-accent);
+      transform: rotate(90deg);
+    }
+
+    /* Navigation links container */
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      padding: 12px 0;
+    }
+    .mobile-nav-links a {
+      color: var(--text-light);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 15px 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      /* Stagger animation setup – links start invisible & shifted */
+      opacity: 0;
+      transform: translateX(30px);
+      transition: color 0.3s ease, background 0.3s ease, opacity 0.01s, transform 0.01s;
+    }
+
+    /* Hover gold left-accent bar + subtle bg highlight */
+    .mobile-nav-links a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 15%;
+      bottom: 15%;
+      width: 3px;
+      background: var(--gold-accent);
+      border-radius: 0 2px 2px 0;
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mobile-nav-links a:hover::before,
+    .mobile-nav-links a:focus-visible::before {
+      transform: scaleY(1);
+    }
+    .mobile-nav-links a:hover,
+    .mobile-nav-links a:focus-visible {
+      color: var(--gold-accent);
+      background: rgba(193, 154, 91, 0.04);
+      padding-left: 34px;
+    }
+
+    /* Arrow icon for each link */
+    .mobile-nav-links a::after {
+      content: '→';
+      margin-left: auto;
+      font-size: 0.7rem;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: all 0.3s ease;
+      color: var(--gold-accent);
+    }
+    .mobile-nav-links a:hover::after {
+      opacity: 0.6;
+      transform: translateX(0);
+    }
+
+    /* Divider inside drawer */
+    .mobile-nav-divider {
+      border: none;
+      border-top: 1px solid rgba(193, 154, 91, 0.08);
+      margin: 8px 28px;
+    }
+
+    /* Staggered reveal when drawer opens */
+    .mobile-nav-drawer.open .mobile-nav-links a {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                  color 0.3s ease, background 0.3s ease;
+    }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(1)  { transition-delay: 0.08s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(2)  { transition-delay: 0.13s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(3)  { transition-delay: 0.18s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(4)  { transition-delay: 0.23s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(5)  { transition-delay: 0.28s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(6)  { transition-delay: 0.33s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(7)  { transition-delay: 0.38s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(8)  { transition-delay: 0.43s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(9)  { transition-delay: 0.48s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(10) { transition-delay: 0.53s; }
+    .mobile-nav-drawer.open .mobile-nav-links a:nth-child(11) { transition-delay: 0.58s; }
+    /* Dividers also stagger */
+    .mobile-nav-drawer .mobile-nav-divider {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .mobile-nav-drawer.open .mobile-nav-divider {
+      opacity: 1;
+      transition-delay: 0.35s;
+    }
+
+    /* Sign-out link gets a red tint */
+    .mobile-nav-links a[data-signout] {
+      color: #ef4444;
+    }
+    .mobile-nav-links a[data-signout]:hover {
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.05);
+    }
+    .mobile-nav-links a[data-signout]::before {
+      background: #ef4444;
+    }
+
+    /* Drawer footer with subtle branding */
+    .mobile-drawer-footer {
+      padding: 24px 28px;
+      margin-top: auto;
+      border-top: 1px solid rgba(193, 154, 91, 0.06);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.55s;
+    }
+    .mobile-nav-drawer.open .mobile-drawer-footer {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .mobile-drawer-footer-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.2);
+      font-family: var(--font-body);
     }
 
     /* ─── RESPONSIVE BREAKPOINTS ─── */
@@ -1614,6 +1777,9 @@
         display: flex;
       }
       .mobile-nav-drawer {
+        display: block;
+      }
+      .mobile-nav-overlay {
         display: block;
       }
       .nav-center-links {
