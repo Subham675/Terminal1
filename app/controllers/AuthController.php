@@ -237,7 +237,12 @@ class AuthController {
 
         // Exchange code for token
         $tokenRes = self::googleTokenExchange($code);
-        if(!isset($tokenRes['access_token'])){ flash('login','Could not get Google token.','error'); redirect('/auth/login'); }
+        if(!isset($tokenRes['access_token'])){
+            $errDetail = $tokenRes['error_description'] ?? $tokenRes['error'] ?? 'Could not get Google token.';
+            error_log('[GoogleOAuth] Token exchange failed: ' . json_encode($tokenRes));
+            flash('login', 'Google login error: ' . $errDetail, 'error');
+            redirect('/auth/login');
+        }
 
         // Get user info
         $gUser = self::googleUserInfo($tokenRes['access_token']);
@@ -425,18 +430,33 @@ class AuthController {
 
         $ch = curl_init('https://oauth2.googleapis.com/token');
         curl_setopt_array($ch,[
-            CURLOPT_RETURNTRANSFER=>true,
-            CURLOPT_POST=>true,
-            CURLOPT_POSTFIELDS=>http_build_query([
-                'code'=>$code,
-                'client_id'=>env('GOOGLE_CLIENT_ID'),
-                'client_secret'=>env('GOOGLE_CLIENT_SECRET'),
-                'redirect_uri'=>$redirectUri,
-                'grant_type'=>'authorization_code',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => http_build_query([
+                'code'          => $code,
+                'client_id'     => env('GOOGLE_CLIENT_ID'),
+                'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+                'redirect_uri'  => $redirectUri,
+                'grant_type'    => 'authorization_code',
             ]),
+            CURLOPT_TIMEOUT        => 15,
         ]);
-        $res = curl_exec($ch); curl_close($ch);
-        return json_decode($res,true) ?? [];
+        $res = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($err) {
+            error_log('[GoogleOAuth] cURL error: ' . $err);
+            return ['error' => 'curl_error', 'error_description' => $err];
+        }
+
+        $decoded = json_decode($res, true);
+        if (!$decoded) {
+            error_log('[GoogleOAuth] Raw response: ' . $res);
+            return ['error' => 'invalid_response', 'error_description' => 'Non-JSON response from Google: ' . substr($res ?: '', 0, 100)];
+        }
+
+        return $decoded;
     }
 
     private static function googleUserInfo(string $token): array {
