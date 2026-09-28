@@ -3,55 +3,57 @@
 
 <script>
 // ─── 0. HORIZONTAL SLIDEBAR — MOUSE DRAG-TO-SCROLL ───
-// Enables desktop click-and-drag scrolling on all slider tracks.
+// Enables desktop click-and-drag scrolling on all slider tracks & filter bars.
 // Touch/swipe already works natively via overflow-x: auto.
 function enableDragScroll(track) {
   if (!track) return;
-  let isDown = false, startX, scrollLeft, hasDragged = false;
+  let isDown = false, startX = 0, scrollLeft = 0, hasDragged = false;
 
   track.style.cursor = 'grab';
 
+  // Prevent browser native image ghost-drag
+  track.addEventListener('dragstart', (e) => e.preventDefault());
+
   track.addEventListener('mousedown', (e) => {
-    // Don't hijack button/link clicks
-    if (e.target.closest('a, button')) return;
     isDown = true;
     hasDragged = false;
-    track.style.cursor = 'grabbing';
-    track.style.scrollBehavior = 'auto';  // Disable smooth during drag
-    startX = e.pageX - track.offsetLeft;
+    startX = e.pageX;
     scrollLeft = track.scrollLeft;
-    e.preventDefault();
+    track.style.scrollBehavior = 'auto';
+    track.style.scrollSnapType = 'none';
   });
 
-  track.addEventListener('mouseleave', () => {
+  window.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    const x = e.pageX;
+    const walk = (x - startX) * 1.5;
+    if (Math.abs(x - startX) > 5) {
+      if (!hasDragged) {
+        hasDragged = true;
+        track.style.cursor = 'grabbing';
+      }
+      e.preventDefault();
+      track.scrollLeft = scrollLeft - walk;
+    }
+  });
+
+  window.addEventListener('mouseup', () => {
     if (!isDown) return;
     isDown = false;
     track.style.cursor = 'grab';
     track.style.scrollBehavior = 'smooth';
+    track.style.scrollSnapType = '';
+    setTimeout(() => {
+      hasDragged = false;
+    }, 60);
   });
 
-  track.addEventListener('mouseup', () => {
-    if (!isDown) return;
-    isDown = false;
-    track.style.cursor = 'grab';
-    track.style.scrollBehavior = 'smooth';
-  });
-
-  track.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - track.offsetLeft;
-    const walk = (x - startX) * 1.5; // Scroll speed multiplier
-    if (Math.abs(walk) > 5) hasDragged = true;
-    track.scrollLeft = scrollLeft - walk;
-  });
-
-  // Prevent clicks on links/buttons if user was dragging
+  // Capture phase click handler: suppress clicks on buttons/links only if the user dragged
   track.addEventListener('click', (e) => {
     if (hasDragged) {
       e.preventDefault();
       e.stopPropagation();
-      hasDragged = false;
+      e.stopImmediatePropagation();
     }
   }, true);
 }
@@ -115,10 +117,11 @@ function setupTrackObserver(trackId, indicatorId) {
 document.addEventListener('DOMContentLoaded', () => {
   setupTrackObserver('experiencesTrack', 'experiencesIndicators');
 
-  // Enable mouse drag-to-scroll on all horizontal slider tracks
+  // Enable mouse drag-to-scroll on all horizontal slider tracks & category bars
   enableDragScroll(document.getElementById('experiencesTrack'));
   enableDragScroll(document.getElementById('dishGrid'));
   enableDragScroll(document.getElementById('guestbookCardsGrid'));
+  enableDragScroll(document.getElementById('menuCatFilter'));
 
   restoreBookingDraft();
   const bForm = document.getElementById('avelineBookingForm');

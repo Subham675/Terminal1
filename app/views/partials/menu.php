@@ -11,7 +11,7 @@
   </div>
 
   <!-- Filter Buttons -->
-  <div class="menu-category-filter">
+  <div class="menu-category-filter" id="menuCatFilter">
     <button class="menu-cat-btn active" data-cat="all">ALL SELECTIONS</button>
     <button class="menu-cat-btn" data-cat="signature">SIGNATURE CUTS</button>
     <button class="menu-cat-btn" data-cat="roasts">CLAY OVEN ROASTS</button>
