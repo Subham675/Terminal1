@@ -24,8 +24,8 @@ class BookingController {
             return;
         }
 
-        $date = $_POST['booking_date'] ?? null;
-        $time = $_POST['booking_time'] ?? null;
+        $date = $_POST['booking_date'] ?? ($_POST['date'] ?? null);
+        $time = $_POST['booking_time'] ?? ($_POST['time'] ?? null);
         $slotCapacity = (int) env('SLOT_CAPACITY', 8);
         if ($date && $time && Booking::countForSlot($date, $time) >= $slotCapacity) {
             http_response_code(409);
@@ -44,10 +44,10 @@ class BookingController {
             'phone'        => $phone,
             'email'        => $email,
             'occasion'     => sanitize($_POST['occasion']??''),
-            'guests'       => (int)($_POST['guests']??1),
+            'guests'       => (int)($_POST['guests']??2),
             'booking_date' => $date,
             'booking_time' => $time,
-            'message'      => sanitize($_POST['message']??''),
+            'message'      => sanitize($_POST['message'] ?? ($_POST['special_requests'] ?? '')),
         ]);
         Booking::setDepositAmount($id, $depositAmount);
         $booking = Booking::findById($id);

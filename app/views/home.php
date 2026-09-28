@@ -1980,17 +1980,17 @@ $user = authUser();
       <form id="avelineBookingForm" onsubmit="handleAvelineBooking(event)">
         <input type="hidden" name="csrf_token" id="fcsrf" value="<?= csrfToken() ?>">
         <input type="hidden" name="guests" id="fguests" value="2">
-        <input type="hidden" name="name" id="fname" value="<?= e($user['name']) ?>">
-        <input type="hidden" name="email" id="femail" value="<?= e($user['email']) ?>">
+        <input type="hidden" name="name" id="fname" value="<?= e($user['name'] ?? '') ?>">
+        <input type="hidden" name="email" id="femail" value="<?= e($user['email'] ?? '') ?>">
 
         <div class="res-form-grid">
           <div class="res-field">
             <label for="fdate">PREFERRED DATE</label>
-            <input type="date" id="fdate" name="date" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
+            <input type="date" id="fdate" name="booking_date" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
           </div>
           <div class="res-field">
             <label for="ftime">DINING TIME SLOT</label>
-            <select id="ftime" name="time" required>
+            <select id="ftime" name="booking_time" required>
               <option value="12:30">12:30 PM &mdash; Lunch Service</option>
               <option value="13:30">01:30 PM &mdash; Afternoon Service</option>
               <option value="19:00" selected>07:00 PM &mdash; Evening Service</option>
@@ -2434,24 +2434,34 @@ async function handleAvelineBooking(e) {
 
   try {
     const formData = new FormData(document.getElementById('avelineBookingForm'));
-    const res = await fetch('<?= url('/book') ?>', {
+    const res = await fetch('<?= url('/bookings') ?>', {
       method: 'POST',
       headers: { 'X-Requested-With': 'XMLHttpRequest' },
       body: formData
     });
 
     const data = await res.json();
+    if (data.require_login) {
+      showAvelineToast(data.message || 'Please sign in to reserve your table.');
+      setTimeout(() => {
+        window.location.href = data.redirect || '<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>';
+      }, 1200);
+      return;
+    }
+
     if (data.success) {
       showAvelineToast('TABLE REQUEST RECEIVED! ' + data.message);
-      if (data.tracking_token) {
-        setTimeout(() => {
-          window.location.href = '<?= url('/track/') ?>' + data.tracking_token;
-        }, 1500);
-      }
+      const targetUrl = (data.id && data.tracking_token)
+        ? '<?= url('/bookings/view?id=') ?>' + data.id + '&token=' + encodeURIComponent(data.tracking_token)
+        : (data.tracking_token ? '<?= url('/track/') ?>' + data.tracking_token : '<?= url('/my-bookings') ?>');
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 1500);
     } else {
-      showAvelineToast('ERROR: ' + (data.message || 'Booking could not be finalized.'));
+      showAvelineToast('ERROR: ' + (data.message || data.error || 'Booking could not be finalized.'));
     }
   } catch(err) {
+    console.error('Reservation submission error:', err);
     showAvelineToast('Network error. Please try again.');
   } finally {
     btn.disabled = false;

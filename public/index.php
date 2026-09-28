@@ -53,6 +53,7 @@ $routes = [
         '/api/reviews'         => [ReviewController::class, 'apiList'],
         '/track/stream'        => [TrackingController::class, 'customerStream'],
         '/admin/track/stream'  => [TrackingController::class, 'adminStream'],
+        '/track'               => [BookingController::class, 'viewBooking'],
     ],
     'POST' => [
         '/auth/login'              => [AuthController::class, 'login'],
@@ -61,6 +62,7 @@ $routes = [
         '/auth/otp/verify'         => [AuthController::class, 'verifyOtp'],
         '/auth/logout'             => [AuthController::class, 'logout'],
         '/bookings'                => [BookingController::class, 'store'],
+        '/book'                    => [BookingController::class, 'store'],
         '/reviews'                 => [ReviewController::class, 'submit'],
         '/payments/create-order'   => [PaymentController::class, 'createOrder'],
         '/payments/verify'         => [PaymentController::class, 'verify'],
@@ -79,13 +81,20 @@ $routes = [
     ],
 ];
 
+// Dynamic customer tracking page (/track/{token})
+if ($method === 'GET' && str_starts_with($uri, '/track/') && $uri !== '/track/stream') {
+    $_GET['token'] = substr($uri, strlen('/track/'));
+    BookingController::viewBooking();
+    exit;
+}
+
 // ── Server-Side URL ID Tampering & IDOR Guard ──
 // If a user manually specifies or changes an order/booking ID (?id=.. or ?booking_id=..) in the URL
 // on any customer-facing page, the server strictly validates that the visitor owns that order.
 // If an attacker changes id=2 to id=3 (another user's order), verifyBookingOwnership immediately
 // terminates execution with HTTP 403 Forbidden and logs the security violation!
 $urlQueryId = (int)($_GET['booking_id'] ?? ($_GET['id'] ?? 0));
-if ($urlQueryId > 0 && !str_starts_with($uri, '/admin') && !in_array($uri, ['/track/stream', '/bookings/view', '/order'])) {
+if ($urlQueryId > 0 && !str_starts_with($uri, '/admin') && !in_array($uri, ['/track/stream', '/bookings/view', '/order', '/track'])) {
     $tokenParam = $_GET['tracking_token'] ?? ($_GET['token'] ?? null);
     verifyBookingOwnership($urlQueryId, $tokenParam);
 }
