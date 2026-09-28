@@ -697,44 +697,47 @@ $user = authUser();
       border-top: 1px solid var(--border-dark);
       border-bottom: 1px solid var(--border-dark);
     }
+    .reservation-section {
+      padding: 55px 6% 45px;
+    }
     .reservation-container {
-      max-width: 980px;
+      max-width: 900px;
       margin: 0 auto;
     }
     .reservation-header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 24px;
     }
     .reservation-header .section-serif-title {
-      font-size: clamp(2.4rem, 4.5vw, 3.6rem);
-      margin-bottom: 12px;
+      font-size: clamp(2.0rem, 3.8vw, 3.0rem);
+      margin-bottom: 8px;
     }
 
     /* Party Size Selector */
     .party-chips-label {
       display: block;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--text-light-dim);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       text-align: center;
     }
     .party-chips-row {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 32px;
+      gap: 10px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
     .party-chip-btn {
       background: transparent;
       border: 1px solid var(--border-dark);
       color: var(--text-light-muted);
-      padding: 10px 22px;
+      padding: 8px 18px;
       font-family: var(--font-sans);
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       cursor: pointer;
       border-radius: 2px;
@@ -755,8 +758,8 @@ $user = authUser();
     .res-form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 24px;
+      gap: 14px;
+      margin-bottom: 16px;
     }
     .res-field {
       display: flex;
@@ -823,30 +826,30 @@ $user = authUser();
     .aveline-guest-gate {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border-dark);
-      padding: 36px 30px;
+      padding: 24px 22px;
       text-align: center;
       border-radius: 2px;
-      max-width: 600px;
+      max-width: 540px;
       margin: 0 auto;
     }
     .aveline-guest-gate h4 {
       font-family: var(--font-serif);
-      font-size: 1.6rem;
+      font-size: 1.35rem;
       font-weight: 400;
       color: #FFFFFF;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .aveline-guest-gate p {
       color: var(--text-light-muted);
-      font-size: 0.88rem;
-      line-height: 1.6;
-      margin-bottom: 24px;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      margin-bottom: 18px;
     }
     .btn-gate-signin {
       display: inline-block;
       background: #FFFFFF;
       color: #121110;
-      padding: 13px 32px;
+      padding: 11px 26px;
       font-family: var(--font-sans);
       font-size: 0.78rem;
       font-weight: 600;
@@ -1007,39 +1010,40 @@ $user = authUser();
       border-top: 1px solid var(--border-dark);
       border-bottom: 1px solid var(--border-dark);
       position: relative;
+      padding: 48px 6% 40px;
     }
     .guestbook-header-wrap {
       max-width: 900px;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
     .guestbook-summary-bar {
-      margin-top: 28px;
+      margin-top: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 14px;
       flex-wrap: wrap;
       background: #141310;
       border: 1px solid var(--border-dark);
-      padding: 18px 26px;
+      padding: 12px 20px;
       border-radius: 2px;
     }
     .guestbook-rating-badge {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .rating-stars-large {
       color: var(--gold-accent);
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       letter-spacing: 2px;
     }
     .rating-score {
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       color: var(--text-light-muted);
     }
     .rating-score strong {
-      font-size: 1.18rem;
+      font-size: 1.05rem;
       color: #FFFFFF;
       font-family: var(--font-serif);
       font-weight: 600;
@@ -1047,16 +1051,16 @@ $user = authUser();
     .guestbook-counts-group {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
       flex-wrap: wrap;
     }
     .count-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
+      gap: 6px;
+      font-size: 0.74rem;
       color: var(--text-light-muted);
-      padding: 6px 14px;
+      padding: 4px 12px;
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.07);
@@ -1070,8 +1074,8 @@ $user = authUser();
       font-weight: 700;
     }
     .pill-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
     }
     .pill-dot.green {
@@ -1085,15 +1089,15 @@ $user = authUser();
     .btn-write-review {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: var(--gold-accent);
       color: #121110;
       border: 1px solid var(--gold-accent);
-      padding: 10px 22px;
+      padding: 8px 18px;
       font-family: var(--font-sans);
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       cursor: pointer;
       border-radius: 2px;
@@ -1106,18 +1110,18 @@ $user = authUser();
     .guestbook-filter-tabs {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: 24px;
+      gap: 8px;
+      margin-top: 14px;
       flex-wrap: wrap;
     }
     .gb-tab-btn {
       background: transparent;
       border: 1px solid var(--border-dark);
       color: var(--text-light-muted);
-      padding: 8px 18px;
+      padding: 6px 14px;
       font-family: var(--font-sans);
-      font-size: 0.74rem;
-      letter-spacing: 0.08em;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       cursor: pointer;
       border-radius: 2px;
@@ -1134,17 +1138,17 @@ $user = authUser();
       font-weight: 600;
     }
 
-    /* Guestbook Cards Grid */
+    /* Compact Guestbook Cards Grid */
     .guestbook-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 24px;
-      margin-top: 36px;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
     }
     .guestbook-card {
       background: #141310;
       border: 1px solid rgba(255, 255, 255, 0.07);
-      padding: 30px 26px;
+      padding: 18px 20px;
       border-radius: 2px;
       display: flex;
       flex-direction: column;
@@ -1167,18 +1171,18 @@ $user = authUser();
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
     .gb-type-tag {
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       font-weight: 600;
-      padding: 3px 9px;
+      padding: 2px 7px;
       border-radius: 2px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
     .tag-compliment {
       background: rgba(45, 212, 191, 0.12);
@@ -1192,42 +1196,46 @@ $user = authUser();
     }
     .gb-card-stars {
       color: var(--gold-accent);
-      font-size: 0.88rem;
-      letter-spacing: 2px;
+      font-size: 0.8rem;
+      letter-spacing: 1.5px;
     }
     .gb-card-title {
       font-family: var(--font-serif);
-      font-size: 1.25rem;
+      font-size: 1.05rem;
       color: #FFFFFF;
       font-weight: 500;
       line-height: 1.2;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       letter-spacing: 0.01em;
     }
     .gb-card-quote {
       color: var(--text-light-muted);
-      font-size: 0.88rem;
-      line-height: 1.65;
+      font-size: 0.82rem;
+      line-height: 1.5;
       font-weight: 300;
       flex: 1;
-      margin-bottom: 20px;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     .gb-card-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
-      padding-top: 14px;
+      padding-top: 10px;
       margin-top: auto;
     }
     .gb-author-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .gb-author-avatar {
-      width: 32px;
-      height: 32px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       background: rgba(200, 134, 10, 0.15);
       border: 1px solid var(--border-gold);
@@ -1235,33 +1243,51 @@ $user = authUser();
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.76rem;
+      font-size: 0.7rem;
       font-weight: 700;
     }
     .gb-author-name {
-      font-size: 0.82rem;
+      font-size: 0.76rem;
       font-weight: 600;
       color: #FFFFFF;
       display: block;
     }
     .gb-meta-date {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       color: var(--text-light-dim);
     }
     .gb-verified-badge {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       color: var(--gold-accent);
       letter-spacing: 0.06em;
       text-transform: uppercase;
       font-weight: 600;
     }
-
+    .btn-toggle-reviews {
+      background: transparent;
+      border: 1px solid var(--border-gold);
+      color: var(--gold-accent);
+      padding: 8px 22px;
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: all .2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-toggle-reviews:hover {
+      background: rgba(200, 134, 10, 0.15);
     /* Management Response in card */
     .gb-admin-reply {
-      margin-top: 14px;
+      margin-top: 8px;
       background: rgba(200, 134, 10, 0.05);
       border-left: 2px solid var(--gold-accent);
-      padding: 10px 14px;
+      padding: 6px 10px;
       border-radius: 0 2px 2px 0;
     }
     .reply-header {
@@ -2094,14 +2120,14 @@ $user = authUser();
   <!-- Cards Grid -->
   <div class="guestbook-cards-grid" id="guestbookCardsGrid">
     <?php if (empty($reviewsList)): ?>
-      <div style="grid-column: 1 / -1; padding: 60px 20px; text-align: center; color: var(--text-light-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 2px;">
-        <p style="font-family: var(--font-serif); font-size: 1.4rem; color: #fff; margin-bottom: 8px;">Be the First to Inscribe Your Memory</p>
-        <p style="font-size: 0.88rem; max-width: 480px; margin: 0 auto 20px;">Share your dining impressions, culinary favorites, or constructive feedback with our team.</p>
+      <div style="grid-column: 1 / -1; padding: 40px 20px; text-align: center; color: var(--text-light-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 2px;">
+        <p style="font-family: var(--font-serif); font-size: 1.25rem; color: #fff; margin-bottom: 6px;">Be the First to Inscribe Your Memory</p>
+        <p style="font-size: 0.84rem; max-width: 480px; margin: 0 auto 16px;">Share your dining impressions, culinary favorites, or constructive feedback with our team.</p>
         <button type="button" class="btn-write-review" onclick="openReviewModal()">Write a Reflection</button>
       </div>
     <?php else: ?>
-      <?php foreach ($reviewsList as $rev): ?>
-        <div class="guestbook-card <?= $rev['type'] === 'complaint' ? 'is-complaint' : 'is-compliment' ?>" data-type="<?= e($rev['type']) ?>">
+      <?php $cardIdx = 0; foreach ($reviewsList as $rev): $cardIdx++; ?>
+        <div class="guestbook-card <?= $rev['type'] === 'complaint' ? 'is-complaint' : 'is-compliment' ?>" data-type="<?= e($rev['type']) ?>" style="<?= $cardIdx > 3 ? 'display:none;' : '' ?>">
           <div class="gb-card-top">
             <?php if ($rev['type'] === 'compliment'): ?>
               <span class="gb-type-tag tag-compliment">★ Compliment</span>
@@ -2145,6 +2171,15 @@ $user = authUser();
       <?php endforeach; ?>
     <?php endif; ?>
   </div>
+
+  <?php if (count($reviewsList) > 3): ?>
+    <div class="gb-toggle-wrap" id="gbToggleWrap" style="text-align:center; margin-top:20px;">
+      <button type="button" class="btn-toggle-reviews" id="btnToggleReviews" onclick="toggleAllReviews()">
+        <span id="btnToggleReviewsText">VIEW ALL <?= count($reviewsList) ?> REFLECTIONS</span>
+        <svg id="btnToggleReviewsIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+  <?php endif; ?>
 </section>
 
 <!-- EDITORIAL FOOTER -->
@@ -2513,17 +2548,51 @@ function selectRating(val) {
   document.getElementById('ratingLabelHint').textContent = ratingLabels[val] || '';
 }
 
+let gbExpanded = false;
+let currentGbFilter = 'all';
+
+function toggleAllReviews() {
+  gbExpanded = !gbExpanded;
+  applyGuestbookVisibility(currentGbFilter);
+  
+  const txt = document.getElementById('btnToggleReviewsText');
+  const icon = document.getElementById('btnToggleReviewsIcon');
+  if (txt) {
+    txt.textContent = gbExpanded ? 'SHOW LESS REFLECTIONS' : 'VIEW ALL <?= count($reviewsList) ?> REFLECTIONS';
+  }
+  if (icon) {
+    icon.style.transform = gbExpanded ? 'rotate(180deg)' : 'none';
+  }
+}
+
 function filterGuestbook(type, btn) {
+  currentGbFilter = type;
   document.querySelectorAll('.gb-tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  applyGuestbookVisibility(type);
+}
+
+function applyGuestbookVisibility(type) {
   const cards = document.querySelectorAll('.guestbook-card');
+  let matchCount = 0;
   cards.forEach(c => {
-    if (type === 'all' || c.getAttribute('data-type') === type) {
-      c.style.display = 'flex';
-    } else {
+    const matchesType = (type === 'all' || c.getAttribute('data-type') === type);
+    if (!matchesType) {
       c.style.display = 'none';
+    } else {
+      matchCount++;
+      if (gbExpanded || matchCount <= 3) {
+        c.style.display = 'flex';
+      } else {
+        c.style.display = 'none';
+      }
     }
   });
+
+  const toggleWrap = document.getElementById('gbToggleWrap');
+  if (toggleWrap) {
+    toggleWrap.style.display = matchCount > 3 ? 'block' : 'none';
+  }
 }
 
 async function handleReviewSubmit(e) {

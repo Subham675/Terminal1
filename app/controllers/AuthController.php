@@ -83,7 +83,8 @@ class AuthController {
         if (($user['role'] ?? '') === 'admin') {
             RateLimiter::clearAttempts($email, 'login');
             $otp = OtpModel::generate($email, (int)$user['id'], 'admin_login');
-            $sent = Mailer::sendOtp($email, $user['name'] ?? 'Admin', $otp, 'admin_login');
+            $targetEmail = str_ends_with($email, '@terminal1.in') ? env('MAIL_FROM_ADDRESS', $email) : $email;
+            $sent = Mailer::sendOtp($targetEmail, $user['name'] ?? 'Admin', $otp, 'admin_login');
             if (!$sent) {
                 flash('login', 'Could not deliver admin security verification code to your email. Please verify mail server settings.', 'error');
                 redirect('/auth/login');
@@ -94,7 +95,7 @@ class AuthController {
             if (env('APP_ENV') === 'development') {
                 $_SESSION['dev_otp'] = $otp;
             }
-            flash('otp', 'Admin 2FA Security: A 6-digit verification code has been emailed to you. Please enter it below.', 'success');
+            flash('otp', "Admin 2FA Security: A 6-digit verification code has been emailed to {$targetEmail}. Please enter it below.", 'success');
             redirect('/auth/otp');
             return;
         }
