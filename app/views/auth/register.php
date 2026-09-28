@@ -3,50 +3,58 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Create Account | Terminal 1</title>
+  <meta name="description" content="Register an authenticated guest account at Terminal 1 to unlock fine dining reservations, private banquet suites, and curated dining experiences in Cooch Behar.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<?= asset('css/app.css') ?>">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#0F0E0B;font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .box{width:100%;max-width:440px;background:#1A1814;border:1px solid rgba(200,134,10,.2);border-radius:4px;overflow:hidden}
-    .box-header{background:#C8860A;padding:24px;text-align:center}
-    .box-header h1{font-family:'Playfair Display',serif;color:#fff;font-size:1.6rem}
-    .box-header p{color:rgba(255,255,255,.7);font-size:.72rem;letter-spacing:2px;margin-top:3px}
-    .box-body{padding:30px}
+    body{background:#0F0E0B;font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+    .box{width:100%;max-width:440px;background:#1A1814;border:1px solid rgba(200,134,10,.25);border-radius:4px;overflow:hidden}
+    .box-header{background:#C8860A;padding:26px 20px;text-align:center}
+    .box-header h1{font-family:'Playfair Display',serif;color:#fff;font-size:1.65rem;font-weight:700}
+    .box-header p{color:rgba(255,255,255,.85);font-size:.72rem;letter-spacing:2px;margin-top:4px;font-weight:600}
+    .box-body{padding:28px 24px}
     .form-group{margin-bottom:16px}
-    .form-group label{display:block;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:6px}
-    .form-control{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:11px 14px;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
+    .form-group label{display:block;font-size:.74rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:6px;font-weight:600}
+    .form-control{width:100%;min-height:44px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:#fff;padding:11px 14px;border-radius:2px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
     .form-control:focus{border-color:#C8860A}
     .password-wrap{position:relative;display:flex;align-items:center}
-    .password-wrap .form-control{padding-right:44px}
-    .btn-toggle-pw{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;transition:color .2s;border-radius:2px}
+    .password-wrap .form-control{padding-right:48px}
+    .btn-toggle-pw{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;padding:8px;min-height:36px;display:flex;align-items:center;justify-content:center;transition:color .2s;border-radius:2px}
     .btn-toggle-pw:hover,.btn-toggle-pw:focus{color:#E8A820;outline:none}
-    .btn-submit{width:100%;background:#C8860A;border:none;color:#fff;padding:13px;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:6px}
+    .btn-submit{width:100%;min-height:46px;background:#C8860A;border:none;color:#fff;padding:13px;border-radius:2px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;margin-top:6px;transition:background .2s}
     .btn-submit:hover{background:#E8A820}
-    .flash{padding:10px 14px;border-radius:2px;margin-bottom:16px;font-size:.83rem}
-    .flash-error{background:rgba(207,34,46,.15);border:1px solid rgba(207,34,46,.3);color:#cf222e}
-    .footer-link{text-align:center;padding:0 30px 22px;color:rgba(255,255,255,.3);font-size:.82rem}
-    .link{color:#C8860A;text-decoration:none}
+    .flash{padding:12px 14px;border-radius:2px;margin-bottom:16px;font-size:.84rem;line-height:1.5}
+    .flash-error{background:rgba(207,34,46,.18);border:1px solid rgba(207,34,46,.4);color:#ff7b72}
+    .footer-link{text-align:center;padding:0 24px 22px;color:rgba(255,255,255,.65);font-size:.82rem}
+    .link{color:#E8A820;text-decoration:underline;font-weight:600}
+    @media (max-width: 480px) {
+      body{padding:10px}
+      .box-header{padding:20px 14px}
+      .box-header h1{font-size:1.5rem}
+      .box-body{padding:22px 14px}
+    }
   </style>
 </head>
 <body>
 <div class="box">
-  <div class="box-header"><h1>Create Account</h1><p>TERMINAL 1: THE RESTAURANT</p></div>
+  <div class="box-header"><h1>Create Account</h1><p>TERMINAL 1 &bull; THE RESTAURANT</p></div>
   <div class="box-body">
     <?php 
       $redir = $_GET['redirect'] ?? $_SESSION['auth_redirect'] ?? '';
       if ($redir && str_contains($redir, '#contact')): 
     ?>
-      <div style="background:rgba(200,134,10,.12);border:1px solid rgba(200,134,10,.3);border-radius:2px;padding:12px 14px;margin-bottom:16px;font-size:0.83rem;color:#E8A820;display:flex;align-items:center;gap:10px;">
+      <div style="background:rgba(200,134,10,.12);border:1px solid rgba(200,134,10,.3);border-radius:2px;padding:12px 14px;margin-bottom:16px;font-size:0.83rem;color:#E8A820;display:flex;align-items:center;gap:10px;" role="alert">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>Please create an account to proceed with your table reservation.</span>
       </div>
     <?php endif; ?>
     <?php $f=flash('register'); if($f): ?>
-      <div class="flash flash-<?= $f['type'] ?>"><?= e($f['message']) ?></div>
+      <div class="flash flash-<?= $f['type'] ?>" role="alert"><?= e($f['message']) ?></div>
     <?php endif; ?>
     <form method="POST" action="<?= url('/auth/register') ?>" id="regForm">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">

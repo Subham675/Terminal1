@@ -7,11 +7,13 @@ $user = authUser();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Bookings | Terminal 1</title>
+  <meta name="description" content="Track your real-time table allocation, concierge dining status, and review reservation policies at Terminal 1.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<?= asset('css/app.css') ?>">
   <style>
     :root {
       --gold: #C8860A;
@@ -21,7 +23,7 @@ $user = authUser();
       --card-bg: rgba(255,255,255,0.03);
       --border: rgba(255,255,255,0.08);
       --text: #F5EFE6;
-      --muted: rgba(245,239,230,0.55);
+      --muted: rgba(245,239,230,0.72);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -41,12 +43,12 @@ $user = authUser();
       justify-content: space-between;
     }
     .logo {
-      font-family: 'Cinzel', serif;
-      font-size: 1.3rem;
-      font-weight: 900;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
       color: var(--gold-lt);
       text-decoration: none;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
     }
     .nav-links { display: flex; gap: 20px; align-items: center; }
     .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color .2s; }
@@ -69,8 +71,9 @@ $user = authUser();
       gap: 16px;
     }
     h1 {
-      font-family: 'Cinzel', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 2rem;
+      font-weight: 700;
       color: #fff;
     }
     .subtitle {
@@ -240,15 +243,122 @@ $user = authUser();
               <?php endif; ?>
             </div>
             <div>
-              <a href="<?= url('/bookings/view?id=' . $b['id'] . '&token=' . urlencode($b['tracking_token'] ?? '')) ?>" class="btn-track">
-                View &amp; Track &rarr;
-              </a>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <a href="<?= url('/bookings/view?id=' . $b['id'] . '&token=' . urlencode($b['tracking_token'] ?? '')) ?>" class="btn-track">
+                  View &amp; Track &rarr;
+                </a>
+                <?php if($b['status'] !== 'cancelled' && $b['status'] !== 'completed'): ?>
+                  <button type="button" class="btn-cancel-small" onclick="promptCancelBooking(<?= (int)$b['id'] ?>, '<?= e($b['tracking_token'] ?? '') ?>', '<?= e($b['booking_date'] ?: 'this date') ?>')">
+                    Cancel Reservation
+                  </button>
+                <?php endif; ?>
+              </div>
             </div>
           </div>
         <?php endforeach; ?>
       </div>
+
+      <div class="cancellation-policy-box" style="margin-top: 32px; padding: 18px 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem; color: var(--muted); line-height: 1.5;">
+        <strong style="color: #fff; display: block; margin-bottom: 4px;">Dining Cancellation Policy</strong>
+        Table reservations may be cancelled up to 2 hours before scheduled dining service without penalty. For special group reservations or dietary tasting menus, please contact the concierge desk directly.
+      </div>
     <?php endif; ?>
   </div>
+
+  <!-- Cancellation Modal -->
+  <div id="cancelModal" class="cancel-modal-overlay" onclick="closeCancelModal(event)">
+    <div class="cancel-modal-box" onclick="event.stopPropagation()">
+      <h3 style="font-family:'Playfair Display',serif; font-size:1.35rem; color:#fff; margin-bottom:10px;">Cancel Reservation</h3>
+      <p id="cancelModalText" style="font-size:0.85rem; color:var(--muted); line-height:1.5; margin-bottom:18px;">
+        Are you sure you wish to cancel this reservation?
+      </p>
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn btn-ghost" onclick="closeCancelModal()" style="background:transparent; border:1px solid var(--border); color:var(--muted); padding:9px 16px; border-radius:4px; cursor:pointer;">Keep Reservation</button>
+        <button type="button" class="btn btn-cancel-confirm" id="btnConfirmCancel" onclick="executeBookingCancellation()" style="background:rgba(207,34,46,0.15); border:1px solid rgba(207,34,46,0.35); color:#ff7b72; padding:9px 18px; border-radius:4px; font-weight:600; cursor:pointer;">Yes, Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .btn-cancel-small {
+      background: transparent;
+      border: 1px solid rgba(207, 34, 46, 0.3);
+      color: #ff7b72;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .btn-cancel-small:hover {
+      background: rgba(207, 34, 46, 0.15);
+      border-color: #ff7b72;
+      color: #fff;
+    }
+    .cancel-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(8px);
+      z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .cancel-modal-overlay.active { display: flex; }
+    .cancel-modal-box {
+      background: #181612; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px;
+      padding: 26px; max-width: 440px; width: 100%;
+    }
+  </style>
+
+  <script>
+  let targetCancelId = 0;
+  let targetCancelToken = '';
+
+  function promptCancelBooking(id, token, dateStr) {
+    targetCancelId = id;
+    targetCancelToken = token;
+    document.getElementById('cancelModalText').textContent = 'Are you sure you wish to cancel your reservation for ' + dateStr + '? This action cannot be undone.';
+    document.getElementById('cancelModal').classList.add('active');
+  }
+
+  function closeCancelModal(e) {
+    if (e && e.target !== e.currentTarget && !e.target.classList.contains('btn-ghost')) return;
+    document.getElementById('cancelModal').classList.remove('active');
+  }
+
+  async function executeBookingCancellation() {
+    if (!targetCancelId) return;
+    const btn = document.getElementById('btnConfirmCancel');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.textContent = 'Cancelling...';
+
+    try {
+      const formData = new FormData();
+      formData.append('csrf_token', '<?= csrfToken() ?>');
+      formData.append('id', targetCancelId);
+      formData.append('token', targetCancelToken);
+
+      const res = await fetch('<?= url('/bookings/cancel') ?>', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert(data.message || 'Could not cancel booking.');
+        btn.disabled = false;
+        btn.textContent = 'Yes, Cancel';
+      }
+    } catch(e) {
+      alert('Network error while cancelling reservation.');
+      btn.disabled = false;
+      btn.textContent = 'Yes, Cancel';
+    }
+  }
+  </script>
 
   <footer>
     &copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved. &bull; <a href="<?= url('/privacy') ?>" style="color:inherit;text-decoration:none;">Privacy Policy</a> &bull; <a href="<?= url('/terms') ?>" style="color:inherit;text-decoration:none;">Terms &amp; Conditions</a>

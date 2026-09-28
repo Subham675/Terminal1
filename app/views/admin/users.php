@@ -99,7 +99,8 @@ $currentAdminId = (int)authUser()['id'];
     <!-- Controls -->
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <div style="position:relative;">
-        <input type="text" id="userSearch" placeholder="Search by name, email, or #ID…" oninput="filterUsers()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;padding:8px 12px 8px 32px;border-radius:6px;font-size:0.82rem;width:240px;outline:none;">
+        <label for="userSearch" class="visually-hidden">Search users</label>
+        <input type="text" id="userSearch" placeholder="Search by name, email, or #ID…" oninput="filterUsers()" value="<?= e($pagination['search'] ?? '') ?>" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;padding:8px 12px 8px 32px;border-radius:6px;font-size:0.82rem;width:240px;outline:none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
       </div>
 
@@ -226,7 +227,9 @@ $currentAdminId = (int)authUser()['id'];
                   </form>
 
                   <!-- Delete User -->
-                  <form method="POST" action="<?= url('/admin/users/delete') ?>" style="display:inline;" onsubmit="return confirm('Permanently delete account for &quot;<?= addslashes(e($u['name'])) ?>&quot;?')">
+                  <form method="POST" action="<?= url('/admin/users/delete') ?>" style="display:inline;"
+                        data-confirm="Permanently delete account for &quot;<?= addslashes(e($u['name'])) ?>&quot;?"
+                        data-title="Delete User Account">
                     <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                     <input type="hidden" name="id" value="<?= $u['id'] ?>">
                     <button type="submit" class="btn btn-sm btn-danger" style="padding:5px 9px;" title="Delete user account">
@@ -243,6 +246,22 @@ $currentAdminId = (int)authUser()['id'];
       <?php endif; ?>
       </tbody>
     </table>
+
+    <?php if(!empty($pagination) && $pagination['total_pages'] > 1): ?>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-top:1px solid var(--border); font-size:0.82rem; color:var(--text-muted); flex-wrap:wrap; gap:12px;">
+        <div>
+          Showing page <?= $pagination['page'] ?> of <?= $pagination['total_pages'] ?> (<?= $pagination['total'] ?> total users)
+        </div>
+        <div style="display:flex; gap:8px;">
+          <?php if($pagination['page'] > 1): ?>
+            <a href="?page=<?= $pagination['page'] - 1 ?>&q=<?= urlencode($pagination['search'] ?? '') ?>&role=<?= urlencode($pagination['role'] ?? '') ?>" class="btn btn-sm" style="text-decoration:none; padding:6px 12px; background:rgba(255,255,255,0.06); color:#fff;">&larr; Previous</a>
+          <?php endif; ?>
+          <?php if($pagination['page'] < $pagination['total_pages']): ?>
+            <a href="?page=<?= $pagination['page'] + 1 ?>&q=<?= urlencode($pagination['search'] ?? '') ?>&role=<?= urlencode($pagination['role'] ?? '') ?>" class="btn btn-sm" style="text-decoration:none; padding:6px 12px; background:rgba(255,255,255,0.06); color:#fff;">Next &rarr;</a>
+          <?php endif; ?>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
 </div>
 

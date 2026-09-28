@@ -31,3 +31,8 @@ storage/invoices/*
 # PHPUnit cache
 .phpunit.cache/
 .phpunit.result.cache
+
+# Scratch files
+scratch/
+tests/check_images.php
+tests/convert_webp.py

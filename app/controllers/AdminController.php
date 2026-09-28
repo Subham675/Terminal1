@@ -23,14 +23,52 @@ class AdminController {
     // ── BOOKINGS ──────────────────────────────────────────
     public static function bookings(): void {
         requireLogin(); requireAdmin();
-        $bookings = Booking::all();
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 15;
+        $search = sanitize($_GET['q'] ?? '');
+        $status = sanitize($_GET['status'] ?? '');
+
+        $where = ["1=1"];
+        $params = [];
+        if ($search !== '') {
+            $where[] = "(b.name LIKE ? OR b.phone LIKE ? OR b.email LIKE ? OR b.occasion LIKE ? OR CAST(b.id AS CHAR) = ?)";
+            $wild = "%{$search}%";
+            $params = array_merge($params, [$wild, $wild, $wild, $wild, $search]);
+        }
+        if ($status !== '' && in_array($status, ['pending', 'confirmed', 'cancelled', 'completed', 'archived'])) {
+            $where[] = "b.status = ?";
+            $params[] = $status;
+        } else {
+            // By default, hide archived records from primary view unless requested
+            $where[] = "b.status != 'archived'";
+        }
+        $whereSql = implode(' AND ', $where);
+
+        $totalCount = (int) (Database::row("SELECT COUNT(*) as c FROM bookings b WHERE {$whereSql}", $params)['c'] ?? 0);
+        $totalPages = max(1, (int)ceil($totalCount / $perPage));
+        $offset = ($page - 1) * $perPage;
+
+        $bookings = Database::rows(
+            "SELECT b.*, u.name as user_name FROM bookings b LEFT JOIN users u ON b.user_id = u.id WHERE {$whereSql} ORDER BY b.created_at DESC LIMIT {$perPage} OFFSET {$offset}",
+            $params
+        );
+
+        $pagination = [
+            'total'       => $totalCount,
+            'page'        => $page,
+            'per_page'    => $perPage,
+            'total_pages' => $totalPages,
+            'search'      => $search,
+            'status'      => $status
+        ];
+
         require APP_ROOT.'/app/views/admin/bookings.php';
     }
     public static function updateBookingStatus(): void {
         requireLogin(); requireAdmin(); verifyCsrf();
         $id     = (int)($_POST['id'] ?? 0);
         $status = sanitize($_POST['status'] ?? '');
-        if($id && in_array($status,['pending','confirmed','cancelled','completed'])){
+        if($id && in_array($status,['pending','confirmed','cancelled','completed','archived'])){
             Booking::updateStatus($id,$status);
             auditLog('UPDATE_BOOKING_STATUS', "Booking #{$id} status set to {$status}");
             flash('bookings','Booking status updated.','success');
@@ -41,9 +79,9 @@ class AdminController {
         requireLogin(); requireAdmin(); verifyCsrf();
         $id = (int)($_POST['id'] ?? 0);
         if($id){
-            Booking::delete($id);
-            auditLog('DELETE_BOOKING', "Booking #{$id} deleted");
-            flash('bookings','Booking deleted.','success');
+            Booking::archive($id);
+            auditLog('ARCHIVE_BOOKING', "Booking #{$id} archived");
+            flash('bookings','Booking archived from active ledger.','success');
         }
         redirect('/admin/bookings');
     }
@@ -51,7 +89,42 @@ class AdminController {
     // ── USERS ─────────────────────────────────────────────
     public static function users(): void {
         requireLogin(); requireAdmin();
-        $users = User::all();
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 15;
+        $search = sanitize($_GET['q'] ?? '');
+        $role = sanitize($_GET['role'] ?? '');
+
+        $where = ["1=1"];
+        $params = [];
+        if ($search !== '') {
+            $where[] = "(name LIKE ? OR email LIKE ? OR phone LIKE ? OR CAST(id AS CHAR) = ?)";
+            $wild = "%{$search}%";
+            $params = array_merge($params, [$wild, $wild, $wild, $search]);
+        }
+        if ($role !== '' && in_array($role, ['admin', 'user'])) {
+            $where[] = "role = ?";
+            $params[] = $role;
+        }
+        $whereSql = implode(' AND ', $where);
+
+        $totalCount = (int) (Database::row("SELECT COUNT(*) as c FROM users WHERE {$whereSql}", $params)['c'] ?? 0);
+        $totalPages = max(1, (int)ceil($totalCount / $perPage));
+        $offset = ($page - 1) * $perPage;
+
+        $users = Database::rows(
+            "SELECT * FROM users WHERE {$whereSql} ORDER BY created_at DESC LIMIT {$perPage} OFFSET {$offset}",
+            $params
+        );
+
+        $pagination = [
+            'total'       => $totalCount,
+            'page'        => $page,
+            'per_page'    => $perPage,
+            'total_pages' => $totalPages,
+            'search'      => $search,
+            'role'        => $role
+        ];
+
         require APP_ROOT.'/app/views/admin/users.php';
     }
     public static function updateUserRole(): void {
@@ -157,8 +230,49 @@ class AdminController {
     // ── GUEST REVIEWS (COMPLIMENTS & COMPLAINTS) ───────────
     public static function reviews(): void {
         requireLogin(); requireAdmin();
-        $reviews = Review::allForAdmin();
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 15;
+        $search = sanitize($_GET['q'] ?? '');
+        $status = sanitize($_GET['status'] ?? '');
+        $type   = sanitize($_GET['type'] ?? '');
+
+        $where = ["1=1"];
+        $params = [];
+        if ($search !== '') {
+            $where[] = "(name LIKE ? OR email LIKE ? OR title LIKE ? OR content LIKE ?)";
+            $wild = "%{$search}%";
+            $params = array_merge($params, [$wild, $wild, $wild, $wild]);
+        }
+        if ($status !== '' && in_array($status, ['approved', 'hidden', 'pending'])) {
+            $where[] = "status = ?";
+            $params[] = $status;
+        }
+        if ($type !== '' && in_array($type, ['compliment', 'complaint'])) {
+            $where[] = "type = ?";
+            $params[] = $type;
+        }
+        $whereSql = implode(' AND ', $where);
+
+        $totalCount = (int) (Database::row("SELECT COUNT(*) as c FROM reviews WHERE {$whereSql}", $params)['c'] ?? 0);
+        $totalPages = max(1, (int)ceil($totalCount / $perPage));
+        $offset = ($page - 1) * $perPage;
+
+        $reviews = Database::rows(
+            "SELECT * FROM reviews WHERE {$whereSql} ORDER BY created_at DESC LIMIT {$perPage} OFFSET {$offset}",
+            $params
+        );
         $stats   = Review::stats();
+
+        $pagination = [
+            'total'       => $totalCount,
+            'page'        => $page,
+            'per_page'    => $perPage,
+            'total_pages' => $totalPages,
+            'search'      => $search,
+            'status'      => $status,
+            'type'        => $type
+        ];
+
         require APP_ROOT.'/app/views/admin/reviews.php';
     }
 

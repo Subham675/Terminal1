@@ -81,7 +81,7 @@ CREATE TABLE bookings (
     booking_date    DATE,
     booking_time    TIME,
     message         TEXT,
-    status          VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending','confirmed','cancelled','completed')),
+    status          VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending','confirmed','cancelled','completed','archived')),
     -- Added by migration 002 (Razorpay payments):
     deposit_amount  DECIMAL(8,2) DEFAULT 0,
     payment_status  VARCHAR(20) DEFAULT 'unpaid' CHECK (payment_status IN ('unpaid','paid','refunded')),

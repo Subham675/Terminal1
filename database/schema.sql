@@ -78,7 +78,7 @@ CREATE TABLE bookings (
     booking_date    DATE,
     booking_time    TIME,
     message         TEXT,
-    status          VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending','confirmed','cancelled','completed')),
+    status          VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending','confirmed','cancelled','completed','archived')),
     created_at      TIMESTAMPTZ DEFAULT NOW(),
     updated_at      TIMESTAMPTZ DEFAULT NOW()
 );

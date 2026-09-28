@@ -36,7 +36,7 @@ class BookingController {
         // Use the authenticated user's verified account email
         $email = $user['email'] ?? sanitize($_POST['email'] ?? '');
 
-        $depositAmount = (float) env('DEPOSIT_AMOUNT', 100);
+        $depositAmount = (float) env('DEPOSIT_AMOUNT', 0);
 
         $id = Booking::create([
             'user_id'      => (int)$user['id'],
@@ -60,7 +60,7 @@ class BookingController {
 
         echo json_encode([
             'success'          => true,
-            'message'          => 'Reservation received! Please pay the deposit to confirm your table.',
+            'message'          => 'Reservation received! Your table request has been registered.',
             'id'               => $id,
             'tracking_token'   => $booking['tracking_token'] ?? null,
             'requires_payment' => $depositAmount > 0,
@@ -100,5 +100,64 @@ class BookingController {
         // Strictly verify server-side ownership. If id was changed/tampered, this dies with 403 Forbidden!
         $booking = verifyBookingOwnership($id, $token);
         require APP_ROOT . '/app/views/customer/view_booking.php';
+    }
+
+    /** GET /bookings/slots — returns slot availability for date */
+    public static function slots(): void {
+        header('Content-Type: application/json');
+        $date = sanitize($_GET['date'] ?? date('Y-m-d'));
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid date format']);
+            return;
+        }
+        $capacity = (int) env('SLOT_CAPACITY', 8);
+        $times = [
+            '12:30' => '12:30 PM — Lunch Service',
+            '13:30' => '01:30 PM — Afternoon Service',
+            '19:00' => '07:00 PM — Evening Service',
+            '20:30' => '08:30 PM — Prime Sitting',
+            '21:45' => '09:45 PM — Late Supper'
+        ];
+        $slots = [];
+        foreach ($times as $t => $label) {
+            $count = Booking::countForSlot($date, $t);
+            $isFull = $count >= $capacity;
+            $slots[] = [
+                'time'      => $t,
+                'label'     => $label,
+                'booked'    => $count,
+                'capacity'  => $capacity,
+                'available' => max(0, $capacity - $count),
+                'full'      => $isFull
+            ];
+        }
+        echo json_encode(['date' => $date, 'slots' => $slots]);
+    }
+
+    /** POST /bookings/cancel — customer cancels their own booking */
+    public static function cancelBooking(): void {
+        header('Content-Type: application/json');
+        csrfCheck();
+        $id = (int)($_POST['id'] ?? 0);
+        $token = sanitize($_POST['token'] ?? '');
+        $booking = verifyBookingOwnership($id, $token ?: null);
+        
+        if ($booking['status'] === 'cancelled') {
+            echo json_encode(['success' => true, 'message' => 'Reservation is already cancelled.']);
+            return;
+        }
+
+        if ($booking['status'] === 'completed') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Completed dining experiences cannot be cancelled.']);
+            return;
+        }
+
+        Booking::updateStatus($id, 'cancelled');
+        echo json_encode([
+            'success' => true,
+            'message' => 'Your reservation has been cancelled per our dining policy.'
+        ]);
     }
 }

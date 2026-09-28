@@ -94,7 +94,8 @@ foreach ($reviews as $r) {
     <button class="filter-tab" onclick="filterReviews('complaint', this)" style="border-left:2px solid var(--danger)">Complaints (<?= $complaintCount ?>)</button>
   </div>
   <div style="position:relative">
-    <input type="text" id="reviewSearch" placeholder="Search guests, titles, reflections..." onkeyup="searchReviews()" style="background:#12100C;border:1px solid var(--border);color:#fff;padding:8px 14px 8px 34px;border-radius:6px;font-size:0.84rem;width:260px">
+    <label for="reviewSearch" class="visually-hidden">Search guest reflections</label>
+    <input type="text" id="reviewSearch" placeholder="Search guests, titles, reflections..." onkeyup="searchReviews()" value="<?= e($pagination['search'] ?? '') ?>" style="background:#12100C;border:1px solid var(--border);color:#fff;padding:8px 14px 8px 34px;border-radius:6px;font-size:0.84rem;width:260px">
     <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-dim)" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   </div>
 </div>
@@ -191,7 +192,9 @@ foreach ($reviews as $r) {
               </td>
 
               <td style="text-align:right">
-                <form method="POST" action="<?= url('/admin/reviews/delete') ?>" onsubmit="return confirm('Permanently remove this review from the guestbook?');" style="display:inline">
+                <form method="POST" action="<?= url('/admin/reviews/delete') ?>" 
+                      data-confirm="Permanently remove this review from the guestbook?"
+                      data-title="Delete Guest Review" style="display:inline">
                   <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                   <input type="hidden" name="id" value="<?= $rev['id'] ?>">
                   <button type="submit" class="btn btn-sm btn-danger" style="padding:4px 8px;font-size:0.75rem" title="Delete Review">
@@ -204,6 +207,22 @@ foreach ($reviews as $r) {
         </tbody>
       </table>
     </div>
+
+    <?php if(!empty($pagination) && $pagination['total_pages'] > 1): ?>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-top:1px solid var(--border); font-size:0.82rem; color:var(--text-muted); flex-wrap:wrap; gap:12px;">
+        <div>
+          Showing page <?= $pagination['page'] ?> of <?= $pagination['total_pages'] ?> (<?= $pagination['total'] ?> total reviews)
+        </div>
+        <div style="display:flex; gap:8px;">
+          <?php if($pagination['page'] > 1): ?>
+            <a href="?page=<?= $pagination['page'] - 1 ?>&q=<?= urlencode($pagination['search'] ?? '') ?>&status=<?= urlencode($pagination['status'] ?? '') ?>&type=<?= urlencode($pagination['type'] ?? '') ?>" class="btn btn-sm" style="text-decoration:none; padding:6px 12px; background:rgba(255,255,255,0.06); color:#fff;">&larr; Previous</a>
+          <?php endif; ?>
+          <?php if($pagination['page'] < $pagination['total_pages']): ?>
+            <a href="?page=<?= $pagination['page'] + 1 ?>&q=<?= urlencode($pagination['search'] ?? '') ?>&status=<?= urlencode($pagination['status'] ?? '') ?>&type=<?= urlencode($pagination['type'] ?? '') ?>" class="btn btn-sm" style="text-decoration:none; padding:6px 12px; background:rgba(255,255,255,0.06); color:#fff;">Next &rarr;</a>
+          <?php endif; ?>
+        </div>
+      </div>
+    <?php endif; ?>
   <?php endif; ?>
 </div>
 

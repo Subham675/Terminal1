@@ -62,6 +62,7 @@ class Booking {
         return $stmt->fetchAll();
     }
     public static function delete(int $id): void { Database::query('DELETE FROM bookings WHERE id=?',[$id]); }
+    public static function archive(int $id): void { Database::query("UPDATE bookings SET status='archived',updated_at=NOW() WHERE id=?", [$id]); }
 
     /** Highest booking ID currently in the table — used by the admin live-update stream
      *  to detect when a brand-new booking has come in. */

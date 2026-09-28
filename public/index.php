@@ -33,8 +33,11 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $routes = [
     'GET' => [
         '/'                    => fn() => require APP_ROOT.'/app/views/home.php',
+        '/menu'                => fn() => redirect('/#menu'),
         '/privacy'             => fn() => require APP_ROOT.'/app/views/legal/privacy.php',
+        '/legal/privacy'       => fn() => redirect('/privacy'),
         '/terms'               => fn() => require APP_ROOT.'/app/views/legal/terms.php',
+        '/legal/terms'         => fn() => redirect('/terms'),
         '/my-bookings'         => [BookingController::class, 'myBookings'],
         '/bookings/view'       => [BookingController::class, 'viewBooking'],
         '/order'               => [BookingController::class, 'viewBooking'],
@@ -53,6 +56,7 @@ $routes = [
         '/admin/menu'          => [AdminController::class, 'menu'],
         '/admin/reviews'       => [AdminController::class, 'reviews'],
         '/api/reviews'         => [ReviewController::class, 'apiList'],
+        '/bookings/slots'      => [BookingController::class, 'slots'],
         '/track/stream'        => [TrackingController::class, 'customerStream'],
         '/admin/track/stream'  => [TrackingController::class, 'adminStream'],
         '/track'               => [BookingController::class, 'viewBooking'],
@@ -65,6 +69,7 @@ $routes = [
         '/auth/logout'             => [AuthController::class, 'logout'],
         '/bookings'                => [BookingController::class, 'store'],
         '/book'                    => [BookingController::class, 'store'],
+        '/bookings/cancel'         => [BookingController::class, 'cancelBooking'],
         '/reviews'                 => [ReviewController::class, 'submit'],
         '/payments/create-order'   => [PaymentController::class, 'createOrder'],
         '/payments/verify'         => [PaymentController::class, 'verify'],
@@ -101,15 +106,26 @@ if ($urlQueryId > 0 && !str_starts_with($uri, '/admin') && !in_array($uri, ['/tr
     verifyBookingOwnership($urlQueryId, $tokenParam);
 }
 
-$handler = $routes[$method][$uri] ?? null;
-if($handler){
-    if(is_array($handler)){
-        [$class, $action] = $handler;
-        $class::$action();
+try {
+    $handler = $routes[$method][$uri] ?? null;
+    if($handler){
+        if(is_array($handler)){
+            [$class, $action] = $handler;
+            $class::$action();
+        } else {
+            $handler();
+        }
     } else {
-        $handler();
+        http_response_code(404);
+        require APP_ROOT . '/app/views/errors/404.php';
     }
-} else {
-    http_response_code(404);
-    echo '<!DOCTYPE html><html><body style="background:#0F0E0B;color:#C8860A;font-family:sans-serif;text-align:center;padding:100px"><h1 style="font-size:4rem">404</h1><p>Page not found. <a style="color:#E8A820" href="/">← Go home</a></p></body></html>';
+} catch (Throwable $e) {
+    error_log("Unhandled exception on {$method} {$uri}: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+    if (env('APP_ENV') === 'development' || env('APP_DEBUG') === 'true') {
+        http_response_code(500);
+        echo "<pre style='background:#111;color:#f87171;padding:24px;'>Internal Server Error:\n" . htmlspecialchars($e->getMessage()) . "\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+    } else {
+        http_response_code(500);
+        require APP_ROOT . '/app/views/errors/500.php';
+    }
 }

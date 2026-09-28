@@ -119,16 +119,17 @@ foreach ($bookings as $b) {
     <!-- Live Filter & Search Controls -->
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
       <div style="position:relative;">
-        <input type="text" id="ledgerSearch" placeholder="Search guest, phone, email…" oninput="filterBookings()" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;padding:8px 12px 8px 32px;border-radius:6px;font-size:0.82rem;width:240px;outline:none;">
+        <label for="ledgerSearch" class="visually-hidden">Search Bookings</label>
+        <input type="text" id="ledgerSearch" placeholder="Search guest, phone, email…" oninput="filterBookings()" value="<?= e($pagination['search'] ?? '') ?>" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;padding:8px 12px 8px 32px;border-radius:6px;font-size:0.82rem;width:240px;outline:none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
       </div>
 
       <div style="display:flex;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;padding:3px;">
-        <button class="filter-tab active" data-filter="all" onclick="setFilter('all', this)">All (<?= $totalCount ?>)</button>
-        <button class="filter-tab" data-filter="pending" onclick="setFilter('pending', this)">Pending (<?= $pendingCount ?>)</button>
-        <button class="filter-tab" data-filter="confirmed" onclick="setFilter('confirmed', this)">Confirmed (<?= $confirmedCount ?>)</button>
-        <button class="filter-tab" data-filter="completed" onclick="setFilter('completed', this)">Fulfilled (<?= $completedCount ?>)</button>
-        <button class="filter-tab" data-filter="cancelled" onclick="setFilter('cancelled', this)">Cancelled (<?= $cancelledCount ?>)</button>
+        <button class="filter-tab <?= empty($pagination['status']) ? 'active' : '' ?>" data-filter="all" onclick="setFilter('all', this)">All (<?= $totalCount ?>)</button>
+        <button class="filter-tab <?= ($pagination['status'] ?? '') === 'pending' ? 'active' : '' ?>" data-filter="pending" onclick="setFilter('pending', this)">Pending (<?= $pendingCount ?>)</button>
+        <button class="filter-tab <?= ($pagination['status'] ?? '') === 'confirmed' ? 'active' : '' ?>" data-filter="confirmed" onclick="setFilter('confirmed', this)">Confirmed (<?= $confirmedCount ?>)</button>
+        <button class="filter-tab <?= ($pagination['status'] ?? '') === 'completed' ? 'active' : '' ?>" data-filter="completed" onclick="setFilter('completed', this)">Fulfilled (<?= $completedCount ?>)</button>
+        <button class="filter-tab <?= ($pagination['status'] ?? '') === 'cancelled' ? 'active' : '' ?>" data-filter="cancelled" onclick="setFilter('cancelled', this)">Cancelled (<?= $cancelledCount ?>)</button>
       </div>
     </div>
   </div>
@@ -138,6 +139,9 @@ foreach ($bookings as $b) {
     .filter-tab:hover{color:#fff}
     .filter-tab.active{background:rgba(200,134,10,0.18);color:var(--gold-lt);border:1px solid var(--border-gold)}
     .action-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .btn-act-refund{background:rgba(210,153,34,0.14);border:1px solid rgba(210,153,34,0.35);color:#e3b341;}
+    .btn-act-refund:hover{background:rgba(210,153,34,0.25);color:#fff;}
+    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
     .btn-act{padding:4px 9px;border-radius:4px;font-size:0.72rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:4px;font-family:var(--font-body)}
     .btn-act-confirm{background:var(--success-bg);color:var(--success);border:1px solid rgba(63,185,80,0.3)}.btn-act-confirm:hover{background:var(--success);color:#fff}
     .btn-act-cancel{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(248,81,73,0.3)}.btn-act-cancel:hover{background:var(--danger);color:#fff}
@@ -298,21 +302,28 @@ foreach ($bookings as $b) {
 
                 <!-- Refund Deposit (if paid) -->
                 <?php if(($b['payment_status'] ?? '') === 'paid'): ?>
-                  <form method="POST" action="<?= url('/admin/bookings/refund') ?>" style="display:inline;" onsubmit="return confirm('Initiate refund of ₹<?= number_format((float)($b['deposit_amount']??0),0) ?> to diner? This cannot be undone.')">
+                  <form method="POST" action="<?= url('/admin/bookings/refund') ?>" style="display:inline;"
+                        data-confirm="Initiate official refund of ₹<?= number_format((float)($b['deposit_amount']??0),0) ?> to diner <?= e($b['name']) ?>? This cannot be undone."
+                        data-title="Refund Table Deposit"
+                        data-danger="true">
                     <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                     <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
-                    <button type="submit" class="btn-act btn-act-cancel" title="Refund Deposit">
+                    <button type="submit" class="btn-act btn-act-refund" title="Refund Deposit">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                       Refund ₹<?= number_format((float)($b['deposit_amount']??0),0) ?>
                     </button>
                   </form>
                 <?php endif; ?>
 
-                <!-- Delete record -->
-                <form method="POST" action="<?= url('/admin/bookings/delete') ?>" style="display:inline;" onsubmit="return confirm('Permanently remove reservation #<?= $b['id'] ?> from ledger?')">
+                <!-- Archive record -->
+                <form method="POST" action="<?= url('/admin/bookings/delete') ?>" style="display:inline;"
+                      data-confirm="Archive reservation #<?= $b['id'] ?> from the active table ledger?"
+                      data-title="Archive Reservation">
                   <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                   <input type="hidden" name="id" value="<?= $b['id'] ?>">
-                  <button type="submit" class="btn-act btn-act-delete" title="Delete record">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <button type="submit" class="btn-act btn-act-delete" title="Archive record">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect width="22" height="5" x="1" y="3"/><line x1="10" x2="14" y1="12" y2="12"/></svg>
+                    Archive
                   </button>
                 </form>
               </div>
@@ -322,6 +333,22 @@ foreach ($bookings as $b) {
       <?php endif; ?>
       </tbody>
     </table>
+
+    <?php if(!empty($pagination) && $pagination['total_pages'] > 1): ?>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-top:1px solid var(--border); font-size:0.82rem; color:var(--text-muted); flex-wrap:wrap; gap:12px;">
+        <div>
+          Showing page <?= $pagination['page'] ?> of <?= $pagination['total_pages'] ?> (<?= $pagination['total'] ?> total reservations)
+        </div>
+        <div style="display:flex; gap:8px;">
+          <?php if($pagination['page'] > 1): ?>
+            <a href="?page=<?= $pagination['page'] - 1 ?>&q=<?= urlencode($pagination['search'] ?? '') ?>&status=<?= urlencode($pagination['status'] ?? '') ?>" class="btn-act" style="text-decoration:none; padding:6px 12px; background:rgba(255,255,255,0.06); color:#fff;">&larr; Previous</a>
+          <?php endif; ?>
+          <?php if($pagination['page'] < $pagination['total_pages']): ?>
+            <a href="?page=<?= $pagination['page'] + 1 ?>&q=<?= urlencode($pagination['search'] ?? '') ?>&status=<?= urlencode($pagination['status'] ?? '') ?>" class="btn-act" style="text-decoration:none; padding:6px 12px; background:rgba(255,255,255,0.06); color:#fff;">Next &rarr;</a>
+          <?php endif; ?>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
 </div>
 

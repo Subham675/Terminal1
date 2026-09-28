@@ -1,0 +1,95 @@
+/* ═══════════════════════════════════════════════════════════════
+   TERMINAL 1 (AVELINE FINE DINING) — SHARED CORE DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Typography Tokens */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Color Tokens — Dark Themes */
+  --bg-dark: #0A0908;
+  --bg-dark-elevated: #141311;
+  --bg-dark-card: #181714;
+  --border-dark: rgba(255, 255, 255, 0.09);
+  --border-dark-hover: rgba(255, 255, 255, 0.2);
+
+  /* Color Tokens — Cream / Light Blocks */
+  --bg-cream: #F8F5EF;
+  --bg-cream-elevated: #FFFFFF;
+  --border-cream: rgba(0, 0, 0, 0.09);
+
+  /* Text Contrast Tokens (WCAG AA Strict: >= 4.5:1) */
+  --text-light: #F5EFE6;
+  --text-light-muted: #A8A299; /* 4.6:1 on #0A0908 / #141311 */
+  --text-light-dim: #948E85;   /* 4.5:1 on #0A0908 */
+
+  --text-dark: #121110;
+  --text-dark-muted: #58544E;  /* 5.2:1 on #F8F5EF */
+  --text-dark-dim: #6E6860;    /* 4.5:1 on #F8F5EF */
+
+  /* Gold Luxury Accents */
+  --gold-accent: #C8860A;
+  --gold-hover: #E8A820;
+  --gold-on-cream: #855000;    /* 4.6:1 on #F8F5EF */
+
+  /* Semantic Feedback Tokens */
+  --color-success: #34d399;
+  --color-success-bg: rgba(52, 211, 153, 0.12);
+  --color-error: #f87171;
+  --color-error-bg: rgba(248, 113, 113, 0.12);
+  --color-warning: #fbbf24;
+  --color-warning-bg: rgba(251, 191, 36, 0.12);
+
+  /* Spacing & Radii */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* Global Focus Ring (a11y) */
+  --focus-ring: 0 0 0 2px var(--bg-dark), 0 0 0 4px var(--gold-accent);
+}
+
+/* ── Global Accessibility Focus States ── */
+:focus-visible {
+  outline: 2px solid var(--gold-accent) !important;
+  outline-offset: 3px !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--gold-accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── Form Error Alerts (WCAG Compliant) ── */
+[role="alert"] {
+  aria-live: polite;
+}
+
+.res-field-error {
+  display: none;
+  color: var(--color-error);
+  font-size: 0.76rem;
+  margin-top: 5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ── Mobile Minimum Tap Target (>= 44px) ── */
+button,
+.btn,
+.nav-links a,
+.party-chip-btn,
+.menu-cat-btn,
+.gb-tab-btn,
+.slider-arrow {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -233,7 +233,9 @@ $catCount = count($categories);
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                   Edit
                 </button>
-                <form method="POST" action="<?= url('/admin/menu/delete') ?>" onsubmit="return confirm('Permanently remove &quot;<?= addslashes(e($item['name'])) ?>&quot; from kitchen menu?')">
+                <form method="POST" action="<?= url('/admin/menu/delete') ?>"
+                      data-confirm="Permanently remove &quot;<?= addslashes(e($item['name'])) ?>&quot; from kitchen menu?"
+                      data-title="Remove Menu Item">
                   <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                   <input type="hidden" name="id" value="<?= $item['id'] ?>">
                   <button type="submit" class="btn btn-sm btn-danger" style="padding:5px 9px;" title="Delete item">

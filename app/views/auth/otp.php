@@ -3,33 +3,42 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>OTP Verification | Terminal 1</title>
+  <meta name="description" content="Verify your six-digit one-time passcode to confirm your Terminal 1 dining profile security.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<?= asset('css/app.css') ?>">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{background:#0F0E0B;font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .box{width:100%;max-width:400px;background:#1A1814;border:1px solid rgba(200,134,10,.2);border-radius:4px;overflow:hidden;text-align:center}
-    .box-header{background:#C8860A;padding:28px}
-    .box-header h1{font-family:'Playfair Display',serif;color:#fff;font-size:1.6rem}
-    .box-body{padding:36px 32px}
+    body{background:#0F0E0B;font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+    .box{width:100%;max-width:420px;background:#1A1814;border:1px solid rgba(200,134,10,.25);border-radius:4px;overflow:hidden;text-align:center}
+    .box-header{background:#C8860A;padding:26px 20px}
+    .box-header h1{font-family:'Playfair Display',serif;color:#fff;font-size:1.65rem;font-weight:700}
+    .box-body{padding:32px 24px}
     .otp-icon{margin-bottom:16px;display:flex;justify-content:center}
     .otp-title{font-size:1.1rem;color:#fff;font-weight:600;margin-bottom:8px}
-    .otp-sub{color:rgba(255,255,255,.45);font-size:.85rem;line-height:1.6;margin-bottom:28px}
-    .otp-inputs{display:flex;gap:10px;justify-content:center;margin-bottom:24px}
-    .otp-input{width:48px;height:56px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:#fff;font-size:1.4rem;font-weight:700;text-align:center;border-radius:2px;outline:none;transition:border-color .2s;font-family:'DM Sans',sans-serif}
-    .otp-input:focus{border-color:#C8860A;background:rgba(200,134,10,.08)}
+    .otp-sub{color:rgba(255,255,255,.75);font-size:.85rem;line-height:1.6;margin-bottom:28px}
+    .otp-inputs{display:flex;gap:8px;justify-content:center;margin-bottom:24px;width:100%}
+    .otp-input{flex:1 1 0;max-width:48px;min-width:34px;height:52px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.18);color:#fff;font-size:1.35rem;font-weight:700;text-align:center;border-radius:2px;outline:none;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif}
+    .otp-input:focus{border-color:#C8860A;background:rgba(200,134,10,.1)}
     input[name="otp"]{display:none}
-    .btn-verify{width:100%;background:#C8860A;border:none;color:#fff;padding:13px;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer}
+    .btn-verify{width:100%;min-height:46px;background:#C8860A;border:none;color:#fff;padding:13px;border-radius:2px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:background .2s}
     .btn-verify:hover{background:#E8A820}
-    .resend-link{color:rgba(255,255,255,.3);font-size:.82rem;margin-top:18px;display:block}
-    .resend-link a{color:#C8860A;text-decoration:none}
-    .flash{padding:10px 14px;border-radius:2px;margin-bottom:16px;font-size:.83rem}
-    .flash-error{background:rgba(207,34,46,.15);border:1px solid rgba(207,34,46,.3);color:#cf222e}
-    .flash-success{background:rgba(45,164,78,.15);border:1px solid rgba(45,164,78,.3);color:#2da44e}
-    #timer{color:#C8860A;font-weight:600}
+    .resend-link{color:rgba(255,255,255,.75);font-size:.82rem;margin-top:18px;display:block}
+    .resend-link a{color:#E8A820;text-decoration:underline;font-weight:600}
+    .flash{padding:12px 14px;border-radius:2px;margin-bottom:16px;font-size:.84rem;line-height:1.5}
+    .flash-error{background:rgba(207,34,46,.18);border:1px solid rgba(207,34,46,.4);color:#ff7b72}
+    .flash-success{background:rgba(45,164,78,.18);border:1px solid rgba(45,164,78,.4);color:#4caf70}
+    #timer{color:#E8A820;font-weight:700}
+    @media (max-width: 480px) {
+      body{padding:10px}
+      .box-header{padding:20px 14px}
+      .box-body{padding:24px 14px}
+      .otp-inputs{gap:6px}
+      .otp-input{height:48px;font-size:1.2rem}
+    }
   </style>
 </head>
 <body>
@@ -37,13 +46,13 @@
   <div class="box-header"><h1>OTP Verification</h1></div>
   <div class="box-body">
     <?php $f=flash('otp'); if($f): ?>
-      <div class="flash flash-<?= $f['type'] ?>"><?= e($f['message']) ?></div>
+      <div class="flash flash-<?= $f['type'] ?>" role="alert"><?= e($f['message']) ?></div>
     <?php endif; ?>
     <?php if (env('APP_ENV') === 'development' && !empty($_SESSION['dev_otp'])): ?>
       <div style="background:rgba(200,134,10,.1);border:1px dashed #C8860A;border-radius:2px;padding:12px;margin-bottom:20px;color:#E8A820;text-align:center;">
-        <div style="font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px;">Development Mode Code</div>
+        <div style="font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:4px;font-weight:600;">Development Mode Code</div>
         <div style="font-family:monospace;font-size:1.4rem;font-weight:700;letter-spacing:4px;color:#fff;"><?= e($_SESSION['dev_otp']) ?></div>
-        <div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:4px;">(Visible on local environment for testing)</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.6);margin-top:4px;">(Visible on local environment for testing)</div>
       </div>
     <?php endif; ?>
     <div class="otp-icon">
@@ -60,30 +69,30 @@
       <?php else: ?>
         We sent a 6-digit OTP to<br>
       <?php endif; ?>
-      <strong style="color:rgba(255,255,255,.7)"><?= e($_SESSION['otp_email'] ?? '') ?></strong><br><br>
+      <strong style="color:#FFFFFF"><?= e($_SESSION['otp_email'] ?? '') ?></strong><br><br>
       Expires in <span id="timer">10:00</span>
     </div>
     <form method="POST" action="<?= url('/auth/otp/verify') ?>" id="otpForm">
       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
       <div class="otp-inputs">
         <?php for($i=0;$i<6;$i++): ?>
-          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" required autocomplete="off">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" required autocomplete="off" aria-label="Digit <?= $i+1 ?> of 6">
         <?php endfor; ?>
       </div>
       <input type="hidden" name="otp" id="otpHidden">
       <button type="submit" class="btn-verify" id="verifyBtn">Verify & Proceed</button>
     </form>
     <div style="margin-top:20px;font-size:.82rem;">
-      <span id="resendContainer" style="color:rgba(255,255,255,.4);">
+      <span id="resendContainer" style="color:rgba(255,255,255,.75);">
         Didn't receive it? <span id="resendWait">Resend in <span id="resendSecs">60</span>s</span>
-        <a id="resendBtn" href="<?= url('/auth/otp/resend') ?>" style="display:none;color:#C8860A;text-decoration:none;font-weight:600;">Resend OTP</a>
+        <a id="resendBtn" href="<?= url('/auth/otp/resend') ?>" style="display:none;color:#E8A820;text-decoration:underline;font-weight:600;">Resend OTP</a>
       </span>
       <div style="margin-top:14px;">
-        <a href="<?= url('/auth/register') ?>" style="color:rgba(255,255,255,.4);text-decoration:none;font-size:.78rem;transition:color .2s;">Mistyped your email? Re-enter</a>
+        <a href="<?= url('/auth/register') ?>" style="color:rgba(255,255,255,.7);text-decoration:underline;font-size:.78rem;transition:color .2s;">Mistyped your email? Re-enter</a>
       </div>
-      <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);font-size:0.75rem;">
-        <a href="<?= url('/privacy') ?>" style="color:rgba(255,255,255,0.4);text-decoration:none;">Privacy Policy</a> &bull;
-        <a href="<?= url('/terms') ?>" style="color:rgba(255,255,255,0.4);text-decoration:none;">Terms &amp; Conditions</a>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.75rem;">
+        <a href="<?= url('/privacy') ?>" style="color:rgba(255,255,255,0.65);text-decoration:none;">Privacy Policy</a> &bull;
+        <a href="<?= url('/terms') ?>" style="color:rgba(255,255,255,0.65);text-decoration:none;">Terms &amp; Conditions</a>
       </div>
     </div>
   </div>

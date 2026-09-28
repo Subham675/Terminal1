@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reservation #<?= e($booking['id']) ?> | Terminal 1</title>
+  <meta name="description" content="View the concierge status, party allocation, and dining confirmation details for Reservation #<?= e($booking['id']) ?> at Terminal 1.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<?= asset('css/app.css') ?>">
   <style>
     :root {
       --gold: #C8860A;
@@ -154,7 +156,26 @@
     .btn-gold { background: var(--gold); color: #fff; }
     .btn-gold:hover { background: var(--gold-lt); }
     .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
-    .btn-ghost:hover { border-color: #fff; color: #fff; }
+    .btn-cancel {
+      background: rgba(207, 34, 46, 0.12);
+      border: 1px solid rgba(207, 34, 46, 0.35);
+      color: #ff7b72;
+      cursor: pointer;
+    }
+    .btn-cancel:hover {
+      background: rgba(207, 34, 46, 0.22);
+      border-color: #ff7b72;
+      color: #fff;
+    }
+    .cancel-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(8px);
+      z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .cancel-modal-overlay.active { display: flex; }
+    .cancel-modal-box {
+      background: #181612; border: 1px solid rgba(255,255,255,0.12); border-radius: 4px;
+      padding: 28px; max-width: 440px; width: 100%;
+    }
     .security-note {
       font-size: 0.72rem;
       color: rgba(255,255,255,0.3);
@@ -256,6 +277,14 @@
         <?php if(isLoggedIn()): ?>
           <a href="<?= url('/my-bookings') ?>" class="btn btn-ghost">View All My Bookings</a>
         <?php endif; ?>
+        <?php if($booking['status'] !== 'cancelled' && $booking['status'] !== 'completed'): ?>
+          <button type="button" class="btn btn-cancel" onclick="openCancelModal()">Cancel Reservation</button>
+        <?php endif; ?>
+      </div>
+
+      <div class="cancellation-policy-box" style="margin-top: 24px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; font-size: 0.8rem; color: var(--muted); line-height: 1.5; text-align: left;">
+        <strong style="color: #fff; display: block; margin-bottom: 4px;">Dining Cancellation Policy</strong>
+        Reservations may be cancelled at least 2 hours prior to scheduled dining service. Any advance deposits (if applicable) are subject to concierge review.
       </div>
 
       <div class="security-note">
@@ -263,6 +292,61 @@
       </div>
     </div>
   </div>
+
+  <!-- Cancellation Modal -->
+  <div id="cancelModal" class="cancel-modal-overlay" onclick="closeCancelModal(event)">
+    <div class="cancel-modal-box" onclick="event.stopPropagation()">
+      <h3 style="font-family:'Playfair Display',serif; font-size:1.35rem; color:#fff; margin-bottom:10px;">Cancel Reservation</h3>
+      <p style="font-size:0.85rem; color:var(--muted); line-height:1.5; margin-bottom:18px;">
+        Are you sure you wish to cancel this reservation for <strong><?= $booking['booking_date'] ? date('D, d M Y', strtotime($booking['booking_date'])) : 'this date' ?></strong>? This action cannot be undone.
+      </p>
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn btn-ghost" onclick="closeCancelModal()">Keep Reservation</button>
+        <button type="button" class="btn btn-cancel" id="btnConfirmCancel" onclick="executeBookingCancellation()">Yes, Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function openCancelModal() {
+    document.getElementById('cancelModal').classList.add('active');
+  }
+  function closeCancelModal(e) {
+    if (e && e.target !== e.currentTarget && !e.target.classList.contains('btn-ghost')) return;
+    document.getElementById('cancelModal').classList.remove('active');
+  }
+  async function executeBookingCancellation() {
+    const btn = document.getElementById('btnConfirmCancel');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.textContent = 'Cancelling...';
+
+    try {
+      const formData = new FormData();
+      formData.append('csrf_token', '<?= csrfToken() ?>');
+      formData.append('id', '<?= (int)$booking['id'] ?>');
+      formData.append('token', '<?= e($booking['tracking_token'] ?? '') ?>');
+
+      const res = await fetch('<?= url('/bookings/cancel') ?>', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert(data.message || 'Could not cancel booking.');
+        btn.disabled = false;
+        btn.textContent = 'Yes, Cancel';
+      }
+    } catch(e) {
+      alert('Network error while cancelling reservation.');
+      btn.disabled = false;
+      btn.textContent = 'Yes, Cancel';
+    }
+  }
+  </script>
 
   <footer>
     &copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved. &bull; <a href="<?= url('/privacy') ?>" style="color:inherit;text-decoration:none;">Privacy Policy</a> &bull; <a href="<?= url('/terms') ?>" style="color:inherit;text-decoration:none;">Terms &amp; Conditions</a>
