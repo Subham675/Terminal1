@@ -377,14 +377,27 @@ class AuthController {
         redirect('/auth/otp');
     }
 
-    // ── Logout (POST-only + CSRF, prevents forced-logout via CSRF) ──
+    // ── Logout (Supports both GET from navigation and POST from admin forms) ──
     public static function logout(): void {
-        verifyCsrf();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['csrf_token'])) {
+            verifyCsrf();
+        }
         if (isAdmin()) {
             auditLog('ADMIN_LOGOUT', 'Admin signed out');
         }
-        session_destroy();
-        redirect('/auth/login');
+        $_SESSION = [];
+        if (session_id()) {
+            session_destroy();
+        }
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        flash('login', 'You have been signed out successfully.', 'info');
+        $target = sanitize($_GET['redirect'] ?? '/auth/login');
+        if (!str_starts_with($target, '/')) {
+            $target = '/auth/login';
+        }
+        redirect($target);
     }
 
     // ── Internals ──────────────────────────────────────────
