@@ -1583,18 +1583,18 @@
       display: none;
       position: fixed;
       top: 0;
-      left: 0;
+      right: 0;
       bottom: 0;
       width: min(85vw, 380px);
       background: linear-gradient(175deg, rgba(18, 16, 14, 0.99) 0%, rgba(10, 9, 8, 0.995) 100%);
       backdrop-filter: blur(40px) saturate(1.3);
       -webkit-backdrop-filter: blur(40px) saturate(1.3);
-      border-right: 1px solid rgba(193, 154, 91, 0.12);
+      border-left: 1px solid rgba(193, 154, 91, 0.12);
       z-index: 999;
       overflow-y: auto;
       overscroll-behavior: contain;
-      box-shadow: 20px 0 80px rgba(0, 0, 0, 0.6);
-      transform: translateX(-102%);
+      box-shadow: -20px 0 80px rgba(0, 0, 0, 0.6);
+      transform: translateX(102%);
       transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .mobile-nav-drawer.open {
@@ -1658,7 +1658,7 @@
       overflow: hidden;
       /* Stagger animation setup – links start invisible & shifted */
       opacity: 0;
-      transform: translateX(-30px);
+      transform: translateX(30px);
       transition: color 0.3s ease, background 0.3s ease, opacity 0.01s, transform 0.01s;
     }
 
