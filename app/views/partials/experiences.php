@@ -56,6 +56,51 @@
           <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
         </div>
       </div>
+
+      <!-- Card 4 -->
+      <div class="experience-card">
+        <div>
+          <div class="exp-num">(04)</div>
+          <h3 class="exp-title">SOMMELIER RESERVE PAIRING</h3>
+          <p class="exp-desc">
+            An exquisite journey through artisanal reserve vintages, small-batch spirits, and tailored botanical infusions paired with curated canapés.
+          </p>
+        </div>
+        <div class="exp-footer">
+          <span class="exp-meta">TASTING &bull; CURATED</span>
+          <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="experience-card">
+        <div>
+          <div class="exp-num">(05)</div>
+          <h3 class="exp-title">PATIO CANOPY STARLIGHT</h3>
+          <p class="exp-desc">
+            Al fresco dining under the evening sky amidst fragrant garden flora, live ambient acoustic melodies, and bespoke candlelight.
+          </p>
+        </div>
+        <div class="exp-footer">
+          <span class="exp-meta">AL FRESCO &bull; EVENING</span>
+          <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="experience-card">
+        <div>
+          <div class="exp-num">(06)</div>
+          <h3 class="exp-title">ARTISANAL MASTERCLASS</h3>
+          <p class="exp-desc">
+            An intimate weekend session with our master chefs exploring hand-pulled pasta craft, heritage marinades, and fine pastry alchemy.
+          </p>
+        </div>
+        <div class="exp-footer">
+          <span class="exp-meta">WEEKENDS &bull; BY INVITATION</span>
+          <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -63,5 +108,8 @@
     <span class="indicator-dot active" onclick="jumpSlide('experiencesTrack', 0)"></span>
     <span class="indicator-dot" onclick="jumpSlide('experiencesTrack', 1)"></span>
     <span class="indicator-dot" onclick="jumpSlide('experiencesTrack', 2)"></span>
+    <span class="indicator-dot" onclick="jumpSlide('experiencesTrack', 3)"></span>
+    <span class="indicator-dot" onclick="jumpSlide('experiencesTrack', 4)"></span>
+    <span class="indicator-dot" onclick="jumpSlide('experiencesTrack', 5)"></span>
   </div>
 </section>
