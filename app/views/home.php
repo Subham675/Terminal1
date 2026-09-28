@@ -442,6 +442,154 @@ $user = authUser();
       margin-top: 10px;
     }
 
+    /* ─── SLIDEBAR UNIVERSAL CONTROLS ─── */
+    .section-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .slider-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .slider-arrow {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--border-dark);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-light);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s ease;
+      user-select: none;
+    }
+    .slider-arrow:hover {
+      background: var(--gold-accent);
+      border-color: var(--gold-accent);
+      color: #FFFFFF;
+      transform: scale(1.06);
+    }
+    .slider-arrow:active {
+      transform: scale(0.95);
+    }
+    .slider-arrow.dark {
+      border: 1px solid rgba(20, 19, 18, 0.2);
+      background: rgba(20, 19, 18, 0.05);
+      color: var(--text-dark);
+    }
+    .slider-arrow.dark:hover {
+      background: #141312;
+      border-color: #141312;
+      color: #FFFFFF;
+    }
+
+    .slider-container {
+      position: relative;
+      width: 100%;
+    }
+    .slider-track {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 10px 4px 16px;
+    }
+    .slider-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .slider-indicators {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .indicator-dot {
+      width: 24px;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.18);
+      cursor: pointer;
+      transition: all .25s ease;
+    }
+    .indicator-dot.active {
+      background: var(--gold-accent);
+      width: 38px;
+    }
+
+    /* Experiences Slidebar Cards */
+    .experiences-slider-track .experience-card {
+      flex: 0 0 calc(33.333% - 16px);
+      min-width: 300px;
+      scroll-snap-align: start;
+      box-sizing: border-box;
+      margin-top: 0;
+    }
+
+    /* Menu Dishes Slidebar Track */
+    .aveline-dish-slider-track {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 10px 4px 16px;
+    }
+    .aveline-dish-slider-track::-webkit-scrollbar {
+      display: none;
+    }
+    .aveline-dish-slider-track .aveline-dish-card {
+      flex: 0 0 310px;
+      min-width: 290px;
+      max-width: 320px;
+      scroll-snap-align: start;
+      box-sizing: border-box;
+    }
+
+    /* Guestbook Reviews Slidebar Track */
+    .guestbook-slider-track {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 10px 4px 16px;
+      margin-top: 20px;
+    }
+    .guestbook-slider-track::-webkit-scrollbar {
+      display: none;
+    }
+    .guestbook-slider-track .guestbook-card {
+      flex: 0 0 340px;
+      min-width: 300px;
+      max-width: 360px;
+      scroll-snap-align: start;
+      box-sizing: border-box;
+    }
+    .guestbook-tabs-and-slider {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
     /* ─── EXPERIENCES BEYOND THE TABLE ─── */
     .experiences-grid {
       display: grid;
@@ -1651,6 +1799,25 @@ $user = authUser();
         grid-template-columns: 1fr !important;
         gap: 24px;
       }
+      .experiences-slider-track .experience-card {
+        flex: 0 0 calc(100% - 36px) !important;
+        min-width: 270px !important;
+        max-width: 350px !important;
+      }
+      .aveline-dish-slider-track .aveline-dish-card {
+        flex: 0 0 calc(100% - 40px) !important;
+        min-width: 270px !important;
+        max-width: 330px !important;
+      }
+      .guestbook-slider-track .guestbook-card {
+        flex: 0 0 calc(100% - 36px) !important;
+        min-width: 270px !important;
+        max-width: 350px !important;
+      }
+      .slider-arrow {
+        width: 38px;
+        height: 38px;
+      }
       .res-form-grid {
         grid-template-columns: 1fr;
         gap: 16px;
@@ -1848,69 +2015,101 @@ $user = authUser();
   </div>
 </section>
 
-<!-- EXPERIENCES BEYOND THE TABLE -->
+<!-- EXPERIENCES BEYOND THE TABLE (SLIDEBAR) -->
 <section class="aveline-section" id="experiences">
-  <span class="section-eyebrow">DINING EXPERIENCES</span>
-  <h2 class="section-serif-title">EXPERIENCES BEYOND THE TABLE</h2>
-  <p class="section-desc">
-    From intimate course-by-course seasonal dinners to grand celebrations, every evening is orchestrated with genuine warmth and culinary precision.
-  </p>
+  <div class="section-header-flex">
+    <div>
+      <span class="section-eyebrow">DINING EXPERIENCES</span>
+      <h2 class="section-serif-title">EXPERIENCES BEYOND THE TABLE</h2>
+      <p class="section-desc">
+        From intimate course-by-course seasonal dinners to grand celebrations, every evening is orchestrated with genuine warmth and culinary precision.
+      </p>
+    </div>
+    <div class="slider-controls">
+      <button type="button" class="slider-arrow" onclick="slideTrack('experiencesTrack', -1)" aria-label="Previous Experience">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="slider-arrow" onclick="slideTrack('experiencesTrack', 1)" aria-label="Next Experience">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
 
-  <div class="experiences-grid">
-    <!-- Card 1 -->
-    <div class="experience-card">
-      <div>
-        <div class="exp-num">(01)</div>
-        <h3 class="exp-title">CHEF'S TABLE TASTING</h3>
-        <p class="exp-desc">
-          An intimate seasonal menu presented course by course, with thoughtful pairings and a limited number of seats per service.
-        </p>
+  <div class="slider-container">
+    <div class="slider-track experiences-slider-track" id="experiencesTrack">
+      <!-- Card 1 -->
+      <div class="experience-card">
+        <div>
+          <div class="exp-num">(01)</div>
+          <h3 class="exp-title">CHEF'S TABLE TASTING</h3>
+          <p class="exp-desc">
+            An intimate seasonal menu presented course by course, with thoughtful pairings and a limited number of seats per service.
+          </p>
+        </div>
+        <div class="exp-footer">
+          <span class="exp-meta">DINNER &bull; FROM ₹850</span>
+          <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+        </div>
       </div>
-      <div class="exp-footer">
-        <span class="exp-meta">DINNER &bull; FROM ₹850</span>
-        <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+
+      <!-- Card 2 -->
+      <div class="experience-card">
+        <div>
+          <div class="exp-num">(02)</div>
+          <h3 class="exp-title">HERITAGE SUPPER LOUNGE</h3>
+          <p class="exp-desc">
+            Late-evening culinary dishes, clay-oven roasts, and relaxed conversation in a setting designed for memorable nights.
+          </p>
+        </div>
+        <div class="exp-footer">
+          <span class="exp-meta">EVENING &bull; BESPOKE</span>
+          <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="experience-card">
+        <div>
+          <div class="exp-num">(03)</div>
+          <h3 class="exp-title">PRIVATE DINING SUITE</h3>
+          <p class="exp-desc">
+            A sophisticated setting for celebrations and gatherings, combining discreet service and carefully considered seasonal menus.
+          </p>
+        </div>
+        <div class="exp-footer">
+          <span class="exp-meta">PRIVATE &bull; COURTYARD</span>
+          <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- Card 2 -->
-    <div class="experience-card">
-      <div>
-        <div class="exp-num">(02)</div>
-        <h3 class="exp-title">HERITAGE SUPPER LOUNGE</h3>
-        <p class="exp-desc">
-          Late-evening culinary dishes, clay-oven roasts, and relaxed conversation in a setting designed for memorable nights.
-        </p>
-      </div>
-      <div class="exp-footer">
-        <span class="exp-meta">EVENING &bull; BESPOKE</span>
-        <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
-      </div>
-    </div>
-
-    <!-- Card 3 -->
-    <div class="experience-card">
-      <div>
-        <div class="exp-num">(03)</div>
-        <h3 class="exp-title">PRIVATE DINING SUITE</h3>
-        <p class="exp-desc">
-          A sophisticated setting for celebrations and gatherings, combining discreet service and carefully considered seasonal menus.
-        </p>
-      </div>
-      <div class="exp-footer">
-        <span class="exp-meta">PRIVATE &bull; COURTYARD</span>
-        <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
-      </div>
-    </div>
+  <div class="slider-indicators" id="experiencesIndicators">
+    <span class="indicator-dot active" onclick="jumpSlide('experiencesTrack', 0)"></span>
+    <span class="indicator-dot" onclick="jumpSlide('experiencesTrack', 1)"></span>
+    <span class="indicator-dot" onclick="jumpSlide('experiencesTrack', 2)"></span>
   </div>
 </section>
 
 <!-- SIGNATURE MENU & THE TASTE (CREAM WRAP) -->
 <section class="aveline-section menu-cream-wrap" id="menu">
-  <span class="section-eyebrow" style="color:var(--gold-accent);">FEATURED MENU</span>
-  <h2 class="section-serif-title dark">A CURATED EXPRESSION OF THE SEASON</h2>
-  <p class="section-desc" style="color:var(--text-dark-muted);">
-    Discover a selection of signature dishes thoughtfully composed to reflect authentic flavors, pristine spices, and artisanal craft.
-  </p>
+  <div class="section-header-flex">
+    <div>
+      <span class="section-eyebrow" style="color:var(--gold-accent);">FEATURED MENU</span>
+      <h2 class="section-serif-title dark">A CURATED EXPRESSION OF THE SEASON</h2>
+      <p class="section-desc" style="color:var(--text-dark-muted);">
+        Discover a selection of signature dishes thoughtfully composed to reflect authentic flavors, pristine spices, and artisanal craft.
+      </p>
+    </div>
+    <div class="slider-controls">
+      <button type="button" class="slider-arrow dark" onclick="slideTrack('dishGrid', -1)" aria-label="Previous Dishes">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="slider-arrow dark" onclick="slideTrack('dishGrid', 1)" aria-label="Next Dishes">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
 
   <!-- Filter Buttons -->
   <div class="menu-category-filter">
@@ -1921,8 +2120,9 @@ $user = authUser();
     <button class="menu-cat-btn" data-cat="rice">RICE &amp; POLAO</button>
   </div>
 
-  <!-- Dishes Grid -->
-  <div class="aveline-dish-grid" id="dishGrid">
+  <!-- Dishes Slidebar Track -->
+  <div class="slider-container">
+    <div class="aveline-dish-slider-track" id="dishGrid">
 
     <!-- Item 1: Artisanal Tagliolini with Herb Crumb -->
     <div class="aveline-dish-card" data-category="signature">
@@ -2050,6 +2250,7 @@ $user = authUser();
       </div>
     </div>
 
+    </div>
   </div>
 </section>
 
@@ -2240,83 +2441,87 @@ $user = authUser();
       </div>
     </div>
 
-    <!-- Segment Filter Tabs -->
-    <div class="guestbook-filter-tabs">
-      <button type="button" class="gb-tab-btn active" id="gbTabAll" onclick="filterGuestbook('all', this)">
-        All Reflections (<?= count($reviewsList) ?>)
-      </button>
-      <button type="button" class="gb-tab-btn" id="gbTabCompliment" onclick="filterGuestbook('compliment', this)">
-        ★ Compliments &amp; Praise (<?= $reviewStats['compliments'] ?>)
-      </button>
-      <button type="button" class="gb-tab-btn" id="gbTabComplaint" onclick="filterGuestbook('complaint', this)">
-        ⚠ Critiques &amp; Concerns (<?= $reviewStats['complaints'] ?>)
-      </button>
-    </div>
-  </div>
-
-  <!-- Cards Grid -->
-  <div class="guestbook-cards-grid" id="guestbookCardsGrid">
-    <?php if (empty($reviewsList)): ?>
-      <div style="grid-column: 1 / -1; padding: 40px 20px; text-align: center; color: var(--text-light-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 2px;">
-        <p style="font-family: var(--font-serif); font-size: 1.25rem; color: #fff; margin-bottom: 6px;">Be the First to Inscribe Your Memory</p>
-        <p style="font-size: 0.84rem; max-width: 480px; margin: 0 auto 16px;">Share your dining impressions, culinary favorites, or constructive feedback with our team.</p>
-        <button type="button" class="btn-write-review" onclick="openReviewModal()">Write a Reflection</button>
+    <!-- Segment Filter Tabs & Slidebar Controls -->
+    <div class="guestbook-tabs-and-slider">
+      <div class="guestbook-filter-tabs">
+        <button type="button" class="gb-tab-btn active" id="gbTabAll" onclick="filterGuestbook('all', this)">
+          All Reflections (<?= count($reviewsList) ?>)
+        </button>
+        <button type="button" class="gb-tab-btn" id="gbTabCompliment" onclick="filterGuestbook('compliment', this)">
+          ★ Compliments &amp; Praise (<?= $reviewStats['compliments'] ?>)
+        </button>
+        <button type="button" class="gb-tab-btn" id="gbTabComplaint" onclick="filterGuestbook('complaint', this)">
+          ⚠ Critiques &amp; Concerns (<?= $reviewStats['complaints'] ?>)
+        </button>
       </div>
-    <?php else: ?>
-      <?php $cardIdx = 0; foreach ($reviewsList as $rev): $cardIdx++; ?>
-        <div class="guestbook-card <?= $rev['type'] === 'complaint' ? 'is-complaint' : 'is-compliment' ?>" data-type="<?= e($rev['type']) ?>" style="<?= $cardIdx > 3 ? 'display:none;' : '' ?>">
-          <div class="gb-card-top">
-            <?php if ($rev['type'] === 'compliment'): ?>
-              <span class="gb-type-tag tag-compliment">★ Compliment</span>
-            <?php else: ?>
-              <span class="gb-type-tag tag-complaint">⚠ Critique / Feedback</span>
-            <?php endif; ?>
-            <div class="gb-card-stars">
-              <?= str_repeat('★', (int)$rev['rating']) ?><span style="opacity:0.25;"><?= str_repeat('★', 5 - (int)$rev['rating']) ?></span>
-            </div>
-          </div>
 
-          <h3 class="gb-card-title"><?= e($rev['title'] ?: ($rev['type'] === 'compliment' ? 'Exquisite Dining Experience' : 'Dining Reflection & Service Notes')) ?></h3>
-
-          <p class="gb-card-quote">“<?= nl2br(e($rev['content'])) ?>”</p>
-
-          <?php if (!empty($rev['admin_reply'])): ?>
-            <div class="gb-admin-reply">
-              <div class="reply-header">
-                <span class="reply-crest">T1</span>
-                <strong>Management Response</strong>
-              </div>
-              <p class="reply-text"><?= nl2br(e($rev['admin_reply'])) ?></p>
-            </div>
-          <?php endif; ?>
-
-          <div class="gb-card-footer">
-            <div class="gb-author-info">
-              <div class="gb-author-avatar">
-                <?= strtoupper(substr($rev['name'] ?? 'G', 0, 1)) ?>
-              </div>
-              <div>
-                <span class="gb-author-name"><?= e($rev['name']) ?></span>
-                <span class="gb-meta-date"><?= date('F Y', strtotime($rev['created_at'])) ?></span>
-              </div>
-            </div>
-            <?php if (!empty($rev['user_id'])): ?>
-              <span class="gb-verified-badge">&#10003; Verified Diner</span>
-            <?php endif; ?>
-          </div>
-        </div>
-      <?php endforeach; ?>
-    <?php endif; ?>
+      <div class="slider-controls">
+        <button type="button" class="slider-arrow" onclick="slideTrack('guestbookCardsGrid', -1)" aria-label="Previous Reflection">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="slider-arrow" onclick="slideTrack('guestbookCardsGrid', 1)" aria-label="Next Reflection">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <?php if (count($reviewsList) > 3): ?>
-    <div class="gb-toggle-wrap" id="gbToggleWrap" style="text-align:center; margin-top:20px;">
-      <button type="button" class="btn-toggle-reviews" id="btnToggleReviews" onclick="toggleAllReviews()">
-        <span id="btnToggleReviewsText">VIEW ALL <?= count($reviewsList) ?> REFLECTIONS</span>
-        <svg id="btnToggleReviewsIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
+  <!-- Slidebar Track -->
+  <div class="slider-container">
+    <div class="guestbook-slider-track" id="guestbookCardsGrid">
+      <?php if (empty($reviewsList)): ?>
+        <div style="width: 100%; min-width: 280px; padding: 36px 20px; text-align: center; color: var(--text-light-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 2px;">
+          <p style="font-family: var(--font-serif); font-size: 1.25rem; color: #fff; margin-bottom: 6px;">Be the First to Inscribe Your Memory</p>
+          <p style="font-size: 0.84rem; max-width: 480px; margin: 0 auto 16px;">Share your dining impressions, culinary favorites, or constructive feedback with our team.</p>
+          <button type="button" class="btn-write-review" onclick="openReviewModal()">Write a Reflection</button>
+        </div>
+      <?php else: ?>
+        <?php foreach ($reviewsList as $rev): ?>
+          <div class="guestbook-card <?= $rev['type'] === 'complaint' ? 'is-complaint' : 'is-compliment' ?>" data-type="<?= e($rev['type']) ?>">
+            <div class="gb-card-top">
+              <?php if ($rev['type'] === 'compliment'): ?>
+                <span class="gb-type-tag tag-compliment">★ Compliment</span>
+              <?php else: ?>
+                <span class="gb-type-tag tag-complaint">⚠ Critique / Feedback</span>
+              <?php endif; ?>
+              <div class="gb-card-stars">
+                <?= str_repeat('★', (int)$rev['rating']) ?><span style="opacity:0.25;"><?= str_repeat('★', 5 - (int)$rev['rating']) ?></span>
+              </div>
+            </div>
+
+            <h3 class="gb-card-title"><?= e($rev['title'] ?: ($rev['type'] === 'compliment' ? 'Exquisite Dining Experience' : 'Dining Reflection & Service Notes')) ?></h3>
+
+            <p class="gb-card-quote">“<?= nl2br(e($rev['content'])) ?>”</p>
+
+            <?php if (!empty($rev['admin_reply'])): ?>
+              <div class="gb-admin-reply">
+                <div class="reply-header">
+                  <span class="reply-crest">T1</span>
+                  <strong>Management Response</strong>
+                </div>
+                <p class="reply-text"><?= nl2br(e($rev['admin_reply'])) ?></p>
+              </div>
+            <?php endif; ?>
+
+            <div class="gb-card-footer">
+              <div class="gb-author-info">
+                <div class="gb-author-avatar">
+                  <?= strtoupper(substr($rev['name'] ?? 'G', 0, 1)) ?>
+                </div>
+                <div>
+                  <span class="gb-author-name"><?= e($rev['name']) ?></span>
+                  <span class="gb-meta-date"><?= date('F Y', strtotime($rev['created_at'])) ?></span>
+                </div>
+              </div>
+              <?php if (!empty($rev['user_id'])): ?>
+                <span class="gb-verified-badge">&#10003; Verified Diner</span>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
-  <?php endif; ?>
+  </div>
 </section>
 
 <!-- EDITORIAL FOOTER -->
@@ -2488,6 +2693,66 @@ $user = authUser();
 <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 
 <script>
+// ─── 0. HORIZONTAL SLIDEBAR CONTROLS ───
+function slideTrack(trackId, direction) {
+  const track = document.getElementById(trackId);
+  if (!track) return;
+  const visibleCard = Array.from(track.children).find(c => c.offsetParent !== null);
+  const amount = visibleCard ? (visibleCard.offsetWidth + 20) : 320;
+  track.scrollBy({ left: direction * amount, behavior: 'smooth' });
+}
+
+function jumpSlide(trackId, index) {
+  const track = document.getElementById(trackId);
+  if (!track) return;
+  const visibleCards = Array.from(track.children).filter(c => c.offsetParent !== null);
+  if (visibleCards[index]) {
+    const card = visibleCards[index];
+    track.scrollTo({
+      left: card.offsetLeft - track.offsetLeft,
+      behavior: 'smooth'
+    });
+  }
+}
+
+function setupTrackObserver(trackId, indicatorId) {
+  const track = document.getElementById(trackId);
+  const indicatorsWrap = document.getElementById(indicatorId);
+  if (!track || !indicatorsWrap) return;
+  const dots = indicatorsWrap.querySelectorAll('.indicator-dot');
+  if (!dots.length) return;
+
+  let isTicking = false;
+  track.addEventListener('scroll', () => {
+    if (!isTicking) {
+      window.requestAnimationFrame(() => {
+        const cards = Array.from(track.children).filter(c => c.offsetParent !== null);
+        if (cards.length) {
+          const trackLeft = track.getBoundingClientRect().left;
+          let closestIdx = 0;
+          let minDiff = Infinity;
+          cards.forEach((card, idx) => {
+            const diff = Math.abs(card.getBoundingClientRect().left - trackLeft);
+            if (diff < minDiff) {
+              minDiff = diff;
+              closestIdx = idx;
+            }
+          });
+          dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === closestIdx);
+          });
+        }
+        isTicking = false;
+      });
+      isTicking = true;
+    }
+  }, { passive: true });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupTrackObserver('experiencesTrack', 'experiencesIndicators');
+});
+
 // ─── 1. DISH DETAIL MODAL ───
 function openSignatureDishModal() {
   openDishDetail(
@@ -2537,6 +2802,11 @@ document.querySelectorAll('.menu-cat-btn').forEach(btn => {
         card.style.display = 'none';
       }
     });
+
+    const menuTrack = document.getElementById('dishGrid');
+    if (menuTrack) {
+      menuTrack.scrollTo({ left: 0, behavior: 'smooth' });
+    }
   });
 });
 
@@ -2695,50 +2965,22 @@ function selectRating(val) {
   document.getElementById('ratingLabelHint').textContent = ratingLabels[val] || '';
 }
 
-let gbExpanded = false;
 let currentGbFilter = 'all';
-
-function toggleAllReviews() {
-  gbExpanded = !gbExpanded;
-  applyGuestbookVisibility(currentGbFilter);
-  
-  const txt = document.getElementById('btnToggleReviewsText');
-  const icon = document.getElementById('btnToggleReviewsIcon');
-  if (txt) {
-    txt.textContent = gbExpanded ? 'SHOW LESS REFLECTIONS' : 'VIEW ALL <?= count($reviewsList) ?> REFLECTIONS';
-  }
-  if (icon) {
-    icon.style.transform = gbExpanded ? 'rotate(180deg)' : 'none';
-  }
-}
 
 function filterGuestbook(type, btn) {
   currentGbFilter = type;
   document.querySelectorAll('.gb-tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  applyGuestbookVisibility(type);
-}
+  if (btn) btn.classList.add('active');
 
-function applyGuestbookVisibility(type) {
   const cards = document.querySelectorAll('.guestbook-card');
-  let matchCount = 0;
   cards.forEach(c => {
     const matchesType = (type === 'all' || c.getAttribute('data-type') === type);
-    if (!matchesType) {
-      c.style.display = 'none';
-    } else {
-      matchCount++;
-      if (gbExpanded || matchCount <= 3) {
-        c.style.display = 'flex';
-      } else {
-        c.style.display = 'none';
-      }
-    }
+    c.style.display = matchesType ? 'flex' : 'none';
   });
 
-  const toggleWrap = document.getElementById('gbToggleWrap');
-  if (toggleWrap) {
-    toggleWrap.style.display = matchCount > 3 ? 'block' : 'none';
+  const grid = document.getElementById('guestbookCardsGrid');
+  if (grid) {
+    grid.scrollTo({ left: 0, behavior: 'smooth' });
   }
 }
 
@@ -2811,6 +3053,7 @@ async function handleReviewSubmit(e) {
         if (emptyState) emptyState.remove();
 
         grid.prepend(card);
+        grid.scrollTo({ left: 0, behavior: 'smooth' });
 
         // Update counts
         if (data.stats) {
