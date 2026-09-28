@@ -59,8 +59,19 @@ function flash(string $k, string $msg='', string $type='success'): ?array {
     if($msg){ $_SESSION['flash'][$k]=['message'=>$msg,'type'=>$type]; return null; }
     $f=$_SESSION['flash'][$k]??null; unset($_SESSION['flash'][$k]); return $f;
 }
-function authUser(): ?array  { return $_SESSION['user']??null; }
-function isLoggedIn(): bool  { return isset($_SESSION['user']); }
+function authUser(): ?array  { return isLoggedIn() ? ($_SESSION['user'] ?? null) : null; }
+function isLoggedIn(): bool  {
+    if (!isset($_SESSION['user']['id'])) return false;
+    // Once-per-request DB check: verify user still exists (prevents stale-session FK errors)
+    static $verified = null;
+    if ($verified === null) {
+        $verified = (bool) User::findById((int)$_SESSION['user']['id']);
+        if (!$verified) {
+            unset($_SESSION['user'], $_SESSION['user_bookings']);
+        }
+    }
+    return $verified;
+}
 function isAdmin(): bool     { return ($_SESSION['user']['role']??'')==='admin'; }
 function requireLogin(): void{ if(!isLoggedIn()){ redirect('/auth/login'); } }
 function requireAdmin(): void{

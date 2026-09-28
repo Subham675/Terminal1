@@ -38,17 +38,24 @@ class BookingController {
 
         $depositAmount = (float) env('DEPOSIT_AMOUNT', 0);
 
-        $id = Booking::create([
-            'user_id'      => (int)$user['id'],
-            'name'         => $name,
-            'phone'        => $phone,
-            'email'        => $email,
-            'occasion'     => sanitize($_POST['occasion']??''),
-            'guests'       => (int)($_POST['guests']??2),
-            'booking_date' => $date,
-            'booking_time' => $time,
-            'message'      => sanitize($_POST['message'] ?? ($_POST['special_requests'] ?? '')),
-        ]);
+        try {
+            $id = Booking::create([
+                'user_id'      => (int)$user['id'],
+                'name'         => $name,
+                'phone'        => $phone,
+                'email'        => $email,
+                'occasion'     => sanitize($_POST['occasion']??''),
+                'guests'       => (int)($_POST['guests']??2),
+                'booking_date' => $date,
+                'booking_time' => $time,
+                'message'      => sanitize($_POST['message'] ?? ($_POST['special_requests'] ?? '')),
+            ]);
+        } catch (\PDOException $e) {
+            error_log('Booking insert failed: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Unable to create reservation. Please log out, sign in again, and retry.']);
+            return;
+        }
         Booking::setDepositAmount($id, $depositAmount);
         $booking = Booking::findById($id);
 
