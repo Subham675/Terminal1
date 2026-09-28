@@ -103,6 +103,12 @@ function setupTrackObserver(trackId, indicatorId) {
               closestIdx = idx;
             }
           });
+          // End-of-scroll boundaries
+          if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 20) {
+            closestIdx = cards.length - 1;
+          } else if (track.scrollLeft <= 10) {
+            closestIdx = 0;
+          }
           dots.forEach((dot, idx) => {
             dot.classList.toggle('active', idx === closestIdx);
           });

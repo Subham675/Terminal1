@@ -479,6 +479,9 @@
     }
 
     /* Experiences Slidebar Cards */
+    .experiences-slider-track {
+      padding-right: calc(100% - 380px - 24px);
+    }
     .experiences-slider-track .experience-card {
       flex: 0 0 380px;
       min-width: 320px;
@@ -1948,6 +1951,9 @@
       .aveline-dish-grid {
         grid-template-columns: 1fr !important;
         gap: 24px;
+      }
+      .experiences-slider-track {
+        padding-right: 20px !important;
       }
       .experiences-slider-track .experience-card {
         flex: 0 0 calc(100% - 36px) !important;
