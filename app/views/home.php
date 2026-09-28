@@ -87,14 +87,17 @@ $user = authUser();
       scroll-behavior: smooth;
       background: var(--bg-dark);
       color: var(--text-light);
+      overflow-x: hidden;
+      max-width: 100vw;
     }
     
     body {
       font-family: var(--font-sans);
       background: var(--bg-dark);
       color: var(--text-light);
-      max-width: 100%;
-      overflow-x: clip;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       line-height: 1.6;
     }
@@ -1282,6 +1285,7 @@ $user = authUser();
     }
     .btn-toggle-reviews:hover {
       background: rgba(200, 134, 10, 0.15);
+    }
     /* Management Response in card */
     .gb-admin-reply {
       margin-top: 8px;
@@ -1424,28 +1428,128 @@ $user = authUser();
       text-transform: uppercase;
     }
 
+    /* Mobile Hamburger Toggle */
+    .btn-mobile-nav-toggle {
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 4px;
+      padding: 6px 8px;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 34px;
+      transition: all .2s ease;
+      flex-shrink: 0;
+    }
+    .btn-mobile-nav-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--text-light);
+      border-radius: 1px;
+      transition: all 0.25s ease;
+    }
+    .btn-mobile-nav-toggle.open {
+      border-color: var(--gold-accent);
+    }
+    .btn-mobile-nav-toggle.open span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+      background: var(--gold-accent);
+    }
+    .btn-mobile-nav-toggle.open span:nth-child(2) {
+      opacity: 0;
+    }
+    .btn-mobile-nav-toggle.open span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+      background: var(--gold-accent);
+    }
+
+    /* Mobile Nav Drawer */
+    .mobile-nav-drawer {
+      display: none;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: rgba(13, 12, 11, 0.98);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border-dark);
+      padding: 24px 6% 30px;
+      z-index: 998;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.7);
+      transform: translateY(-12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .mobile-nav-drawer.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .mobile-nav-links a {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mobile-nav-links a:hover {
+      color: var(--gold-accent);
+      padding-left: 6px;
+    }
+
     /* ─── RESPONSIVE BREAKPOINTS ─── */
     @media (max-width: 1024px) {
+      .btn-mobile-nav-toggle {
+        display: flex;
+      }
+      .mobile-nav-drawer {
+        display: block;
+      }
+      .nav-center-links {
+        display: none !important;
+      }
       .aveline-hero {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-top: 65px;
+        padding-top: 60px;
         background: var(--bg-dark);
         min-height: auto;
+        width: 100%;
+        max-width: 100vw;
+        overflow: hidden;
       }
       .hero-parchment-panel {
         order: 1;
-        clip-path: none;
-        padding: 40px 6% 75px;
+        clip-path: none !important;
+        padding: 40px 6% 40px;
         width: 100%;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         gap: 22px;
         position: relative;
         z-index: 2;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       }
       .hero-intro-text, .hero-monument-title, .hero-button-row {
         max-width: 100%;
@@ -1453,32 +1557,30 @@ $user = authUser();
       .hero-overlapping-plate {
         order: 2;
         position: relative;
-        top: auto;
-        left: auto;
-        right: auto;
-        bottom: auto;
-        transform: none;
+        top: auto; left: auto; right: auto; bottom: auto;
+        transform: none !important;
         align-self: center;
-        margin: -50px auto -120px auto;
-        width: clamp(240px, 66vw, 310px);
+        margin: -36px auto -70px auto;
+        width: clamp(230px, 58vw, 290px);
+        aspect-ratio: 1/1;
         z-index: 25;
         display: flex;
         justify-content: center;
         align-items: center;
       }
       .hero-overlapping-plate:hover {
-        transform: translateY(-4px) scale(1.02);
+        transform: translateY(-4px) scale(1.02) !important;
       }
       .hero-overlapping-plate img {
         width: 100%;
         height: 100%;
         max-width: 100%;
-        filter: drop-shadow(0 22px 40px rgba(0, 0, 0, 0.7));
+        filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.75));
         animation: gentleFloatMobile 5s ease-in-out infinite;
       }
       @keyframes gentleFloatMobile {
-        0%, 100% { transform: translateY(0px) rotate(-6deg); }
-        50% { transform: translateY(-8px) rotate(-3deg); }
+        0%, 100% { transform: translateY(0px) rotate(-5deg); }
+        50% { transform: translateY(-7px) rotate(-2deg); }
       }
       .plate-floating-badge {
         bottom: -6px;
@@ -1488,22 +1590,26 @@ $user = authUser();
       .hero-ambiance-panel {
         order: 3;
         width: 100%;
-        height: 380px;
-        min-height: 380px;
+        height: 300px;
+        min-height: 300px;
         position: relative;
+        overflow: hidden;
       }
       .experiences-grid {
         grid-template-columns: 1fr;
+        gap: 22px;
       }
       .philosophy-grid {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 28px;
       }
       .footer-columns-grid {
         grid-template-columns: 1fr 1fr;
+        gap: 24px;
       }
       .guestbook-cards-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
       }
       .guestbook-summary-bar {
         flex-direction: column;
@@ -1515,104 +1621,107 @@ $user = authUser();
     @media (max-width: 768px) {
       nav {
         padding: 12px 4%;
+        height: 58px;
       }
       .brand-logo {
-        font-size: 1.2rem;
-        letter-spacing: 0.14em;
-      }
-      .nav-center-links {
-        display: none;
+        font-size: 1.15rem;
+        letter-spacing: 0.12em;
       }
       .nav-actions {
-        gap: 12px;
+        gap: 10px;
       }
       .btn-nav-auth {
         font-size: 0.72rem;
       }
       .btn-aveline-cta {
-        padding: 8px 16px;
-        font-size: 0.7rem;
+        padding: 8px 14px;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
       }
       .hero-monument-title {
-        font-size: clamp(2.3rem, 10vw, 3.6rem);
-        line-height: 1.0;
-        margin-bottom: 22px;
+        font-size: clamp(2.2rem, 9.5vw, 3.2rem);
+        line-height: 1.02;
+        margin-bottom: 20px;
       }
       .hero-intro-text {
         font-size: 0.88rem;
-        margin-bottom: 24px;
+        margin-bottom: 22px;
+      }
+      .aveline-dish-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px;
       }
       .res-form-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
       }
       .footer-columns-grid {
         grid-template-columns: 1fr;
-        gap: 28px;
+        gap: 24px;
       }
       .modal-grid {
         grid-template-columns: 1fr;
       }
       .modal-photo {
-        height: 200px;
+        height: 190px;
         min-height: auto;
       }
     }
 
     @media (max-width: 480px) {
       nav {
-        padding: 10px 3.5%;
+        padding: 10px 4%;
+        height: 56px;
       }
       .brand-logo {
         font-size: 1.05rem;
         letter-spacing: 0.1em;
       }
-      .nav-actions {
-        gap: 8px;
-      }
       .btn-nav-auth {
-        font-size: 0.66rem;
+        display: none;
       }
       .btn-aveline-cta {
-        padding: 6px 12px;
+        padding: 7px 12px;
         font-size: 0.66rem;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.06em;
       }
       .hero-parchment-panel {
-        padding: 24px 5% 68px;
+        padding: 26px 5% 32px;
       }
       .parchment-top-bar {
-        margin-bottom: 16px;
+        margin-bottom: 14px;
       }
       .hero-intro-text {
         font-size: 0.84rem;
         line-height: 1.55;
-        margin-bottom: 18px;
+        margin-bottom: 16px;
       }
       .hero-monument-title {
-        font-size: clamp(2.0rem, 9.2vw, 2.6rem);
-        line-height: 1.02;
+        font-size: clamp(1.9rem, 9vw, 2.4rem);
+        line-height: 1.04;
         margin-bottom: 18px;
       }
       .hero-button-row {
         display: flex;
+        flex-direction: column;
         width: 100%;
         gap: 8px;
       }
       .btn-parchment-dark, .btn-parchment-outline {
-        flex: 1;
+        width: 100%;
         text-align: center;
-        padding: 11px 8px;
-        font-size: 0.68rem;
-        letter-spacing: 0.06em;
+        padding: 12px 14px;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        box-sizing: border-box;
       }
       .hero-overlapping-plate {
-        align-self: center;
-        width: clamp(220px, 66vw, 275px);
-        margin: -42px auto -110px auto;
+        width: clamp(200px, 60vw, 250px);
+        margin: -30px auto -65px auto;
       }
       .hero-ambiance-panel {
-        height: 360px;
-        min-height: 360px;
+        height: 250px;
+        min-height: 250px;
       }
       .party-chips-row {
         gap: 8px;
@@ -1632,7 +1741,7 @@ $user = authUser();
         text-align: center;
       }
       .review-modal-box {
-        padding: 24px 18px;
+        padding: 22px 16px;
       }
     }
   </style>
@@ -1663,8 +1772,36 @@ $user = authUser();
       <a href="<?= url('/auth/login') ?>" class="btn-nav-auth">Sign In</a>
     <?php endif; ?>
     <a href="#contact" class="btn-aveline-cta">BOOK A TABLE</a>
+    <button type="button" class="btn-mobile-nav-toggle" id="mobileNavToggle" onclick="toggleMobileNav()" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </nav>
+
+<!-- MOBILE SLIDE-DOWN DRAWER -->
+<div class="mobile-nav-drawer" id="mobileNavDrawer">
+  <div class="mobile-nav-links">
+    <a href="#about" onclick="closeMobileNav()">About Terminal 1</a>
+    <a href="#experiences" onclick="closeMobileNav()">Experiences</a>
+    <a href="#menu" onclick="closeMobileNav()">Artisanal Menu</a>
+    <a href="#philosophy" onclick="closeMobileNav()">Culinary Philosophy</a>
+    <a href="#contact" onclick="closeMobileNav()">Book a Table</a>
+    <a href="#reviews" onclick="closeMobileNav()">Praise & Critiques</a>
+    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin: 8px 0;">
+    <?php if($user): ?>
+      <a href="<?= url('/my-bookings') ?>" onclick="closeMobileNav()">My Reservations (<?= e($user['name']) ?>)</a>
+      <?php if(($user['role'] ?? '') === 'admin'): ?>
+        <a href="<?= url('/admin/dashboard') ?>" onclick="closeMobileNav()" style="color:var(--gold-accent);">Admin Dashboard</a>
+      <?php endif; ?>
+      <a href="<?= url('/auth/logout') ?>" style="color:#ef4444;">Sign Out</a>
+    <?php else: ?>
+      <a href="<?= url('/auth/login') ?>" onclick="closeMobileNav()">Sign In</a>
+      <a href="<?= url('/auth/register') ?>" onclick="closeMobileNav()">Create an Account</a>
+    <?php endif; ?>
+  </div>
+</div>
 
 <!-- AVELINE ICONIC SPLIT HERO SECTION -->
 <section class="aveline-hero" id="about">
@@ -2709,6 +2846,32 @@ function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
+
+// ─── 7. MOBILE NAVIGATION DRAWER TOGGLE ───
+function toggleMobileNav() {
+  const drawer = document.getElementById('mobileNavDrawer');
+  const btn = document.getElementById('mobileNavToggle');
+  if (!drawer || !btn) return;
+  drawer.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function closeMobileNav() {
+  const drawer = document.getElementById('mobileNavDrawer');
+  const btn = document.getElementById('mobileNavToggle');
+  if (drawer) drawer.classList.remove('open');
+  if (btn) btn.classList.remove('open');
+}
+
+document.addEventListener('click', (e) => {
+  const drawer = document.getElementById('mobileNavDrawer');
+  const btn = document.getElementById('mobileNavToggle');
+  if (drawer && drawer.classList.contains('open')) {
+    if (!drawer.contains(e.target) && !btn.contains(e.target)) {
+      closeMobileNav();
+    }
+  }
+});
 </script>
 </body>
 </html>
