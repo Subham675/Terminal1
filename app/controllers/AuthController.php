@@ -213,12 +213,7 @@ class AuthController {
         $state = bin2hex(random_bytes(16));
         $_SESSION['oauth_state'] = $state;
 
-        $redirectUri = env('GOOGLE_REDIRECT_URI');
-        if (empty($redirectUri) || str_contains($redirectUri, 'yourdomain.com')) {
-            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            $redirectUri = $scheme . '://' . $host . url('/auth/google/callback');
-        }
+        $redirectUri = self::getGoogleRedirectUri();
 
         $params = http_build_query([
             'client_id'     => $clientId,
@@ -401,13 +396,32 @@ class AuthController {
         }
     }
 
-    private static function googleTokenExchange(string $code): array {
-        $redirectUri = env('GOOGLE_REDIRECT_URI');
-        if (empty($redirectUri) || str_contains($redirectUri, 'yourdomain.com')) {
-            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            $redirectUri = $scheme . '://' . $host . url('/auth/google/callback');
+    public static function getGoogleRedirectUri(): string {
+        $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || $forwardedProto === 'https'
+            || (($_SERVER['SERVER_PORT'] ?? '') == 443);
+        $scheme = $isHttps ? 'https' : 'http';
+
+        $host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+        // When accessed through ngrok or any public domain, use the current active public host
+        // so mobile/remote users are redirected back to the public domain, not their device's localhost!
+        if ($host !== 'localhost' && $host !== '127.0.0.1' && !str_starts_with($host, 'localhost:') && !str_starts_with($host, '127.0.0.1:')) {
+            return $scheme . '://' . $host . url('/auth/google/callback');
         }
+
+        // On localhost, respect GOOGLE_REDIRECT_URI if set
+        $redirectUri = env('GOOGLE_REDIRECT_URI');
+        if (!empty($redirectUri) && !str_contains($redirectUri, 'yourdomain.com')) {
+            return $redirectUri;
+        }
+
+        return $scheme . '://' . $host . url('/auth/google/callback');
+    }
+
+    private static function googleTokenExchange(string $code): array {
+        $redirectUri = self::getGoogleRedirectUri();
 
         $ch = curl_init('https://oauth2.googleapis.com/token');
         curl_setopt_array($ch,[
