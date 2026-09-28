@@ -8,14 +8,6 @@
         From intimate course-by-course seasonal dinners to grand celebrations, every evening is orchestrated with genuine warmth and culinary precision.
       </p>
     </div>
-    <div class="slider-controls">
-      <button type="button" class="slider-arrow" onclick="slideTrack('experiencesTrack', -1)" aria-label="Previous Experience">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button type="button" class="slider-arrow" onclick="slideTrack('experiencesTrack', 1)" aria-label="Next Experience">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
-    </div>
   </div>
 
   <div class="slider-container">

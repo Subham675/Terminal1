@@ -448,9 +448,11 @@
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       padding: 10px 4px 16px;
+      cursor: grab;
+      user-select: none;
     }
-    .slider-track::-webkit-scrollbar {
-      display: none;
+    .slider-track:active {
+      cursor: grabbing;
     }
 
     .slider-indicators {
@@ -492,6 +494,11 @@
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       padding: 10px 4px 16px;
+      cursor: grab;
+      user-select: none;
+    }
+    .aveline-dish-slider-track:active {
+      cursor: grabbing;
     }
     .aveline-dish-slider-track::-webkit-scrollbar {
       display: none;
@@ -515,6 +522,11 @@
       scrollbar-width: none;
       padding: 10px 4px 16px;
       margin-top: 20px;
+      cursor: grab;
+      user-select: none;
+    }
+    .guestbook-slider-track:active {
+      cursor: grabbing;
     }
     .guestbook-slider-track::-webkit-scrollbar {
       display: none;

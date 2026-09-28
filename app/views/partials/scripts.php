@@ -2,7 +2,61 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 
 <script>
-// ─── 0. HORIZONTAL SLIDEBAR CONTROLS ───
+// ─── 0. HORIZONTAL SLIDEBAR — MOUSE DRAG-TO-SCROLL ───
+// Enables desktop click-and-drag scrolling on all slider tracks.
+// Touch/swipe already works natively via overflow-x: auto.
+function enableDragScroll(track) {
+  if (!track) return;
+  let isDown = false, startX, scrollLeft, hasDragged = false;
+
+  track.style.cursor = 'grab';
+
+  track.addEventListener('mousedown', (e) => {
+    // Don't hijack button/link clicks
+    if (e.target.closest('a, button')) return;
+    isDown = true;
+    hasDragged = false;
+    track.style.cursor = 'grabbing';
+    track.style.scrollBehavior = 'auto';  // Disable smooth during drag
+    startX = e.pageX - track.offsetLeft;
+    scrollLeft = track.scrollLeft;
+    e.preventDefault();
+  });
+
+  track.addEventListener('mouseleave', () => {
+    if (!isDown) return;
+    isDown = false;
+    track.style.cursor = 'grab';
+    track.style.scrollBehavior = 'smooth';
+  });
+
+  track.addEventListener('mouseup', () => {
+    if (!isDown) return;
+    isDown = false;
+    track.style.cursor = 'grab';
+    track.style.scrollBehavior = 'smooth';
+  });
+
+  track.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - track.offsetLeft;
+    const walk = (x - startX) * 1.5; // Scroll speed multiplier
+    if (Math.abs(walk) > 5) hasDragged = true;
+    track.scrollLeft = scrollLeft - walk;
+  });
+
+  // Prevent clicks on links/buttons if user was dragging
+  track.addEventListener('click', (e) => {
+    if (hasDragged) {
+      e.preventDefault();
+      e.stopPropagation();
+      hasDragged = false;
+    }
+  }, true);
+}
+
+// Legacy function kept for compatibility (no-op now that arrows are removed)
 function slideTrack(trackId, direction) {
   const track = document.getElementById(trackId);
   if (!track) return;
@@ -60,6 +114,12 @@ function setupTrackObserver(trackId, indicatorId) {
 
 document.addEventListener('DOMContentLoaded', () => {
   setupTrackObserver('experiencesTrack', 'experiencesIndicators');
+
+  // Enable mouse drag-to-scroll on all horizontal slider tracks
+  enableDragScroll(document.getElementById('experiencesTrack'));
+  enableDragScroll(document.getElementById('dishGrid'));
+  enableDragScroll(document.getElementById('guestbookCardsGrid'));
+
   restoreBookingDraft();
   const bForm = document.getElementById('avelineBookingForm');
   if (bForm) {
