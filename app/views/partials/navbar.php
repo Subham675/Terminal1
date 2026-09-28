@@ -37,7 +37,12 @@
 <div class="mobile-nav-drawer" id="mobileNavDrawer">
   <div class="mobile-drawer-header">
     <span class="mobile-drawer-brand">Terminal 1</span>
-    <button type="button" class="mobile-drawer-close" onclick="closeMobileNav()" aria-label="Close navigation">✕</button>
+    <button type="button" class="mobile-drawer-close" onclick="closeMobileNav()" aria-label="Close navigation">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
   </div>
   <div class="mobile-nav-links">
     <a href="#about" onclick="closeMobileNav()">About Terminal 1</a>

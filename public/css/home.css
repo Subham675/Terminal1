@@ -1651,21 +1651,23 @@
     }
     .mobile-drawer-close {
       background: none;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
+      border: none;
       width: 36px;
       height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
       color: var(--text-light);
-      font-size: 1rem;
+      font-size: 1.3rem;
+      line-height: 1;
+      padding: 0;
+      opacity: 0.85;
     }
     .mobile-drawer-close:hover {
-      border-color: var(--gold-accent);
       color: var(--gold-accent);
+      opacity: 1;
       transform: rotate(90deg);
     }
 
