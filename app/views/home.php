@@ -204,7 +204,7 @@ $user = authUser();
       position: relative;
       min-height: calc(100vh - 65px);
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 1.08fr 0.92fr;
       padding-top: 65px;
       background: var(--bg-dark);
       overflow: hidden;
@@ -220,7 +220,7 @@ $user = authUser();
       justify-content: space-between;
       position: relative;
       z-index: 2;
-      clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+      clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
     }
 
     .parchment-top-bar {
@@ -246,7 +246,7 @@ $user = authUser();
     }
 
     .hero-intro-text {
-      max-width: 380px;
+      max-width: 370px;
       font-family: var(--font-sans);
       font-size: 0.92rem;
       line-height: 1.65;
@@ -256,11 +256,11 @@ $user = authUser();
     }
 
     .hero-monument-title {
-      max-width: 440px;
+      max-width: 400px;
       font-family: var(--font-serif);
-      font-size: clamp(2.6rem, 4.6vw, 4.2rem);
+      font-size: clamp(2.3rem, 3.8vw, 3.6rem);
       font-weight: 400;
-      line-height: 0.96;
+      line-height: 0.98;
       letter-spacing: -0.02em;
       color: var(--text-dark);
       text-transform: uppercase;
@@ -340,38 +340,68 @@ $user = authUser();
       background: linear-gradient(to right, rgba(13, 12, 11, 0.4) 0%, transparent 60%);
     }
 
-    /* Left-Biased Overlapping Circular Signature Plate */
+    /* Signature Overlapping Circular Centerpiece Plate */
     .hero-overlapping-plate {
       position: absolute;
-      top: 58%;
-      left: 45%;
+      top: 50%;
+      left: 52%;
       transform: translate(-50%, -50%);
-      width: clamp(280px, 28vw, 420px);
+      width: clamp(270px, 25vw, 380px);
       aspect-ratio: 1/1;
-      z-index: 10;
+      z-index: 15;
       pointer-events: auto;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
     }
     .hero-overlapping-plate img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.5));
+      filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.55));
       border-radius: 50%;
-      cursor: pointer;
       display: block;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
       animation: gentleFloatPlate 6s ease-in-out infinite;
     }
     .hero-overlapping-plate:hover img {
-      transform: scale(1.03) rotate(-6deg);
-      filter: drop-shadow(0 30px 48px rgba(0, 0, 0, 0.65));
+      transform: scale(1.04) rotate(-3deg);
+      filter: drop-shadow(0 32px 55px rgba(0, 0, 0, 0.7));
     }
     @keyframes gentleFloatPlate {
-      0%, 100% { transform: translateY(0px) rotate(-8deg); }
-      50% { transform: translateY(-10px) rotate(-5deg); }
+      0%, 100% { transform: translateY(0px) rotate(-6deg); }
+      50% { transform: translateY(-10px) rotate(-2deg); }
+    }
+    .plate-floating-badge {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(18, 17, 16, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-accent);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-overlapping-plate:hover .plate-floating-badge {
+      border-color: var(--gold-accent);
+      color: #FFFFFF;
+      background: #121110;
+      transform: translateX(-50%) translateY(-2px);
     }
 
     /* ─── AVELINE SECTION COMMONS ─── */
@@ -1381,12 +1411,15 @@ $user = authUser();
       .hero-parchment-panel {
         order: 1;
         clip-path: none;
-        padding: 36px 6% 28px;
+        padding: 40px 6% 75px;
         width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         gap: 22px;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       }
       .hero-intro-text, .hero-monument-title, .hero-button-row {
         max-width: 100%;
@@ -1395,16 +1428,16 @@ $user = authUser();
         order: 2;
         position: relative;
         top: auto;
-        left: 0;
+        left: auto;
         right: auto;
         bottom: auto;
         transform: none;
-        align-self: flex-start;
-        margin: 28px 0 -115px 5%;
-        width: clamp(220px, 58vw, 300px);
+        align-self: center;
+        margin: -50px auto -120px auto;
+        width: clamp(240px, 66vw, 310px);
         z-index: 25;
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
       }
       .hero-overlapping-plate:hover {
@@ -1414,18 +1447,23 @@ $user = authUser();
         width: 100%;
         height: 100%;
         max-width: 100%;
-        filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.6));
+        filter: drop-shadow(0 22px 40px rgba(0, 0, 0, 0.7));
         animation: gentleFloatMobile 5s ease-in-out infinite;
       }
       @keyframes gentleFloatMobile {
-        0%, 100% { transform: translateY(0px) rotate(-8deg); }
-        50% { transform: translateY(-8px) rotate(-5deg); }
+        0%, 100% { transform: translateY(0px) rotate(-6deg); }
+        50% { transform: translateY(-8px) rotate(-3deg); }
+      }
+      .plate-floating-badge {
+        bottom: -6px;
+        font-size: 0.62rem;
+        padding: 4px 11px;
       }
       .hero-ambiance-panel {
         order: 3;
         width: 100%;
-        height: 360px;
-        min-height: 360px;
+        height: 380px;
+        min-height: 380px;
         position: relative;
       }
       .experiences-grid {
@@ -1514,7 +1552,7 @@ $user = authUser();
         letter-spacing: 0.08em;
       }
       .hero-parchment-panel {
-        padding: 24px 5% 20px;
+        padding: 24px 5% 68px;
       }
       .parchment-top-bar {
         margin-bottom: 16px;
@@ -1542,13 +1580,13 @@ $user = authUser();
         letter-spacing: 0.06em;
       }
       .hero-overlapping-plate {
-        align-self: flex-start;
-        width: clamp(190px, 60vw, 240px);
-        margin: 24px 0 -100px 5%;
+        align-self: center;
+        width: clamp(220px, 66vw, 275px);
+        margin: -42px auto -110px auto;
       }
       .hero-ambiance-panel {
-        height: 290px;
-        min-height: 290px;
+        height: 360px;
+        min-height: 360px;
       }
       .party-chips-row {
         gap: 8px;
@@ -1638,8 +1676,12 @@ $user = authUser();
   </div>
 
   <!-- Center Overlapping Signature Ceramic Plate -->
-  <div class="hero-overlapping-plate">
-    <img src="<?= asset('images/aveline_plate.png') ?>" alt="Terminal 1 Signature Culinary Craft" onclick="openSignatureDishModal()">
+  <div class="hero-overlapping-plate" onclick="openSignatureDishModal()" title="Click to view dish story">
+    <img src="<?= asset('images/aveline_plate.png') ?>" alt="Terminal 1 Signature Culinary Craft">
+    <div class="plate-floating-badge">
+      <span>✦</span>
+      <span>Signature Dish</span>
+    </div>
   </div>
 </section>
 
