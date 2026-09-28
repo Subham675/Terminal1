@@ -169,6 +169,16 @@
       color: rgba(255,255,255,0.25);
       font-size: 0.8rem;
     }
+    @media(max-width: 600px) {
+      nav { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
+      .nav-links { gap: 14px; }
+      .container { margin: 20px auto; padding: 0 14px; }
+      .detail-card { padding: 22px 18px; }
+      h1 { font-size: 1.45rem; margin-bottom: 18px; }
+      .grid-info { grid-template-columns: 1fr; gap: 14px; margin-bottom: 20px; padding-bottom: 18px; }
+      .actions { flex-direction: column; width: 100%; }
+      .btn { width: 100%; justify-content: center; text-align: center; }
+    }
   </style>
 </head>
 <body>

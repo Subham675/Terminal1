@@ -43,6 +43,12 @@ class EmailValidator {
         }
 
         [$username, $domain] = $parts;
+        $domain = strtolower($domain);
+
+        // Allow internal application domains (e.g. admin@terminal1.in)
+        if ($domain === 'terminal1.in' || $domain === 'localhost') {
+            return [true, '', $email];
+        }
 
         // 2. Check for common domain typos
         if (isset(self::COMMON_TYPOS[$domain])) {

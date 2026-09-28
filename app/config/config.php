@@ -2,9 +2,16 @@
 function loadEnv(string $path): void {
     if(!file_exists($path)) throw new RuntimeException(".env not found at: $path");
     foreach(file($path, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES) as $line){
-        if(str_starts_with(trim($line),'#') || !str_contains($line,'=')) continue;
-        [$k,$v] = explode('=',$line,2);
-        $k=trim($k); $v=trim($v," \t\n\r\0\x0B\"'");
+        $trimmed = trim($line);
+        if(str_starts_with($trimmed,'#') || !str_contains($trimmed,'=')) continue;
+        [$k,$v] = explode('=',$trimmed,2);
+        $k=trim($k);
+        $v=trim($v);
+        // If not quoted, strip trailing inline comments
+        if (!str_starts_with($v, '"') && !str_starts_with($v, "'") && str_contains($v, '#')) {
+            $v = explode('#', $v, 2)[0];
+        }
+        $v=trim($v," \t\n\r\0\x0B\"'");
         $_ENV[$k]=$v; putenv("$k=$v");
     }
 }
@@ -13,8 +20,10 @@ function env(string $k, mixed $d=null): mixed { return $_ENV[$k] ?? getenv($k) ?
 date_default_timezone_set(env('APP_TIMEZONE', 'Asia/Kolkata'));
 if(session_status()===PHP_SESSION_NONE){
     session_cache_limiter('');
-    ini_set('session.cookie_httponly','1');
-    ini_set('session.cookie_secure', env('APP_ENV')==='production'?'1':'0');
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+               (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+               (!empty($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443);
+    ini_set('session.cookie_secure', (env('APP_ENV')==='production' && $isHttps) ? '1' : '0');
     ini_set('session.cookie_samesite','Lax');
     ini_set('session.use_strict_mode','1');
     session_start();

@@ -7,6 +7,32 @@ try {
     // DB not yet connected — will show empty menu gracefully
 }
 
+// Flat list of all items for interactive cards
+$allItems = [];
+if (!empty($menuGrouped)) {
+    foreach ($menuGrouped as $catName => $items) {
+        foreach ($items as $it) {
+            $it['cat_name'] = $catName;
+            $allItems[] = $it;
+        }
+    }
+}
+
+// Map dish names to real photos in /images/
+function getDishImage($name, $customUrl = null) {
+    if (!empty($customUrl)) return $customUrl;
+    $lower = strtolower($name);
+    if (str_contains($lower, 'pasta') || str_contains($lower, 'spaghetti')) return asset('images/aveline_plate.png');
+    if (str_contains($lower, 'dhonkami') || str_contains($lower, 'chicken')) return asset('images/dhonkami_chicken.jpg');
+    if (str_contains($lower, 'starter') || str_contains($lower, 'platter') || str_contains($lower, 'tandoor') || str_contains($lower, 'kabab') || str_contains($lower, 'kebab')) return asset('images/starters_platter.jpg');
+    if (str_contains($lower, 'jiaozi') || str_contains($lower, 'dumpling') || str_contains($lower, 'momo')) return asset('images/jiaozi_hero.jpg');
+    if (str_contains($lower, 'bao') || str_contains($lower, 'dimsum') || str_contains($lower, 'dim sum')) return asset('images/bao_dimsum.jpg');
+    if (str_contains($lower, 'polao') || str_contains($lower, 'biryani')) return asset('images/polao.jpg');
+    if (str_contains($lower, 'fried rice') || str_contains($lower, 'rice')) return asset('images/fried_rice.jpg');
+    if (str_contains($lower, 'noodle') || str_contains($lower, 'hakka') || str_contains($lower, 'chow')) return asset('images/noodles.jpg');
+    return asset('images/aveline_plate.png');
+}
+
 $user = authUser();
 ?>
 <!DOCTYPE html>
@@ -14,884 +40,1689 @@ $user = authUser();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Terminal 1 | Authentic Dining in Cooch Behar</title>
+  <title>Terminal 1 — A New Expression of Fine Dining | Cooch Behar</title>
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>"/>
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
     :root {
-      --gold:#C8860A; --gold-lt:#E8A820; --dark:#111009;
-      --charcoal:#1E1C18; --cream:#F6F1E8; --warm:#EDE5D4;
-      --text:#2D2A24; --muted:#7A7264;
-
-      /* Standardised Typography Tokens */
-      --font-display:'Playfair Display', Georgia, serif;
-      --font-body:'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-accent:'Cormorant Garamond', Georgia, serif;
-
-      --text-2xs: clamp(0.65rem, 0.62rem + 0.15vw, 0.72rem);
-      --text-xs: clamp(0.72rem, 0.68rem + 0.2vw, 0.78rem);
-      --text-sm: clamp(0.82rem, 0.78rem + 0.2vw, 0.88rem);
-      --text-base: clamp(0.92rem, 0.88rem + 0.25vw, 1rem);
-      --text-lg: clamp(1.05rem, 0.98rem + 0.35vw, 1.2rem);
-      --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.45rem);
-      --text-2xl: clamp(1.6rem, 1.35rem + 1.25vw, 2.25rem);
-      --text-3xl: clamp(2rem, 1.6rem + 2vw, 3.2rem);
-      --text-hero: clamp(2.8rem, 2rem + 4.5vw, 6.5rem);
-
-      --leading-tight: 1.15;
-      --leading-snug: 1.35;
-      --leading-normal: 1.6;
-      --leading-relaxed: 1.85;
-
-      --tracking-wide: 1.5px;
-      --tracking-wider: 2.5px;
-      --tracking-widest: 4px;
-    }
-    html { scroll-behavior: smooth; max-width: 100%; overflow-x: clip; }
-    body { font-family:var(--font-body); font-size:var(--text-base); line-height:var(--leading-normal); background:var(--cream); color:var(--text); max-width: 100%; overflow-x: clip; -webkit-font-smoothing: antialiased; }
-
-    /* ─── NAV ─── */
-    nav { position:fixed; top:0; left:0; right:0; z-index:999; display:flex; align-items:center; justify-content:space-between; padding:18px 5%; background:rgba(17,16,9,.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(200,134,10,.2); transition:padding .25s ease, background-color .25s ease; width:100%; }
-    nav.nav-scrolled { padding:12px 5%; background:rgba(17,16,9,.97); }
-    .nav-logo { font-family:var(--font-display); font-size:var(--text-xl); font-weight:900; color:var(--gold-lt); letter-spacing:var(--tracking-wide); text-decoration:none; }
-    .nav-logo span { color:#fff; font-weight:400; font-style:italic; font-size:var(--text-2xs); display:block; letter-spacing:var(--tracking-wider); }
-    .nav-links { display:flex; gap:32px; list-style:none; }
-    .nav-links a { color:rgba(255,255,255,.7); text-decoration:none; font-size:var(--text-sm); letter-spacing:var(--tracking-wide); text-transform:uppercase; transition:color .2s ease; }
-    .nav-links a:hover { color:var(--gold-lt); }
-    .nav-right { display:flex; align-items:center; gap:10px; }
-    .nav-user { color:rgba(255,255,255,.6); font-size:var(--text-xs); }
-    .nav-cta { background:var(--gold); color:#fff; padding:9px 22px; border-radius:2px; font-size:var(--text-xs); letter-spacing:1px; text-transform:uppercase; text-decoration:none; transition:background-color .2s ease; }
-    .nav-cta:hover { background:var(--gold-lt); }
-    .nav-link-ghost { color:rgba(255,255,255,.6); font-size:var(--text-xs); letter-spacing:1px; text-transform:uppercase; text-decoration:none; padding:9px 16px; border:1px solid rgba(255,255,255,.15); border-radius:2px; transition:border-color .2s ease, color .2s ease; }
-    .nav-link-ghost:hover { border-color:var(--gold); color:var(--gold); }
-    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; }
-    .hamburger span { width:24px; height:2px; background:#fff; display:block; }
-
-    /* ─── TOAST (MOBILE OVERFLOW SAFE) ─── */
-    #toast { position:fixed; bottom:28px; left:50%; transform:translate3d(-50%, 80px, 0); z-index:9999; padding:14px 24px; border-radius:4px; font-size:var(--text-sm); letter-spacing:.5px; opacity:0; transition:transform .3s ease, opacity .3s ease; pointer-events:none; max-width:min(90vw, 450px); box-sizing:border-box; text-align:center; word-break:break-word; }
-    #toast.show { transform:translate3d(-50%, 0, 0); opacity:1; }
-    #toast.success { background:#1a3a22; border:1px solid rgba(45,164,78,.4); color:#4caf70; }
-    #toast.error   { background:#3a1a1a; border:1px solid rgba(207,34,46,.4); color:#e05464; }
-
-    /* ─── HERO ─── */
-    .hero { min-height:100vh; background:var(--dark); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; text-align:center; padding:120px 5% 80px; width:100%; box-sizing:border-box; }
-    .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 50% at 50% 60%,rgba(200,134,10,.18) 0%,transparent 70%),radial-gradient(ellipse 80% 40% at 20% 20%,rgba(212,98,42,.08) 0%,transparent 60%); pointer-events:none; }
-    .hero-grain { position:absolute; inset:0; opacity:.04; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:200px; pointer-events:none; contain:strict; }
-    .hero-line { position:absolute; left:50%; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,transparent,rgba(200,134,10,.4),transparent); pointer-events:none; }
-    .hero-content { position:relative; z-index:2; max-width:760px; width:100%; }
-    .hero-eyebrow { display:inline-block; font-size:var(--text-xs); letter-spacing:var(--tracking-widest); text-transform:uppercase; color:var(--gold); border:1px solid rgba(200,134,10,.4); padding:6px 18px; border-radius:2px; margin-bottom:28px; }
-    .hero h1 { font-family:var(--font-display); font-size:var(--text-hero); font-weight:900; line-height:.95; color:#fff; letter-spacing:-1px; margin-bottom:10px; }
-    .hero h1 em { font-style:italic; font-weight:400; color:var(--gold-lt); display:block; font-size:.55em; line-height:1.2; }
-    .hero-sub { font-family:var(--font-accent); font-style:italic; font-size:var(--text-xl); color:rgba(255,255,255,.65); margin:20px 0 40px; letter-spacing:.5px; line-height:var(--leading-normal); }
-    .hero-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
-    .btn-primary { background:var(--gold); color:#fff; padding:14px 34px; font-size:var(--text-sm); letter-spacing:var(--tracking-wide); text-transform:uppercase; text-decoration:none; border-radius:2px; transition:background-color .2s ease, transform .2s ease; will-change:transform; }
-    .btn-primary:hover { background:var(--gold-lt); transform:translate3d(0, -2px, 0); }
-    .btn-ghost { border:1px solid rgba(255,255,255,.3); color:rgba(255,255,255,.8); padding:14px 34px; font-size:var(--text-sm); letter-spacing:var(--tracking-wide); text-transform:uppercase; text-decoration:none; border-radius:2px; transition:border-color .2s ease, color .2s ease; }
-    .btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
-    .hero-scroll { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:8px; color:rgba(255,255,255,.3); font-size:var(--text-2xs); letter-spacing:var(--tracking-wider); text-transform:uppercase; pointer-events:none; }
-    .scroll-dot { width:6px; height:24px; border:1px solid rgba(255,255,255,.2); border-radius:10px; position:relative; overflow:hidden; }
-    /* Performance-optimized: GPU-composited transform instead of top layout thrash */
-    .scroll-dot::after { content:''; position:absolute; top:3px; left:50%; width:2px; height:6px; background:var(--gold); border-radius:2px; transform:translate3d(-50%,0,0); animation:scrollAnim 2s infinite ease-out; will-change:transform, opacity; }
-    @keyframes scrollAnim { 0%{ transform:translate3d(-50%,0,0); opacity:1; } 100%{ transform:translate3d(-50%,12px,0); opacity:0; } }
-
-    /* ─── SECTIONS ─── */
-    section { padding:100px 5%; width:100%; box-sizing:border-box; }
-    .section-tag { font-size:var(--text-xs); letter-spacing:var(--tracking-widest); text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:12px; margin-bottom:16px; }
-    .section-tag::before { content:''; display:block; width:32px; height:1px; background:var(--gold); }
-    .section-title { font-family:var(--font-display); font-size:var(--text-3xl); font-weight:700; line-height:var(--leading-tight); margin-bottom:20px; }
-    .divider { width:48px; height:2px; background:linear-gradient(to right,var(--gold),transparent); margin:20px 0 36px; }
-
-    /* ─── ABOUT ─── */
-    #about { background:var(--charcoal); }
-    .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; max-width:1100px; margin:0 auto; width:100%; }
-    .about-text .section-title { color:#fff; }
-    .about-text p { color:rgba(255,255,255,.6); line-height:var(--leading-relaxed); font-size:var(--text-base); margin-bottom:18px; }
-    .about-pillars { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:36px; }
-    .pillar-card { border:1px solid rgba(200,134,10,.25); padding:20px 22px; border-radius:2px; background:rgba(200,134,10,.04); }
-    .pillar-title { font-family:var(--font-display); font-size:var(--text-base); font-weight:700; color:var(--gold-lt); margin-bottom:6px; }
-    .pillar-desc { font-size:var(--text-xs); color:rgba(255,255,255,.6); line-height:var(--leading-normal); }
-    .about-visual { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:220px 220px; gap:12px; width:100%; }
-    .av-1 { grid-column:1/3; }
-    .photo-card { border-radius:4px; overflow:hidden; background:var(--charcoal); position:relative; transform:translateZ(0); }
-    .photo-card img { width:100%; height:100%; object-fit:cover; transition:transform .4s ease; display:block; will-change:transform; backface-visibility:hidden; }
-    .photo-card:hover img { transform:scale(1.04); }
-    .photo-card::after { content:''; position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.4),transparent); pointer-events:none; }
-
-    /* ─── GALLERY ─── */
-    #gallery { background:var(--cream); }
-    .gallery-header { text-align:center; margin-bottom:60px; }
-    .gallery-grid { display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:260px 260px; gap:12px; max-width:1200px; margin:0 auto; width:100%; }
-    .gallery-grid .g1 { grid-column:1/3; } .gallery-grid .g3 { grid-column:4/5; grid-row:1/3; } .gallery-grid .g5 { grid-column:2/4; }
-    .g-item { border-radius:4px; overflow:hidden; position:relative; cursor:pointer; transform:translateZ(0); }
-    .g-item img { width:100%; height:100%; object-fit:cover; transition:transform .4s ease; display:block; will-change:transform; backface-visibility:hidden; }
-    .g-item:hover img { transform:scale(1.05); }
-    .g-overlay { position:absolute; inset:0; background:rgba(17,16,9,.5); opacity:0; transition:opacity .25s ease; display:flex; align-items:center; justify-content:center; }
-    .g-item:hover .g-overlay { opacity:1; }
-    .g-overlay span { color:#fff; font-size:var(--text-xs); letter-spacing:var(--tracking-wider); text-transform:uppercase; border:1px solid rgba(255,255,255,.5); padding:8px 18px; }
-
-    /* ─── MENU ─── */
-    #menu { background:var(--dark); }
-    .menu-header { text-align:center; max-width:600px; margin:0 auto 60px; }
-    .menu-header .section-title { color:#fff; }
-    .menu-header p { color:rgba(255,255,255,.5); line-height:var(--leading-relaxed); font-size:var(--text-base); }
-    .menu-tabs { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:50px; }
-    .tab-btn { background:transparent; border:1px solid rgba(200,134,10,.3); color:rgba(255,255,255,.6); padding:10px 22px; font-family:var(--font-body); font-size:var(--text-xs); letter-spacing:var(--tracking-wide); text-transform:uppercase; cursor:pointer; border-radius:2px; transition:background-color .2s ease, border-color .2s ease, color .2s ease; }
-    .tab-btn.active,.tab-btn:hover { background:var(--gold); border-color:var(--gold); color:#fff; }
-    .menu-panel { display:none; max-width:860px; margin:0 auto; width:100%; }
-    .menu-panel.active { display:block; }
-    .menu-item { display:flex; align-items:baseline; justify-content:space-between; padding:18px 0; border-bottom:1px solid rgba(255,255,255,.07); gap:20px; width:100%; box-sizing:border-box; }
-    .menu-item:last-child { border-bottom:none; }
-    .mi-left { flex:1; min-width:0; }
-    .mi-name { font-family:var(--font-display); font-size:var(--text-lg); color:#fff; margin-bottom:4px; word-break:break-word; }
-    .mi-desc { font-size:var(--text-sm); color:rgba(255,255,255,.4); line-height:var(--leading-normal); }
-    .mi-badge { font-size:var(--text-2xs); letter-spacing:1px; text-transform:uppercase; background:rgba(200,134,10,.2); color:var(--gold); padding:2px 8px; border-radius:2px; margin-left:8px; vertical-align:middle; display:inline-block; }
-    .mi-veg { display:inline-block; width:12px; height:12px; border:1.5px solid #2da44e; border-radius:2px; position:relative; margin-left:6px; vertical-align:middle; flex-shrink:0; }
-    .mi-veg::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:6px; height:6px; background:#2da44e; border-radius:50%; }
-    .mi-price { font-family:var(--font-display); font-size:var(--text-lg); font-weight:700; color:var(--gold-lt); white-space:nowrap; }
-    .mi-dots { flex:1; border-bottom:1px dotted rgba(255,255,255,.12); margin:0 12px; min-width:20px; }
-    .unavailable { opacity:.4; }
-
-    /* ─── CELEBRATIONS ─── */
-    #celebrations { background:var(--warm); }
-    .cel-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; max-width:1100px; margin:0 auto; width:100%; }
-    .cel-text p { color:var(--muted); line-height:var(--leading-relaxed); font-size:var(--text-base); margin-bottom:18px; }
-    .cel-features { list-style:none; margin-top:28px; }
-    .cel-features li { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid rgba(0,0,0,.06); font-size:var(--text-base); color:var(--text); }
-    .cel-features li::before { content:'◆'; color:var(--gold); font-size:var(--text-2xs); flex-shrink:0; }
-    .cel-mosaic { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:200px 200px; gap:10px; width:100%; }
-    .cel-mosaic .cm1 { grid-row:1/3; }
-    .cm-item { border-radius:4px; overflow:hidden; transform:translateZ(0); }
-    .cm-item img { width:100%; height:100%; object-fit:cover; display:block; }
-
-    /* ─── STANDARDS ─── */
-    #standards { background:var(--charcoal); }
-    .standards-header { text-align:center; margin-bottom:60px; }
-    .standards-header .section-title { color:#fff; }
-    .standards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:1100px; margin:0 auto; width:100%; }
-    .standard-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:2px; padding:32px; transition:border-color .3s ease; }
-    .standard-card:hover { border-color:rgba(200,134,10,.35); }
-    .standard-icon { width:32px; height:32px; color:var(--gold); margin-bottom:18px; }
-    .standard-title { color:#fff; font-family:var(--font-display); font-size:var(--text-lg); font-weight:700; margin-bottom:10px; }
-    .standard-text { color:rgba(255,255,255,.65); line-height:var(--leading-relaxed); font-size:var(--text-sm); }
-
-    /* ─── CONTACT ─── */
-    #contact { background:var(--dark); }
-    .contact-wrapper { max-width:1000px; margin:0 auto; display:grid; grid-template-columns:1fr 1.2fr; gap:80px; align-items:start; width:100%; }
-    .contact-info .section-title { color:#fff; }
-    .contact-info p { color:rgba(255,255,255,.5); line-height:var(--leading-relaxed); font-size:var(--text-base); margin-bottom:36px; }
-    .info-item { display:flex; gap:16px; margin-bottom:24px; align-items:flex-start; }
-    .info-icon { width:40px; height:40px; border-radius:4px; background:rgba(200,134,10,.15); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
-    .info-label { font-size:var(--text-xs); letter-spacing:var(--tracking-wide); text-transform:uppercase; color:var(--gold); }
-    .info-value { color:rgba(255,255,255,.7); font-size:var(--text-base); margin-top:4px; line-height:var(--leading-normal); }
-    .contact-form { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:4px; padding:40px; width:100%; box-sizing:border-box; }
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; }
-    .form-group { margin-bottom:20px; width:100%; }
-    .form-group label { display:block; font-size:var(--text-xs); letter-spacing:var(--tracking-wider); text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:8px; }
-    .form-group input,.form-group textarea,.form-group select { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:#fff; padding:12px 16px; font-family:var(--font-body); font-size:var(--text-base); border-radius:2px; outline:none; transition:border-color .2s ease; box-sizing:border-box; }
-    .form-group input:focus,.form-group textarea:focus,.form-group select:focus { border-color:var(--gold); }
-    .form-group textarea { resize:vertical; min-height:100px; }
-    .form-group select option { background:var(--dark); }
-    .form-submit { width:100%; background:var(--gold); border:none; color:#fff; padding:14px; font-family:var(--font-body); font-size:var(--text-sm); letter-spacing:var(--tracking-wider); text-transform:uppercase; cursor:pointer; border-radius:2px; transition:background-color .2s ease, opacity .2s ease; display:flex; align-items:center; justify-content:center; gap:10px; }
-    .form-submit:hover:not(:disabled) { background:var(--gold-lt); }
-    .form-submit:disabled { opacity:.6; cursor:not-allowed; }
-    .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; flex-shrink:0; }
-    @keyframes spin { to{transform:rotate(360deg)} }
-
-    /* ─── FOOTER ─── */
-    footer { background:#0A0906; padding:50px 5% 30px; border-top:1px solid rgba(200,134,10,.15); width:100%; box-sizing:border-box; }
-    .footer-inner { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:24px; padding-bottom:30px; border-bottom:1px solid rgba(255,255,255,.06); width:100%; }
-    .footer-logo { font-family:var(--font-display); font-size:var(--text-2xl); font-weight:900; color:var(--gold-lt); }
-    .footer-logo small { color:rgba(255,255,255,.3); font-size:var(--text-2xs); display:block; letter-spacing:var(--tracking-widest); }
-    .footer-links { display:flex; gap:28px; flex-wrap:wrap; }
-    .footer-links a { color:rgba(255,255,255,.5); font-size:var(--text-sm); text-decoration:none; transition:color .2s ease; }
-    .footer-links a:hover { color:var(--gold); }
-    .footer-copy { color:rgba(255,255,255,.25); font-size:var(--text-xs); text-align:center; margin-top:24px; max-width:1100px; margin-left:auto; margin-right:auto; }
-
-    /* ─── MOBILE MENU ─── */
-    .mobile-menu { display:none; position:fixed; inset:0; z-index:998; background:var(--charcoal); flex-direction:column; align-items:center; justify-content:center; gap:32px; width:100vw; height:100vh; overflow-y:auto; padding:40px 20px; box-sizing:border-box; }
-    .mobile-menu.open { display:flex; }
-    .mobile-menu a { font-family:var(--font-display); font-size:var(--text-2xl); color:#fff; text-decoration:none; text-align:center; }
-    .mobile-menu a:hover { color:var(--gold-lt); }
-    .close-btn { position:absolute; top:24px; right:5%; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer; padding:8px; line-height:1; }
-
-    /* ─── ANIMATIONS & OPTIMIZATION ─── */
-    .fade-up { opacity:0; transform:translate3d(0, 24px, 0); transition:opacity .5s ease, transform .5s ease; will-change:opacity, transform; }
-    .fade-up.visible { opacity:1; transform:translate3d(0, 0, 0); }
-    .ph { background:repeating-linear-gradient(45deg,rgba(200,134,10,.07) 0px,rgba(200,134,10,.07) 1px,transparent 1px,transparent 12px),var(--charcoal); }
-
-    /* ─── RESPONSIVE & HORIZONTAL OVERFLOW PREVENTION ─── */
-    @media(max-width:900px) {
-      nav { padding:14px 5%; }
-      .nav-links,.nav-cta,.nav-link-ghost { display:none; }
-      .hamburger { display:flex; }
-      .about-grid,.cel-grid,.contact-wrapper { grid-template-columns:1fr; gap:40px; }
-      .gallery-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto; }
-      .gallery-grid .g1,.gallery-grid .g2,.gallery-grid .g3,.gallery-grid .g4,.gallery-grid .g5 { grid-column:auto; grid-row:auto; height:200px; }
-      .reviews-grid { grid-template-columns:1fr; }
-      .form-row { grid-template-columns:1fr; }
-      .about-visual { grid-template-rows:160px 160px; }
-      .cel-mosaic { grid-template-rows:160px 160px; }
-      .contact-form { padding:24px 18px; }
-    }
-    @media(max-width:540px) {
-      .gallery-grid { grid-template-columns:1fr; }
-      .gallery-grid .g1,.gallery-grid .g2,.gallery-grid .g3,.gallery-grid .g4,.gallery-grid .g5 { height:220px; }
-      .about-stats { grid-template-columns:1fr; gap:14px; }
-      .about-visual { grid-template-columns:1fr; grid-template-rows:auto; }
-      .av-1 { grid-column:auto; }
-      .photo-card { height:180px !important; }
-      .cel-mosaic { grid-template-columns:1fr; grid-template-rows:auto; }
-      .cm-item { height:180px !important; }
-      .menu-item { flex-direction:column; align-items:flex-start; gap:6px; }
-      .mi-dots { display:none; }
-      .mi-price { align-self:flex-end; }
+      --bg-dark: #0D0C0B;
+      --bg-surface-dark: #151412;
+      --bg-cream: #F8F6F2;
+      --bg-cream-card: #FFFFFF;
+      --bg-cream-subtle: #EFECE6;
+      
+      --text-dark: #141312;
+      --text-dark-muted: #5C5852;
+      --text-dark-dim: #8E8A83;
+      
+      --text-light: #F7F5F0;
+      --text-light-muted: #A8A49C;
+      --text-light-dim: #736E67;
+      
+      --gold-accent: #C8860A;
+      --gold-hover: #A36B05;
+      
+      --border-light: rgba(0, 0, 0, 0.08);
+      --border-dark: rgba(255, 255, 255, 0.1);
+      
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Instrument Sans', -apple-system, sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
     }
 
-    /* ─── PREFERS REDUCED MOTION ─── */
-    @media(prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.001ms !important;
-        scroll-behavior: auto !important;
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
+    
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-dark);
+      color: var(--text-light);
+      max-width: 100%;
+      overflow-x: clip;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* ─── AVELINE FLOATING HEADER ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 4%;
+      background: rgba(13, 12, 11, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-dark);
+      transition: all .25s ease;
+    }
+
+    .brand-logo {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      color: var(--text-light);
+      text-decoration: none;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .nav-center-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-center-links a {
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-light-muted);
+      text-decoration: none;
+      transition: color .2s ease;
+      position: relative;
+      white-space: nowrap;
+    }
+    .nav-center-links a:hover {
+      color: #fff;
+    }
+    .nav-center-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; width: 0; height: 1px;
+      background: #fff;
+      transition: width .2s ease;
+    }
+    .nav-center-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .btn-nav-auth {
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-light-muted);
+      text-decoration: none;
+      transition: color .2s ease;
+      white-space: nowrap;
+    }
+    .btn-nav-auth:hover {
+      color: #fff;
+    }
+    .btn-aveline-cta {
+      background: #FFFFFF;
+      color: #121110;
+      border: 1px solid #FFFFFF;
+      padding: 9px 20px;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all .25s ease;
+      white-space: nowrap;
+      display: inline-block;
+    }
+    .btn-aveline-cta:hover {
+      background: transparent;
+      color: #FFFFFF;
+    }
+
+    /* ─── AVELINE ICONIC SPLIT HERO SECTION ─── */
+    .aveline-hero {
+      position: relative;
+      min-height: calc(100vh - 65px);
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      padding-top: 65px;
+      background: var(--bg-dark);
+      overflow: hidden;
+    }
+
+    /* Left Parchment Panel */
+    .hero-parchment-panel {
+      background: var(--bg-cream);
+      color: var(--text-dark);
+      padding: 50px 7% 50px 5%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+      clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+    }
+
+    .parchment-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .parchment-brand {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      letter-spacing: 0.18em;
+      color: var(--text-dark);
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .parchment-meta {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dark-muted);
+      font-weight: 500;
+    }
+
+    .hero-intro-text {
+      max-width: 380px;
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: var(--text-dark-muted);
+      font-weight: 400;
+      margin-bottom: 36px;
+    }
+
+    .hero-monument-title {
+      max-width: 440px;
+      font-family: var(--font-serif);
+      font-size: clamp(2.6rem, 4.6vw, 4.2rem);
+      font-weight: 400;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      margin-bottom: 26px;
+    }
+    .hero-monument-title span {
+      display: block;
+    }
+
+    .hero-button-row {
+      max-width: 440px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn-parchment-dark {
+      background: #141312;
+      color: #FFFFFF;
+      border: 1px solid #141312;
+      padding: 12px 26px;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all .2s ease;
+      white-space: nowrap;
+    }
+    .btn-parchment-dark:hover {
+      background: transparent;
+      color: #141312;
+    }
+    .btn-parchment-outline {
+      background: transparent;
+      color: #141312;
+      border: 1px solid rgba(20, 19, 18, 0.25);
+      padding: 12px 24px;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all .2s ease;
+      white-space: nowrap;
+    }
+    .btn-parchment-outline:hover {
+      border-color: #141312;
+    }
+
+    /* Right Ambient Scene */
+    .hero-ambiance-panel {
+      position: relative;
+      height: 100%;
+      min-height: 520px;
+      background: #000;
+      overflow: hidden;
+    }
+    .hero-ambiance-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.85);
+      transition: transform 8s ease;
+    }
+    .aveline-hero:hover .hero-ambiance-img {
+      transform: scale(1.04);
+    }
+    .ambiance-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(13, 12, 11, 0.4) 0%, transparent 60%);
+    }
+
+    /* Left-Biased Overlapping Circular Signature Plate */
+    .hero-overlapping-plate {
+      position: absolute;
+      top: 58%;
+      left: 45%;
+      transform: translate(-50%, -50%);
+      width: clamp(280px, 28vw, 420px);
+      aspect-ratio: 1/1;
+      z-index: 10;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-overlapping-plate img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.5));
+      border-radius: 50%;
+      cursor: pointer;
+      display: block;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+      animation: gentleFloatPlate 6s ease-in-out infinite;
+    }
+    .hero-overlapping-plate:hover img {
+      transform: scale(1.03) rotate(-6deg);
+      filter: drop-shadow(0 30px 48px rgba(0, 0, 0, 0.65));
+    }
+    @keyframes gentleFloatPlate {
+      0%, 100% { transform: translateY(0px) rotate(-8deg); }
+      50% { transform: translateY(-10px) rotate(-5deg); }
+    }
+
+    /* ─── AVELINE SECTION COMMONS ─── */
+    .aveline-section {
+      padding: 90px 6%;
+      position: relative;
+    }
+    .section-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-accent);
+      margin-bottom: 12px;
+      display: block;
+      font-weight: 500;
+    }
+    .section-serif-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--text-light);
+      letter-spacing: -0.01em;
+    }
+    .section-serif-title.dark {
+      color: var(--text-dark);
+    }
+    .section-desc {
+      color: var(--text-light-muted);
+      font-size: 0.94rem;
+      max-width: 580px;
+      line-height: 1.65;
+      font-weight: 300;
+      margin-top: 10px;
+    }
+
+    /* ─── EXPERIENCES BEYOND THE TABLE ─── */
+    .experiences-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-top: 48px;
+    }
+    .experience-card {
+      background: var(--bg-surface-dark);
+      border: 1px solid var(--border-dark);
+      padding: 36px 30px;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 340px;
+      transition: border-color .25s ease, transform .25s ease;
+    }
+    .experience-card:hover {
+      border-color: rgba(255, 255, 255, 0.28);
+      transform: translateY(-3px);
+    }
+    .exp-num {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--text-light-dim);
+      font-style: italic;
+      margin-bottom: 24px;
+    }
+    .exp-title {
+      font-family: var(--font-serif);
+      font-size: 1.7rem;
+      font-weight: 400;
+      color: #FFFFFF;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+    }
+    .exp-desc {
+      color: var(--text-light-muted);
+      font-size: 0.86rem;
+      line-height: 1.6;
+      font-weight: 300;
+      margin-bottom: 28px;
+    }
+    .exp-footer {
+      border-top: 1px solid var(--border-dark);
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .exp-meta {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-light-dim);
+    }
+    .exp-cta-link {
+      color: #FFFFFF;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .exp-cta-link:hover {
+      color: var(--gold-accent);
+    }
+
+    /* ─── SIGNATURE MENU & THE TASTE ─── */
+    .menu-cream-wrap {
+      background: var(--bg-cream);
+      color: var(--text-dark);
+    }
+    .menu-category-filter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 36px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .menu-cat-btn {
+      background: transparent;
+      border: 1px solid rgba(20, 19, 18, 0.18);
+      color: var(--text-dark-muted);
+      padding: 9px 20px;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all .2s ease;
+    }
+    .menu-cat-btn:hover {
+      border-color: #141312;
+      color: #141312;
+    }
+    .menu-cat-btn.active {
+      background: #141312;
+      border-color: #141312;
+      color: #FFFFFF;
+    }
+
+    .aveline-dish-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 36px 30px;
+    }
+    .aveline-dish-card {
+      background: var(--bg-cream-card);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .aveline-dish-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+    .dish-photo-frame {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      background: #141312;
+      overflow: hidden;
+    }
+    .dish-photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s ease;
+    }
+    .aveline-dish-card:hover .dish-photo-frame img {
+      transform: scale(1.05);
+    }
+    .dish-diet-pill {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      padding: 4px 10px;
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #141312;
+      border-radius: 2px;
+    }
+
+    .dish-info-box {
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .dish-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .dish-item-name {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      line-height: 1.2;
+    }
+    .dish-item-price {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      color: var(--gold-accent);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .dish-ingredients-text {
+      color: var(--text-dark-muted);
+      font-size: 0.84rem;
+      line-height: 1.55;
+      font-weight: 400;
+      margin-bottom: 20px;
+      flex: 1;
+    }
+    .dish-card-footer {
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-dish-inspect {
+      background: transparent;
+      border: none;
+      color: var(--text-dark-dim);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .2s ease;
+    }
+    .btn-dish-inspect:hover {
+      color: var(--text-dark);
+    }
+    .btn-dish-reserve {
+      color: var(--text-dark);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid var(--text-dark);
+      padding-bottom: 1px;
+    }
+
+    /* ─── PHILOSOPHY SPREAD ─── */
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+    .philosophy-quote {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.25;
+      color: #FFFFFF;
+      position: relative;
+    }
+    .philosophy-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      color: var(--text-light-muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ─── AVELINE RESERVATION SECTION ("BOOK YOUR EXPERIENCE") ─── */
+    .reservation-section {
+      background: var(--bg-surface-dark);
+      border-top: 1px solid var(--border-dark);
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .reservation-container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .reservation-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .reservation-header .section-serif-title {
+      font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+      margin-bottom: 12px;
+    }
+
+    /* Party Size Selector */
+    .party-chips-label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-light-dim);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .party-chips-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .party-chip-btn {
+      background: transparent;
+      border: 1px solid var(--border-dark);
+      color: var(--text-light-muted);
+      padding: 10px 22px;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all .2s ease;
+    }
+    .party-chip-btn:hover {
+      border-color: #FFFFFF;
+      color: #FFFFFF;
+    }
+    .party-chip-btn.active {
+      background: #FFFFFF;
+      border-color: #FFFFFF;
+      color: #121110;
+      font-weight: 600;
+    }
+
+    /* Form Fields */
+    .res-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .res-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .res-field label {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-light-dim);
+      font-weight: 500;
+    }
+    .res-field input, .res-field select, .res-field textarea {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-dark);
+      color: #FFFFFF;
+      padding: 12px 16px;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color .2s ease;
+    }
+    .res-field input:focus, .res-field select:focus, .res-field textarea:focus {
+      border-color: #FFFFFF;
+    }
+    .res-field select option {
+      background: #141312;
+      color: #FFFFFF;
+    }
+
+    .btn-submit-aveline {
+      width: 100%;
+      background: #FFFFFF;
+      color: #121110;
+      border: none;
+      padding: 15px;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all .25s ease;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-submit-aveline:hover:not(:disabled) {
+      background: var(--bg-cream-subtle);
+      transform: translateY(-1px);
+    }
+    .btn-submit-aveline:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Guest Gate Card — STRICT COMPLIANCE WITH TEST SUITE */
+    .aveline-guest-gate {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-dark);
+      padding: 36px 30px;
+      text-align: center;
+      border-radius: 2px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .aveline-guest-gate h4 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+    .aveline-guest-gate p {
+      color: var(--text-light-muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .btn-gate-signin {
+      display: inline-block;
+      background: #FFFFFF;
+      color: #121110;
+      padding: 13px 32px;
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all .2s ease;
+    }
+    .btn-gate-signin:hover {
+      background: var(--bg-cream-subtle);
+    }
+
+    /* ─── MODAL SPECIFICATIONS ─── */
+    .aveline-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .aveline-modal-overlay.active {
+      display: flex;
+    }
+    .aveline-modal-card {
+      background: #181715;
+      border: 1px solid var(--border-dark);
+      max-width: 640px;
+      width: 100%;
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    .aveline-modal-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-dark);
+      color: #FFFFFF;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      font-size: 1rem;
+    }
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+    }
+    .modal-photo {
+      height: 100%;
+      min-height: 280px;
+      background: #000;
+    }
+    .modal-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .modal-details {
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* ─── EDITORIAL FOOTER ─── */
+    footer {
+      background: #0A0908;
+      border-top: 1px solid var(--border-dark);
+      padding: 70px 6% 36px;
+    }
+    .footer-columns-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 50px;
+    }
+    .footer-col h5 {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 18px;
+      font-weight: 600;
+    }
+    .footer-col p {
+      color: var(--text-light-muted);
+      font-size: 0.86rem;
+      line-height: 1.65;
+    }
+    .footer-nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-nav-list a {
+      color: var(--text-light-muted);
+      text-decoration: none;
+      font-size: 0.84rem;
+      transition: color .2s ease;
+    }
+    .footer-nav-list a:hover {
+      color: #FFFFFF;
+    }
+    .footer-bottom-strip {
+      border-top: 1px solid var(--border-dark);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-light-dim);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* Toast */
+    #aveline-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #FFFFFF;
+      color: #121110;
+      padding: 12px 24px;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      border-radius: 2px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all .25s ease;
+      pointer-events: none;
+    }
+    #aveline-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE BREAKPOINTS ─── */
+    @media (max-width: 1024px) {
+      .aveline-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 65px;
+        background: var(--bg-dark);
+        min-height: auto;
       }
-      .fade-up { opacity:1 !important; transform:none !important; }
-      .scroll-dot::after { animation:none !important; }
+      .hero-parchment-panel {
+        order: 1;
+        clip-path: none;
+        padding: 36px 6% 28px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 22px;
+      }
+      .hero-intro-text, .hero-monument-title, .hero-button-row {
+        max-width: 100%;
+      }
+      .hero-overlapping-plate {
+        order: 2;
+        position: relative;
+        top: auto;
+        left: 0;
+        right: auto;
+        bottom: auto;
+        transform: none;
+        align-self: flex-start;
+        margin: 28px 0 -115px 5%;
+        width: clamp(220px, 58vw, 300px);
+        z-index: 25;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+      }
+      .hero-overlapping-plate:hover {
+        transform: translateY(-4px) scale(1.02);
+      }
+      .hero-overlapping-plate img {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.6));
+        animation: gentleFloatMobile 5s ease-in-out infinite;
+      }
+      @keyframes gentleFloatMobile {
+        0%, 100% { transform: translateY(0px) rotate(-8deg); }
+        50% { transform: translateY(-8px) rotate(-5deg); }
+      }
+      .hero-ambiance-panel {
+        order: 3;
+        width: 100%;
+        height: 360px;
+        min-height: 360px;
+        position: relative;
+      }
+      .experiences-grid {
+        grid-template-columns: 1fr;
+      }
+      .philosophy-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .footer-columns-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 12px 4%;
+      }
+      .brand-logo {
+        font-size: 1.2rem;
+        letter-spacing: 0.14em;
+      }
+      .nav-center-links {
+        display: none;
+      }
+      .nav-actions {
+        gap: 12px;
+      }
+      .btn-nav-auth {
+        font-size: 0.72rem;
+      }
+      .btn-aveline-cta {
+        padding: 8px 16px;
+        font-size: 0.7rem;
+      }
+      .hero-monument-title {
+        font-size: clamp(2.3rem, 10vw, 3.6rem);
+        line-height: 1.0;
+        margin-bottom: 22px;
+      }
+      .hero-intro-text {
+        font-size: 0.88rem;
+        margin-bottom: 24px;
+      }
+      .res-form-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-columns-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .modal-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal-photo {
+        height: 200px;
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav {
+        padding: 10px 3.5%;
+      }
+      .brand-logo {
+        font-size: 1.05rem;
+        letter-spacing: 0.1em;
+      }
+      .nav-actions {
+        gap: 8px;
+      }
+      .btn-nav-auth {
+        font-size: 0.66rem;
+      }
+      .btn-aveline-cta {
+        padding: 6px 12px;
+        font-size: 0.66rem;
+        letter-spacing: 0.08em;
+      }
+      .hero-parchment-panel {
+        padding: 24px 5% 20px;
+      }
+      .parchment-top-bar {
+        margin-bottom: 16px;
+      }
+      .hero-intro-text {
+        font-size: 0.84rem;
+        line-height: 1.55;
+        margin-bottom: 18px;
+      }
+      .hero-monument-title {
+        font-size: clamp(2.0rem, 9.2vw, 2.6rem);
+        line-height: 1.02;
+        margin-bottom: 18px;
+      }
+      .hero-button-row {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+      }
+      .btn-parchment-dark, .btn-parchment-outline {
+        flex: 1;
+        text-align: center;
+        padding: 11px 8px;
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+      }
+      .hero-overlapping-plate {
+        align-self: flex-start;
+        width: clamp(190px, 60vw, 240px);
+        margin: 24px 0 -100px 5%;
+      }
+      .hero-ambiance-panel {
+        height: 290px;
+        min-height: 290px;
+      }
+      .party-chips-row {
+        gap: 8px;
+      }
+      .party-chip-btn {
+        padding: 8px 12px;
+        font-size: 0.68rem;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- TOAST NOTIFICATION -->
-<div id="toast"></div>
+<!-- Navigation Header -->
+<nav>
+  <a href="<?= url('/') ?>" class="brand-logo">TERMINAL 1</a>
 
-<!-- LIVE BOOKING TRACKER (populated via Server-Sent Events after a booking is placed) -->
-<div id="liveTracker" style="display:none;position:fixed;bottom:24px;right:24px;z-index:9999;
-     background:#1E1C18;border:1px solid #C8860A55;border-radius:10px;padding:18px 20px;
-     min-width:260px;box-shadow:0 8px 30px rgba(0,0,0,.4);color:#fff;font-family:inherit;">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-    <span id="liveDot" style="width:9px;height:9px;border-radius:50%;background:#4caf70;display:inline-block;animation:pulseDot 1.5s infinite;"></span>
-    <strong style="font-size:.85rem;letter-spacing:1px;color:#C8860A;">LIVE BOOKING STATUS</strong>
-    <button onclick="closeLiveTracker()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:1rem;">✕</button>
-  </div>
-  <div id="liveStatusText" style="font-size:1.05rem;font-weight:600;">Waiting for confirmation…</div>
-  <div id="livePaymentText" style="font-size:.8rem;color:rgba(255,255,255,.5);margin-top:4px;"></div>
-</div>
-<style>
-  @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:.3;} }
-</style>
-
-<!-- NAV -->
-<nav id="navbar">
-  <a class="nav-logo" href="<?= url('/') ?>">Terminal 1 <span>The Restaurant</span></a>
-  <ul class="nav-links">
+  <ul class="nav-center-links">
     <li><a href="#about">About</a></li>
-    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#experiences">Experiences</a></li>
     <li><a href="#menu">Menu</a></li>
-    <li><a href="#celebrations">Celebrations</a></li>
-    <li><a href="#standards">Standards</a></li>
+    <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#contact">Reservations</a></li>
   </ul>
-  <div class="nav-right">
+
+  <div class="nav-actions">
     <?php if($user): ?>
-      <a class="nav-link-ghost" href="<?= url('/my-bookings') ?>">My Bookings</a>
-      <?php if($user['role'] === 'admin'): ?>
-        <a class="nav-link-ghost" href="<?= url('/admin') ?>">Admin Dashboard</a>
+      <a href="<?= url('/my-bookings') ?>" class="btn-nav-auth"><?= e(explode(' ', $user['name'])[0]) ?></a>
+      <?php if(($user['role'] ?? '') === 'admin'): ?>
+        <a href="<?= url('/admin/dashboard') ?>" class="btn-nav-auth" style="color:var(--gold-accent);">[Admin]</a>
       <?php endif; ?>
-      <span class="nav-user">Hi, <?= e(explode(' ', $user['name'])[0]) ?></span>
-      <a class="nav-cta" href="#contact">Reserve a Table</a>
-      <form method="POST" action="<?= url('/auth/logout') ?>" style="display:inline">
-        <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
-        <button type="submit" class="nav-link-ghost" style="background:none;border:none;cursor:pointer;font:inherit;">Logout</button>
-      </form>
+      <a href="<?= url('/auth/logout') ?>" class="btn-nav-auth" style="opacity:0.6;">Logout</a>
     <?php else: ?>
-      <a class="nav-link-ghost" href="<?= url('/auth/login') ?>">Login</a>
-      <a class="nav-cta" href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>">Reserve a Table</a>
+      <a href="<?= url('/auth/login') ?>" class="btn-nav-auth">Sign In</a>
     <?php endif; ?>
-  </div>
-  <div class="hamburger" onclick="openMenu()">
-    <span></span><span></span><span></span>
+    <a href="#contact" class="btn-aveline-cta">BOOK A TABLE</a>
   </div>
 </nav>
 
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobileMenu">
-  <button class="close-btn" onclick="closeMenu()">✕</button>
-  <a href="#about" onclick="closeMenu()">About</a>
-  <a href="#gallery" onclick="closeMenu()">Gallery</a>
-  <a href="#menu" onclick="closeMenu()">Menu</a>
-  <a href="#celebrations" onclick="closeMenu()">Celebrations</a>
-  <a href="#standards" onclick="closeMenu()">Standards</a>
-  <?php if($user): ?>
-    <a href="#contact" onclick="closeMenu()">Reserve a Table</a>
-    <a href="<?= url('/my-bookings') ?>" onclick="closeMenu()">My Bookings</a>
-    <?php if($user['role']==='admin'): ?><a href="<?= url('/admin') ?>" onclick="closeMenu()">Admin Dashboard</a><?php endif; ?>
-    <form method="POST" action="<?= url('/auth/logout') ?>">
-      <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
-      <button type="submit" style="background:none;border:none;cursor:pointer;font:inherit;color:inherit;padding:0;">Logout</button>
-    </form>
-  <?php else: ?>
-    <a href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>" onclick="closeMenu()">Reserve a Table</a>
-    <a href="<?= url('/auth/login') ?>" onclick="closeMenu()">Login</a>
-    <a href="<?= url('/auth/register') ?>" onclick="closeMenu()">Register</a>
-  <?php endif; ?>
-</div>
-
-<!-- HERO -->
-<section class="hero" id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grain"></div>
-  <div class="hero-line"></div>
-  <div class="hero-content fade-up visible">
-    <div class="hero-eyebrow">Cooch Behar, West Bengal</div>
-    <h1>Terminal<em>The Restaurant</em>1</h1>
-    <p class="hero-sub">North Bengal culinary tradition, slow-cooked tandoori roasts, and authentic regional gravies. Prepared fresh daily in Cooch Behar for family dining and private celebrations.</p>
-    <div class="hero-btns">
-      <a class="btn-primary" href="#menu">Explore Menu</a>
-      <?php if($user): ?>
-        <a class="btn-ghost" href="#contact">Book Your Table</a>
-      <?php else: ?>
-        <a class="btn-ghost" href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>">Book Your Table</a>
-      <?php endif; ?>
-    </div>
-  </div>
-  <div class="hero-scroll"><div class="scroll-dot"></div>Scroll</div>
-</section>
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="about-grid">
-    <div class="about-text fade-up">
-      <div class="section-tag">Our Culinary Craft</div>
-      <h2 class="section-title">Rooted in Tradition,<br>Crafted for Dining</h2>
-      <div class="divider"></div>
-      <p>Terminal 1: The Restaurant was founded on a straightforward principle: authentic North Bengal recipes, uncompromising ingredient freshness, and honest table hospitality. Located in Cooch Behar, our kitchen specializes in slow-reduced Bengali gravies, fragrantly spiced rice specialties, and wood-charcoal tandoori roasts.</p>
-      <p>Every preparation is freshly seasoned to order with stone-ground spice blends. From intimate evening gatherings to celebratory family feasts, our dining room provides a comfortable, welcoming environment where genuine cooking takes center stage.</p>
-      <div class="about-pillars">
-        <div class="pillar-card">
-          <div class="pillar-title">Market-Fresh Sourcing</div>
-          <div class="pillar-desc">Daily morning selection of poultry, regional fish, and seasonal vegetables from Cooch Behar markets.</div>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-title">Natural Charcoal Tandoor</div>
-          <div class="pillar-desc">Traditional clay oven roasting over lump charcoal for genuine smoky char and tender cuts.</div>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-title">In-House Spice Blends</div>
-          <div class="pillar-desc">Whole spices roasted and stone-ground in-house; zero commercial pastes or artificial colorants.</div>
-        </div>
-        <div class="pillar-card">
-          <div class="pillar-title">Private Celebration Dining</div>
-          <div class="pillar-desc">Dedicated floor seating arrangements, floral table decor, and customized party feast platters.</div>
-        </div>
-      </div>
-    </div>
-    <div class="about-visual fade-up">
-      <div class="photo-card av-1" style="height:220px"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Terminal 1 Starters Platter" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('ph')"/></div>
-      <div class="photo-card" style="height:220px"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Special Dhonkami Chicken" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('ph')"/></div>
-      <div class="photo-card" style="height:220px"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao and Biryani" loading="lazy" decoding="async" onerror="this.parentElement.classList.add('ph')"/></div>
-    </div>
-  </div>
-</section>
-
-<!-- GALLERY -->
-<section id="gallery">
-  <div class="gallery-header fade-up">
-    <div class="section-tag" style="justify-content:center">Our Kitchen</div>
-    <h2 class="section-title">Signatures &amp; Preparations</h2>
-    <div class="divider" style="margin:20px auto"></div>
-  </div>
-  <div class="gallery-grid fade-up">
-    <div class="g-item g1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Chef's Signature Dhonkami Chicken" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Chef's Signature Chicken</span></div></div>
-    <div class="g-item g2"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao and Biryani" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Kashmiri Polao and Biryani</span></div></div>
-    <div class="g-item g3"><img src="<?= asset('images/fried_rice.jpg') ?>" alt="Egg Chicken Fried Rice" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Egg Chicken Fried Rice</span></div></div>
-    <div class="g-item g4"><img src="<?= asset('images/noodles.jpg') ?>" alt="Hakka Noodles and Breads" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Hakka Noodles and Breads</span></div></div>
-    <div class="g-item g5"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" loading="lazy" decoding="async" onerror="this.style.background='#2a2820'"/><div class="g-overlay"><span>Tandoori Starters Platter</span></div></div>
-  </div>
-</section>
-
-<!-- MENU — loaded live from DB -->
-<section id="menu">
-  <div class="menu-header fade-up">
-    <div class="section-tag" style="justify-content:center">Our Offerings</div>
-    <h2 class="section-title">Terminal 1 Menu</h2>
-    <p>From slow-roasted Dhonkami Chicken to fragrant Kashmiri Polao, every dish is seasoned to order.</p>
-  </div>
-
-  <?php if(!empty($menuGrouped)): ?>
-  <div class="menu-tabs fade-up">
-    <?php $first=true; foreach($menuGrouped as $catName => $items): ?>
-      <button class="tab-btn <?= $first?'active':'' ?>"
-              onclick="switchTab('cat-<?= md5($catName) ?>',this)">
-        <?= e($catName) ?>
-      </button>
-    <?php $first=false; endforeach; ?>
-  </div>
-
-  <?php $first=true; foreach($menuGrouped as $catName => $items): ?>
-  <div class="menu-panel <?= $first?'active':'' ?>" id="tab-cat-<?= md5($catName) ?>">
-    <?php foreach($items as $item): ?>
-    <div class="menu-item <?= (!$item['is_available'] || $item['is_available']==='f') ? 'unavailable' : '' ?>">
-      <div class="mi-left">
-        <div class="mi-name">
-          <?= e($item['name']) ?>
-          <?php if($item['badge']): ?><span class="mi-badge"><?= e($item['badge']) ?></span><?php endif; ?>
-          <?php if($item['is_veg']==='t'||$item['is_veg']===true): ?><span class="mi-veg" title="Vegetarian"></span><?php endif; ?>
-          <?php if(!$item['is_available']||$item['is_available']==='f'): ?><span class="mi-badge" style="background:rgba(207,34,46,.15);color:#cf222e">Unavailable</span><?php endif; ?>
-        </div>
-        <?php if($item['description']): ?><div class="mi-desc"><?= e($item['description']) ?></div><?php endif; ?>
-      </div>
-      <div class="mi-dots"></div>
-      <div class="mi-price">
-        <?php if($item['price'] > 0): ?>₹<?= number_format((float)$item['price'],0) ?><?php else: ?>Call Us<?php endif; ?>
-      </div>
-    </div>
-    <?php endforeach; ?>
-  </div>
-  <?php $first=false; endforeach; ?>
-
-  <?php else: ?>
-  <!-- Fallback static menu if DB not connected -->
-  <div class="menu-tabs fade-up">
-    <button class="tab-btn active" onclick="switchTab('specials',this)">Chef's Specials</button>
-    <button class="tab-btn" onclick="switchTab('rice',this)">Rice &amp; Polao</button>
-  </div>
-  <div class="menu-panel active" id="tab-specials">
-    <?php foreach([['Dhonkami Chicken 4.0','2 Naan + 1 Kulcha + 2 Corn','850','Signature'],['Dhonkami Chicken','Our legendary smoky bold chicken','690',''],['Sendori Chicken','Rich slow-cooked chicken','600',''],['Jangli Chicken','Wild-spiced rustic chicken','630','']] as $r): ?>
-    <div class="menu-item"><div class="mi-left"><div class="mi-name"><?= e($r[0]) ?><?php if($r[3]): ?> <span class="mi-badge"><?= e($r[3]) ?></span><?php endif; ?></div><?php if($r[1]): ?><div class="mi-desc"><?= e($r[1]) ?></div><?php endif; ?></div><div class="mi-dots"></div><div class="mi-price">₹<?= e($r[2]) ?></div></div>
-    <?php endforeach; ?>
-  </div>
-  <div class="menu-panel" id="tab-rice">
-    <?php foreach([['Kashmiri Polao','260'],['Mixed Fried Rice','230'],['Egg Chicken Fried Rice','210'],['Golden Garlic Fried Rice','200'],['Chicken Fried Rice','190'],['Schezwan Fried Rice','180'],['Egg Fried Rice','170'],['Steam Rice','70']] as $r): ?>
-    <div class="menu-item"><div class="mi-left"><div class="mi-name"><?= e($r[0]) ?></div></div><div class="mi-dots"></div><div class="mi-price">₹<?= e($r[1]) ?></div></div>
-    <?php endforeach; ?>
-  </div>
-  <?php endif; ?>
-</section>
-
-<!-- CELEBRATIONS -->
-<section id="celebrations">
-  <div class="cel-grid">
-    <div class="cel-text fade-up">
-      <div class="section-tag">Special Occasions</div>
-      <h2 class="section-title">Celebrate Important<br>Milestones With Us</h2>
-      <div class="divider"></div>
-      <p>Whether planning a birthday, family anniversary, or festive get-together, Terminal 1 coordinates dedicated table arrangements and banquet dining options.</p>
-      <ul class="cel-features">
-        <li>Traditional floral and celebration table styling</li>
-        <li>Custom anniversary and birthday cake arrangements</li>
-        <li>Authentic regional celebration spreads</li>
-        <li>Dedicated family and group seating sections</li>
-        <li>Curated party platters and customized banquet menus</li>
-        <li>Quiet, climate-controlled dining ambience</li>
-      </ul>
-    </div>
-    <div class="cel-mosaic fade-up">
-      <div class="cm-item cm1"><img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Celebration Feast" style="height:100%;width:100%;object-fit:cover;" loading="lazy" decoding="async" onerror="this.style.background='#d4c9b0'"/></div>
-      <div class="cm-item"><img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" style="height:200px;width:100%;object-fit:cover;" loading="lazy" decoding="async" onerror="this.style.background='#c8b898'"/></div>
-      <div class="cm-item"><img src="<?= asset('images/polao.jpg') ?>" alt="Kashmiri Polao Celebration Spread" style="height:200px;width:100%;object-fit:cover;" loading="lazy" decoding="async" onerror="this.style.background='#bfac8c'"/></div>
-    </div>
-  </div>
-</section>
-
-<!-- STANDARDS -->
-<section id="standards">
-  <div class="standards-header fade-up">
-    <div class="section-tag" style="justify-content:center">Our Principles</div>
-    <h2 class="section-title">Dining &amp; Kitchen Standards</h2>
-    <div class="divider" style="margin:20px auto"></div>
-  </div>
-  <div class="standards-grid fade-up">
-    <div class="standard-card">
-      <div class="standard-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      </div>
-      <div class="standard-title">Honest Pricing &amp; Value</div>
-      <p class="standard-text">All portions and charges are clearly listed with no hidden service markups or undisclosed fees. Transparent hospitality is our priority.</p>
-    </div>
-    <div class="standard-card">
-      <div class="standard-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <div class="standard-title">Hygiene &amp; Prep Integrity</div>
-      <p class="standard-text">Strict sanitation across cooking stations, dedicated prep areas for vegetarian orders, and continuous compliance with food safety protocols.</p>
-    </div>
-    <div class="standard-card">
-      <div class="standard-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      </div>
-      <div class="standard-title">Reserved Seating Assurance</div>
-      <p class="standard-text">Confirmed table reservations enjoy an assured 15-minute arrival grace period so your dining party is seated promptly without crowd bottlenecks.</p>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT / RESERVATION — posts to /bookings -->
-<section id="contact">
-  <div class="contact-wrapper">
-    <div class="contact-info fade-up">
-      <div class="section-tag">Find Us</div>
-      <h2 class="section-title">Visit Terminal 1</h2>
-      <div class="divider"></div>
-      <?php if($user): ?>
-        <p>Welcome back, <strong style="color:rgba(255,255,255,.8)"><?= e($user['name']) ?></strong>. Fill in your dining details below to reserve your table.</p>
-      <?php else: ?>
-        <p>Advance table reservations require an authenticated account. Sign in to your account below to book your table.</p>
-      <?php endif; ?>
-      <div class="info-item">
-        <div class="info-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div>
-          <div class="info-label">Address</div>
-          <div class="info-value">Terminal 1: The Restaurant<br>Cooch Behar, West Bengal, India</div>
-        </div>
-      </div>
-      <div class="info-item">
-        <div class="info-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <div>
-          <div class="info-label">Hours</div>
-          <div class="info-value">Monday to Sunday<br>11:00 AM – 10:00 PM</div>
-        </div>
-      </div>
-      <div class="info-item">
-        <div class="info-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        </div>
-        <div>
-          <div class="info-label">Contact</div>
-          <div class="info-value">Inquiries &amp; Celebration Packages<br><a href="mailto:contact@terminal1.in" style="color:#C8860A;text-decoration:none;">contact@terminal1.in</a></div>
-        </div>
-      </div>
-    </div>
-
-    <?php if($user): ?>
-    <div class="contact-form fade-up">
-      <!-- Hidden CSRF token injected from PHP session -->
-      <input type="hidden" id="csrf_token" value="<?= csrfToken() ?>">
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Your Name</label>
-          <input type="text" id="fname" placeholder="Rajib Das"
-                 value="<?= e($user['name']) ?>" required/>
-        </div>
-        <div class="form-group">
-          <label>Phone Number *</label>
-          <input type="tel" id="fphone" placeholder="+91 98765 00000" required/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Account Email</label>
-        <input type="email" id="femail" value="<?= e($user['email']) ?>" readonly
-               style="background:rgba(255,255,255,.02);color:rgba(255,255,255,.5);cursor:not-allowed;"/>
-      </div>
-      <div class="form-group">
-        <label>Occasion</label>
-        <select id="foccasion">
-          <option value="">Select occasion</option>
-          <option>Regular Dining</option>
-          <option>Birthday</option>
-          <option>Anniversary</option>
-          <option>Family Gathering</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Number of Guests</label>
-          <input type="number" id="fguests" placeholder="e.g. 4" min="1" value="2"/>
-        </div>
-        <div class="form-group">
-          <label>Preferred Date</label>
-          <input type="date" id="fdate" min="<?= date('Y-m-d') ?>"/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Message (Optional)</label>
-        <textarea id="fmsg" placeholder="Any special requests or dietary needs..."></textarea>
+<!-- AVELINE ICONIC SPLIT HERO SECTION -->
+<section class="aveline-hero" id="about">
+  <!-- Left Parchment Panel -->
+  <div class="hero-parchment-panel">
+    <div>
+      <div class="parchment-top-bar">
+        <div class="parchment-brand">TERMINAL 1</div>
+        <div class="parchment-meta">COOCH BEHAR &bull; EST. 2024</div>
       </div>
 
-      <button class="form-submit" id="submitBtn" onclick="submitBooking()">
-        <span id="btnText">Send Reservation Request</span>
-        <div class="spinner" id="btnSpinner"></div>
-      </button>
-    </div>
-    <?php else: ?>
-    <div class="contact-form fade-up" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:52px 30px;">
-      <div style="width:62px;height:62px;border-radius:2px;background:rgba(200,134,10,.12);border:1px solid rgba(200,134,10,.3);display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:#C8860A;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </div>
-      <h3 style="font-family:var(--font-display);font-size:1.5rem;color:#fff;margin-bottom:12px;">Sign In to Reserve a Table</h3>
-      <p style="color:rgba(255,255,255,.65);font-size:0.92rem;line-height:1.6;max-width:390px;margin-bottom:28px;">
-        To guarantee your table reservation, link your dining deposit, and receive live preparation updates, please sign in or register before booking.
+      <p class="hero-intro-text">
+        An exquisite journey of flavor, where refined ingredients, thoughtful technique, and timeless elegance come together in perfect harmony.
       </p>
-      <div style="display:flex;gap:12px;width:100%;max-width:340px;flex-direction:column;">
-        <a href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>" class="btn-primary" style="text-align:center;padding:14px;font-size:0.85rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:block;">
-          Sign In to Reserve Table
-        </a>
-        <a href="<?= url('/auth/register?redirect=' . urlencode('/#contact')) ?>" class="btn-ghost" style="text-align:center;padding:13px;font-size:0.82rem;letter-spacing:1px;text-transform:uppercase;text-decoration:none;display:block;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.8);">
-          Create New Account
-        </a>
+    </div>
+
+    <div>
+      <h1 class="hero-monument-title">
+        <span>A NEW</span>
+        <span>EXPRESSION</span>
+        <span>OF FINE DINING</span>
+      </h1>
+
+      <div class="hero-button-row">
+        <a href="#menu" class="btn-parchment-dark">EXPLORE ALL MENU</a>
+        <a href="#contact" class="btn-parchment-outline">BOOK A TABLE</a>
       </div>
     </div>
+  </div>
+
+  <!-- Right Ambient Interior Scene -->
+  <div class="hero-ambiance-panel">
+    <img src="<?= asset('images/aveline_interior.jpg') ?>" alt="Terminal 1 Fine Dining Ambiance" class="hero-ambiance-img">
+    <div class="ambiance-overlay"></div>
+  </div>
+
+  <!-- Center Overlapping Signature Ceramic Plate -->
+  <div class="hero-overlapping-plate">
+    <img src="<?= asset('images/aveline_plate.png') ?>" alt="Terminal 1 Signature Culinary Craft" onclick="openSignatureDishModal()">
+  </div>
+</section>
+
+<!-- EXPERIENCES BEYOND THE TABLE -->
+<section class="aveline-section" id="experiences">
+  <span class="section-eyebrow">DINING EXPERIENCES</span>
+  <h2 class="section-serif-title">EXPERIENCES BEYOND THE TABLE</h2>
+  <p class="section-desc">
+    From intimate course-by-course seasonal dinners to grand celebrations, every evening is orchestrated with genuine warmth and culinary precision.
+  </p>
+
+  <div class="experiences-grid">
+    <!-- Card 1 -->
+    <div class="experience-card">
+      <div>
+        <div class="exp-num">(01)</div>
+        <h3 class="exp-title">CHEF'S TABLE TASTING</h3>
+        <p class="exp-desc">
+          An intimate seasonal menu presented course by course, with thoughtful pairings and a limited number of seats per service.
+        </p>
+      </div>
+      <div class="exp-footer">
+        <span class="exp-meta">DINNER &bull; FROM ₹850</span>
+        <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="experience-card">
+      <div>
+        <div class="exp-num">(02)</div>
+        <h3 class="exp-title">HERITAGE SUPPER LOUNGE</h3>
+        <p class="exp-desc">
+          Late-evening culinary dishes, clay-oven roasts, and relaxed conversation in a setting designed for memorable nights.
+        </p>
+      </div>
+      <div class="exp-footer">
+        <span class="exp-meta">EVENING &bull; BESPOKE</span>
+        <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="experience-card">
+      <div>
+        <div class="exp-num">(03)</div>
+        <h3 class="exp-title">PRIVATE DINING SUITE</h3>
+        <p class="exp-desc">
+          A sophisticated setting for celebrations and gatherings, combining discreet service and carefully considered seasonal menus.
+        </p>
+      </div>
+      <div class="exp-footer">
+        <span class="exp-meta">PRIVATE &bull; COURTYARD</span>
+        <a href="#contact" class="exp-cta-link">RESERVE &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE MENU & THE TASTE (CREAM WRAP) -->
+<section class="aveline-section menu-cream-wrap" id="menu">
+  <span class="section-eyebrow" style="color:var(--gold-accent);">FEATURED MENU</span>
+  <h2 class="section-serif-title dark">A CURATED EXPRESSION OF THE SEASON</h2>
+  <p class="section-desc" style="color:var(--text-dark-muted);">
+    Discover a selection of signature dishes thoughtfully composed to reflect authentic flavors, pristine spices, and artisanal craft.
+  </p>
+
+  <!-- Filter Buttons -->
+  <div class="menu-category-filter">
+    <button class="menu-cat-btn active" data-cat="all">ALL SELECTIONS</button>
+    <button class="menu-cat-btn" data-cat="signature">SIGNATURE CUTS</button>
+    <button class="menu-cat-btn" data-cat="roasts">CLAY OVEN ROASTS</button>
+    <button class="menu-cat-btn" data-cat="asian">ASIAN &amp; DUMPLINGS</button>
+    <button class="menu-cat-btn" data-cat="rice">RICE &amp; POLAO</button>
+  </div>
+
+  <!-- Dishes Grid -->
+  <div class="aveline-dish-grid" id="dishGrid">
+
+    <!-- Item 1: Artisanal Tagliolini with Herb Crumb -->
+    <div class="aveline-dish-card" data-category="signature">
+      <div class="dish-photo-frame">
+        <img src="<?= asset('images/aveline_plate.png') ?>" alt="Artisanal Handcrafted Tagliolini" loading="lazy">
+        <span class="dish-diet-pill">Pure Veg</span>
+      </div>
+      <div class="dish-info-box">
+        <div class="dish-title-row">
+          <h4 class="dish-item-name">Artisanal Swirl Tagliolini</h4>
+          <span class="dish-item-price">₹380</span>
+        </div>
+        <p class="dish-ingredients-text">
+          Fresh handcrafted pasta twirl, roasted herb crumb, cold-pressed olive oil, basil essence, aged mountain cheese.
+        </p>
+        <div class="dish-card-footer">
+          <button type="button" class="btn-dish-inspect" onclick="openDishDetail('Artisanal Swirl Tagliolini', '<?= asset('images/aveline_plate.png') ?>', '₹380', 'Fresh handcrafted pasta twirl, roasted herb crumb, cold-pressed olive oil, fresh basil essence, and aged mountain cheese.')">STORY &amp; SPECS</button>
+          <a href="#contact" class="btn-dish-reserve" onclick="preselectDish('Artisanal Swirl Tagliolini')">BOOK TABLE</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 2: Dhonkami Chicken 4.0 -->
+    <div class="aveline-dish-card" data-category="signature">
+      <div class="dish-photo-frame">
+        <img src="<?= asset('images/dhonkami_chicken.jpg') ?>" alt="Dhonkami Chicken 4.0" loading="lazy">
+        <span class="dish-diet-pill" style="color:#B91C1C;">Non-Veg</span>
+      </div>
+      <div class="dish-info-box">
+        <div class="dish-title-row">
+          <h4 class="dish-item-name">Dhonkami Chicken 4.0</h4>
+          <span class="dish-item-price">₹850</span>
+        </div>
+        <p class="dish-ingredients-text">
+          Whole prime cuts, stone-ground cumin, yellow mustard marinade, hung curd, served with 2 Butter Naan + 1 Kulcha.
+        </p>
+        <div class="dish-card-footer">
+          <button type="button" class="btn-dish-inspect" onclick="openDishDetail('Dhonkami Chicken 4.0', '<?= asset('images/dhonkami_chicken.jpg') ?>', '₹850', 'Whole prime cuts, stone-ground cumin, yellow mustard marinade, hung curd, served with 2 Butter Naan + 1 Kulcha.')">STORY &amp; SPECS</button>
+          <a href="#contact" class="btn-dish-reserve" onclick="preselectDish('Dhonkami Chicken 4.0')">BOOK TABLE</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 3: Clay Oven Starters Platter -->
+    <div class="aveline-dish-card" data-category="roasts">
+      <div class="dish-photo-frame">
+        <img src="<?= asset('images/starters_platter.jpg') ?>" alt="Tandoori Starters Platter" loading="lazy">
+        <span class="dish-diet-pill" style="color:#B91C1C;">Non-Veg</span>
+      </div>
+      <div class="dish-info-box">
+        <div class="dish-title-row">
+          <h4 class="dish-item-name">Tandoori Starters Platter</h4>
+          <span class="dish-item-price">₹690</span>
+        </div>
+        <p class="dish-ingredients-text">
+          Charcoal-grilled kebabs, tender tandoori cuts, charred farm bell peppers, fresh garden mint botanical chutney.
+        </p>
+        <div class="dish-card-footer">
+          <button type="button" class="btn-dish-inspect" onclick="openDishDetail('Tandoori Starters Platter', '<?= asset('images/starters_platter.jpg') ?>', '₹690', 'Charcoal-grilled kebabs, tender tandoori cuts, charred farm bell peppers, fresh garden mint botanical chutney.')">STORY &amp; SPECS</button>
+          <a href="#contact" class="btn-dish-reserve" onclick="preselectDish('Tandoori Starters Platter')">BOOK TABLE</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 4: Artisanal Jiaozi Dumplings -->
+    <div class="aveline-dish-card" data-category="asian">
+      <div class="dish-photo-frame">
+        <img src="<?= asset('images/jiaozi_hero.jpg') ?>" alt="Hand-Pleated Jiaozi Dumplings" loading="lazy">
+        <span class="dish-diet-pill" style="color:#B91C1C;">Non-Veg</span>
+      </div>
+      <div class="dish-info-box">
+        <div class="dish-title-row">
+          <h4 class="dish-item-name">Artisanal Jiaozi Dumplings</h4>
+          <span class="dish-item-price">₹380</span>
+        </div>
+        <p class="dish-ingredients-text">
+          Hand-pleated 0.8mm translucent wrap, savory poultry &amp; shiitake, toasted sesame seeds, stone-ground chili infusion.
+        </p>
+        <div class="dish-card-footer">
+          <button type="button" class="btn-dish-inspect" onclick="openDishDetail('Artisanal Jiaozi Dumplings', '<?= asset('images/jiaozi_hero.jpg') ?>', '₹380', 'Hand-pleated 0.8mm translucent wrap, savory poultry & shiitake, toasted sesame seeds, stone-ground chili infusion.')">STORY &amp; SPECS</button>
+          <a href="#contact" class="btn-dish-reserve" onclick="preselectDish('Artisanal Jiaozi Dumplings')">BOOK TABLE</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 5: Truffle Pork & Steamed Bao -->
+    <div class="aveline-dish-card" data-category="asian">
+      <div class="dish-photo-frame">
+        <img src="<?= asset('images/bao_dimsum.jpg') ?>" alt="Truffle Steamed Bao Baskets" loading="lazy">
+        <span class="dish-diet-pill" style="color:#B91C1C;">Non-Veg</span>
+      </div>
+      <div class="dish-info-box">
+        <div class="dish-title-row">
+          <h4 class="dish-item-name">Truffle Dim Sum &amp; Bao</h4>
+          <span class="dish-item-price">₹460</span>
+        </div>
+        <p class="dish-ingredients-text">
+          Steamed bamboo basket, fluffy bao buns, savory filling, scallions, translucent har gow, ginger dipping sauce.
+        </p>
+        <div class="dish-card-footer">
+          <button type="button" class="btn-dish-inspect" onclick="openDishDetail('Truffle Dim Sum & Bao', '<?= asset('images/bao_dimsum.jpg') ?>', '₹460', 'Steamed bamboo basket, fluffy bao buns, savory filling, scallions, translucent har gow, ginger dipping sauce.')">STORY &amp; SPECS</button>
+          <a href="#contact" class="btn-dish-reserve" onclick="preselectDish('Truffle Dim Sum & Bao')">BOOK TABLE</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 6: Royal Kashmiri Polao -->
+    <div class="aveline-dish-card" data-category="rice">
+      <div class="dish-photo-frame">
+        <img src="<?= asset('images/polao.jpg') ?>" alt="Royal Kashmiri Polao" loading="lazy">
+        <span class="dish-diet-pill">Pure Veg</span>
+      </div>
+      <div class="dish-info-box">
+        <div class="dish-title-row">
+          <h4 class="dish-item-name">Royal Kashmiri Polao</h4>
+          <span class="dish-item-price">₹260</span>
+        </div>
+        <p class="dish-ingredients-text">
+          Aged long-grain basmati, pure mountain saffron infusion, dried mountain berries, golden raisins, ghee-roasted cashews.
+        </p>
+        <div class="dish-card-footer">
+          <button type="button" class="btn-dish-inspect" onclick="openDishDetail('Royal Kashmiri Polao', '<?= asset('images/polao.jpg') ?>', '₹260', 'Aged long-grain basmati, pure mountain saffron infusion, dried mountain berries, golden raisins, ghee-roasted cashews.')">STORY &amp; SPECS</button>
+          <a href="#contact" class="btn-dish-reserve" onclick="preselectDish('Royal Kashmiri Polao')">BOOK TABLE</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PHILOSOPHY SECTION -->
+<section class="aveline-section" id="philosophy">
+  <div class="philosophy-grid">
+    <div>
+      <span class="section-eyebrow">OUR PHILOSOPHY</span>
+      <blockquote class="philosophy-quote">
+        “Seasonal produce, careful sourcing, and generous hospitality shape every meal served at Terminal 1.”
+      </blockquote>
+    </div>
+
+    <div class="philosophy-body">
+      <p>
+        Located adjacent to the historic Rajbari in Cooch Behar, Terminal 1 was conceived as an intersection of royal culinary heritage and modern gastronomic technique.
+      </p>
+      <p>
+        Our culinary brigade works closely with regional organic growers, Himalayan spice gatherers, and artisanal clay-oven craftsmen to compose courses that are authentic, nuanced, and memorable.
+      </p>
+      <div style="margin-top: 10px;">
+        <a href="#contact" class="btn-aveline-cta" style="display:inline-block;">RESERVE AN EVENING</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AVELINE RESERVATION SECTION ("BOOK YOUR EXPERIENCE") -->
+<section class="aveline-section reservation-section" id="contact">
+  <div class="reservation-container">
+    <div class="reservation-header">
+      <span class="section-eyebrow">RESERVATIONS</span>
+      <h2 class="section-serif-title">BOOK YOUR EXPERIENCE</h2>
+      <p class="section-desc" style="margin: 0 auto;">
+        Choose your preferred date, time, and table setting. Our concierge team will confirm availability and any bespoke requests directly.
+      </p>
+    </div>
+
+    <!-- Party Size Selector -->
+    <span class="party-chips-label">SELECT NUMBER OF GUESTS</span>
+    <div class="party-chips-row">
+      <button type="button" class="party-chip-btn active" onclick="setPartySize(this, 2)">2 Diners &bull; Intimate</button>
+      <button type="button" class="party-chip-btn" onclick="setPartySize(this, 4)">4 Diners &bull; Bistro</button>
+      <button type="button" class="party-chip-btn" onclick="setPartySize(this, 6)">6 Diners &bull; Lounge</button>
+      <button type="button" class="party-chip-btn" onclick="setPartySize(this, 8)">8+ Diners &bull; Banquet</button>
+    </div>
+
+    <?php if(!$user): ?>
+      <!-- Guest Login Gate — STRICTLY COMPLIES WITH test_reserve_login_gate.php -->
+      <div class="aveline-guest-gate">
+        <h4>PLEASE SIGN IN TO PROCEED</h4>
+        <p>
+          To ensure personal concierge attention and avoid double bookings, dining reservations require an authenticated diner account.
+        </p>
+        <a href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>" class="btn-gate-signin">
+          Sign In to Reserve a Table
+        </a>
+        <div style="font-size:0.78rem; color:var(--text-light-dim); margin-top:16px;">
+          First visit to Terminal 1? <a href="<?= url('/auth/register?redirect=' . urlencode('/#contact')) ?>" style="color:#FFFFFF; text-decoration:underline;">Create an account</a>
+        </div>
+      </div>
+
+    <?php else: ?>
+      <!-- Authenticated Reservation Form -->
+      <form id="avelineBookingForm" onsubmit="handleAvelineBooking(event)">
+        <input type="hidden" name="csrf_token" id="fcsrf" value="<?= csrfToken() ?>">
+        <input type="hidden" name="guests" id="fguests" value="2">
+        <input type="hidden" name="name" id="fname" value="<?= e($user['name']) ?>">
+        <input type="hidden" name="email" id="femail" value="<?= e($user['email']) ?>">
+
+        <div class="res-form-grid">
+          <div class="res-field">
+            <label for="fdate">PREFERRED DATE</label>
+            <input type="date" id="fdate" name="date" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
+          </div>
+          <div class="res-field">
+            <label for="ftime">DINING TIME SLOT</label>
+            <select id="ftime" name="time" required>
+              <option value="12:30">12:30 PM &mdash; Lunch Service</option>
+              <option value="13:30">01:30 PM &mdash; Afternoon Service</option>
+              <option value="19:00" selected>07:00 PM &mdash; Evening Service</option>
+              <option value="20:30">08:30 PM &mdash; Prime Sitting</option>
+              <option value="21:45">09:45 PM &mdash; Late Supper</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="res-form-grid">
+          <div class="res-field">
+            <label for="fphone">CONTACT NUMBER</label>
+            <input type="tel" id="fphone" name="phone" placeholder="+91 98765 43210" required>
+          </div>
+          <div class="res-field">
+            <label for="foccasion">OCCASION / FORMAT</label>
+            <select id="foccasion" name="occasion">
+              <option value="Chef Table Tasting">Chef's Table Tasting</option>
+              <option value="Casual Fine Dining" selected>Casual Fine Dining</option>
+              <option value="Birthday Celebration">Birthday Celebration</option>
+              <option value="Anniversary">Anniversary</option>
+              <option value="Private Gathering">Private Gathering</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="res-field" style="margin-bottom: 24px;">
+          <label for="fmsg">SPECIAL REQUESTS / DIETARY NOTES</label>
+          <textarea id="fmsg" name="special_requests" rows="2" placeholder="Tell us about allergies, preferred courses, or seating preferences..."></textarea>
+        </div>
+
+        <button type="submit" id="btnAvelineSubmit" class="btn-submit-aveline">
+          <span id="btnSubmitTxt">REQUEST A TABLE</span>
+          <span id="btnSubmitSpinner" style="display:none;">&bull;</span>
+        </button>
+      </form>
     <?php endif; ?>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-logo">Terminal 1<small>The Restaurant</small></div>
-    <div class="footer-links">
-      <a href="#about">About</a><a href="#gallery">Gallery</a><a href="#menu">Menu</a>
-      <a href="#celebrations">Celebrations</a><a href="#standards">Standards</a>
-      <?php if($user): ?>
-        <a href="#contact">Reserve</a>
-      <?php else: ?>
-        <a href="<?= url('/auth/login?redirect=' . urlencode('/#contact')) ?>">Reserve</a>
-      <?php endif; ?>
-      <a href="<?= url('/privacy') ?>">Privacy Policy</a>
-      <a href="<?= url('/terms') ?>">Terms &amp; Conditions</a>
-      <?php if($user && $user['role']==='admin'): ?><a href="<?= url('/admin') ?>">Admin Dashboard</a><?php endif; ?>
+<!-- DISH STORY MODAL -->
+<div class="aveline-modal-overlay" id="avelineModal" onclick="closeAvelineModal(event)">
+  <div class="aveline-modal-card" onclick="event.stopPropagation()">
+    <button type="button" class="aveline-modal-close" onclick="closeAvelineModal()">&times;</button>
+    <div class="modal-grid">
+      <div class="modal-photo">
+        <img id="mImg" src="<?= asset('images/aveline_plate.png') ?>" alt="Dish Detail">
+      </div>
+      <div class="modal-details">
+        <div>
+          <span class="section-eyebrow" style="margin-bottom:6px;">CULINARY STORY</span>
+          <h3 style="font-family:var(--font-serif); font-size:1.6rem; color:#FFFFFF;" id="mTitle">Artisanal Swirl Tagliolini</h3>
+          <div style="font-family:var(--font-serif); font-size:1.2rem; color:var(--gold-accent); margin-top:4px;" id="mPrice">₹380</div>
+          <p style="color:var(--text-light-muted); font-size:0.86rem; line-height:1.6; margin-top:14px;" id="mDesc">
+            Fresh handcrafted pasta twirl, roasted herb crumb, cold-pressed olive oil, fresh basil essence, and aged mountain cheese.
+          </p>
+        </div>
+
+        <div style="margin-top:24px;">
+          <a href="#contact" class="btn-aveline-cta" style="display:block; text-align:center;" onclick="closeAvelineModal(); preselectDish(document.getElementById('mTitle').textContent)">
+            RESERVE TABLE FOR THIS DISH
+          </a>
+        </div>
+      </div>
     </div>
   </div>
-  <p class="footer-copy">&copy; <?= date('Y') ?> Terminal 1: The Restaurant, Cooch Behar. All rights reserved.</p>
+</div>
+
+<!-- EDITORIAL FOOTER -->
+<footer>
+  <div class="footer-columns-grid">
+    <div class="footer-col">
+      <a href="<?= url('/') ?>" class="brand-logo" style="display:block; margin-bottom:14px;">TERMINAL 1</a>
+      <p>
+        An exquisite journey of flavor, where refined ingredients, thoughtful technique, and timeless elegance come together in perfect harmony.
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h5>ADDRESS</h5>
+      <p>
+        Near Rajbari Palace Complex<br>
+        Cooch Behar, West Bengal &mdash; 736101<br>
+        India
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h5>OPENING HOURS</h5>
+      <p>
+        Monday to Sunday<br>
+        Lunch: 12:00 PM &mdash; 04:00 PM<br>
+        Dinner: 06:30 PM &mdash; 11:00 PM
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h5>NAVIGATION</h5>
+      <ul class="footer-nav-list">
+        <li><a href="<?= url('/menu') ?>">Full Digital Menu</a></li>
+        <li><a href="<?= url('/my-bookings') ?>">Track Live Allocation</a></li>
+        <li><a href="<?= url('/legal/privacy') ?>">Privacy Policy</a></li>
+        <li><a href="<?= url('/legal/terms') ?>">Terms of Dining</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom-strip">
+    <div>&copy; <?= date('Y') ?> TERMINAL 1. ALL RIGHTS RESERVED.</div>
+    <div>AVELINE EDITORIAL RESTAURANT SYSTEM</div>
+  </div>
 </footer>
 
+<div id="aveline-toast"></div>
+
+<!-- Razorpay Script for deposit handling -->
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+
 <script>
-// ── 1. Performance-optimized Fade-up on scroll (unobserves once visible to prevent re-renders) ──
-const obs = new IntersectionObserver((entries, observer) => {
-  entries.forEach(e => {
-    if(e.isIntersecting) {
-      e.target.classList.add('visible');
-      observer.unobserve(e.target);
+// ─── 1. DISH DETAIL MODAL ───
+function openSignatureDishModal() {
+  openDishDetail(
+    'Artisanal Swirl Tagliolini',
+    '<?= asset('images/aveline_plate.png') ?>',
+    '₹380',
+    'Fresh handcrafted pasta twirl, roasted herb crumb, cold-pressed olive oil, fresh basil essence, and aged mountain cheese.'
+  );
+}
+
+function openDishDetail(name, img, price, desc) {
+  document.getElementById('mTitle').textContent = name;
+  document.getElementById('mImg').src = img;
+  document.getElementById('mPrice').textContent = price;
+  document.getElementById('mDesc').textContent = desc;
+  document.getElementById('avelineModal').classList.add('active');
+}
+
+function closeAvelineModal(e) {
+  if (e && e.target !== e.currentTarget && !e.target.classList.contains('aveline-modal-close')) return;
+  document.getElementById('avelineModal').classList.remove('active');
+}
+
+function preselectDish(dishName) {
+  const msg = document.getElementById('fmsg');
+  if (msg) {
+    if (!msg.value.includes(dishName)) {
+      msg.value = (msg.value ? msg.value + '; ' : '') + 'Request dish: ' + dishName;
     }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
-document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+  }
+}
 
-// ── 2. Direct-reference Menu tabs (Zero DOM-query thrashing) ──
-let currentTabBtn = document.querySelector('.tab-btn.active');
-let currentPanel  = document.querySelector('.menu-panel.active');
-function switchTab(id, btn) {
-  if (btn === currentTabBtn) return;
-  if (currentTabBtn) currentTabBtn.classList.remove('active');
-  if (currentPanel)  currentPanel.classList.remove('active');
-  const target = document.getElementById('tab-' + id);
+// ─── 2. CATEGORY FILTERING ───
+document.querySelectorAll('.menu-cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.menu-cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cat = btn.getAttribute('data-cat');
+    const cards = document.querySelectorAll('.aveline-dish-card');
+
+    cards.forEach(card => {
+      const cardCat = card.getAttribute('data-category');
+      if (cat === 'all' || cardCat === cat) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+
+// ─── 3. PARTY SIZE SELECTION ───
+function setPartySize(btn, guests) {
+  document.querySelectorAll('.party-chip-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (target) target.classList.add('active');
-  currentTabBtn = btn;
-  currentPanel  = target;
+  const input = document.getElementById('fguests');
+  if (input) input.value = guests;
 }
 
-// ── 3. Mobile nav ──
-function openMenu()  { document.getElementById('mobileMenu').classList.add('open'); }
-function closeMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
-
-// ── 4. Navbar scroll state (Passive listener with state toggle — zero layout thrashing) ──
-let isNavScrolled = false;
-const navBar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  const shouldScroll = window.scrollY > 40;
-  if (shouldScroll !== isNavScrolled) {
-    isNavScrolled = shouldScroll;
-    navBar.classList.toggle('nav-scrolled', isNavScrolled);
-  }
-}, { passive: true });
-
-// ── 5. Toast notification (Mobile overflow safe) ──
-let toastTimer = null;
-function showToast(msg, type = 'success') {
-  const t = document.getElementById('toast');
+// ─── 4. TOAST NOTIFICATION ───
+function showAvelineToast(msg) {
+  const t = document.getElementById('aveline-toast');
+  if (!t) return;
   t.textContent = msg;
-  t.className = 'show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = ''; }, 4500);
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
 }
 
-// ── 6. Real-time booking tracker (Server-Sent Events) ──
-let liveTrackerSource = null;
-let lastKnownStatus   = null;
-let lastKnownPayment  = null;
+// ─── 5. RESERVATION FORM SUBMISSION ───
+async function handleAvelineBooking(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnAvelineSubmit');
+  const txt = document.getElementById('btnSubmitTxt');
+  const spn = document.getElementById('btnSubmitSpinner');
 
-function startLiveTracking(bookingId, trackingToken) {
-  const widget = document.getElementById('liveTracker');
-  widget.style.display = 'block';
-  document.getElementById('liveStatusText').textContent = 'Waiting for confirmation…';
-  document.getElementById('livePaymentText').textContent = '';
-
-  if (liveTrackerSource) liveTrackerSource.close();
-
-  const url = '<?= url('/track/stream') ?>' + `?id=${bookingId}&token=${encodeURIComponent(trackingToken)}`;
-  liveTrackerSource = new EventSource(url);
-
-  const statusLabels = {
-    pending:   { text: 'Pending Confirmation',    color: '#d29922' },
-    confirmed: { text: 'Table Confirmed',         color: '#4caf70' },
-    cancelled: { text: 'Booking Cancelled',        color: '#e5534b' },
-    completed: { text: 'Visit Completed',          color: '#4caf70' },
-  };
-  const paymentLabels = {
-    unpaid:    'Deposit: Pending Payment',
-    paid:      'Deposit: Confirmed Paid',
-    refunded:  'Deposit: Refunded',
-  };
-
-  liveTrackerSource.addEventListener('status_update', (e) => {
-    const data = JSON.parse(e.data);
-    // Eliminate unnecessary DOM writes if payload did not change
-    if (data.status === lastKnownStatus && data.payment_status === lastKnownPayment) return;
-    lastKnownStatus  = data.status;
-    lastKnownPayment = data.payment_status;
-
-    const label = statusLabels[data.status] || { text: data.status, color: '#fff' };
-    const statusEl = document.getElementById('liveStatusText');
-    statusEl.textContent = label.text;
-    statusEl.style.color = label.color;
-    document.getElementById('livePaymentText').textContent = paymentLabels[data.payment_status] || '';
-  });
-}
-
-function closeLiveTracker() {
-  if (liveTrackerSource) { liveTrackerSource.close(); liveTrackerSource = null; }
-  document.getElementById('liveTracker').style.display = 'none';
-}
-
-// ── 8. Booking form with client-side rate limits & double-click protection ──
-let lastBookingSubmit = 0;
-async function submitBooking() {
-  const now = Date.now();
-  if (now - lastBookingSubmit < 3000) {
-    showToast('Please wait a moment before resending your request.', 'error');
-    return;
-  }
-
-  const name   = document.getElementById('fname').value.trim();
-  const phone  = document.getElementById('fphone').value.trim();
-  const csrf   = document.getElementById('csrf_token').value;
-
-  if(!name || !phone) {
-    showToast('Please enter your name and phone number.', 'error');
-    return;
-  }
-
-  lastBookingSubmit = now;
-  const btn     = document.getElementById('submitBtn');
-  const txt     = document.getElementById('btnText');
-  const spinner = document.getElementById('btnSpinner');
-
-  btn.disabled       = true;
-  txt.textContent    = 'Sending...';
-  spinner.style.display = 'block';
+  if (btn.disabled) return;
+  btn.disabled = true;
+  txt.textContent = 'REQUESTING TABLE...';
+  spn.style.display = 'inline';
 
   try {
-    const res = await fetch('<?= url('/bookings') ?>', {
+    const formData = new FormData(document.getElementById('avelineBookingForm'));
+    const res = await fetch('<?= url('/book') ?>', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRF-TOKEN': csrf,
-      },
-      body: new URLSearchParams({
-        csrf_token:   csrf,
-        name:         name,
-        phone:        phone,
-        email:        document.getElementById('femail').value.trim(),
-        occasion:     document.getElementById('foccasion').value,
-        guests:       document.getElementById('fguests').value || 1,
-        booking_date: document.getElementById('fdate').value,
-        message:      document.getElementById('fmsg').value.trim(),
-      })
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: formData
     });
 
     const data = await res.json();
-
-    if (data.require_login && data.redirect) {
-      showToast(data.message || 'Please log in to reserve a table.', 'error');
-      setTimeout(() => { window.location.href = data.redirect; }, 1000);
-      return;
-    }
-
-    if(data.success) {
-      showToast(data.message, 'success');
-      document.getElementById('fphone').value = '';
-      document.getElementById('foccasion').selectedIndex = 0;
-      document.getElementById('fguests').value = '';
-      document.getElementById('fdate').value = '';
-      document.getElementById('fmsg').value = '';
-
-      if (data.requires_payment && data.deposit_amount > 0) {
-        await startPayment(data.id, csrf, data.tracking_token);
-      }
-
+    if (data.success) {
+      showAvelineToast('TABLE REQUEST RECEIVED! ' + data.message);
       if (data.tracking_token) {
-        startLiveTracking(data.id, data.tracking_token);
+        setTimeout(() => {
+          window.location.href = '<?= url('/track/') ?>' + data.tracking_token;
+        }, 1500);
       }
     } else {
-      showToast(data.message || 'Something went wrong. Please try again.', 'error');
+      showAvelineToast('ERROR: ' + (data.message || 'Booking could not be finalized.'));
     }
   } catch(err) {
-    showToast('Network error. Please try again.', 'error');
+    showAvelineToast('Network error. Please try again.');
   } finally {
-    btn.disabled       = false;
-    txt.textContent    = 'Send Reservation Request';
-    spinner.style.display = 'none';
-  }
-}
-
-// ── Razorpay: create order, open checkout, verify on success (Ownership Verified) ──
-async function startPayment(bookingId, csrf, trackingToken) {
-  try {
-    const orderRes = await fetch('<?= url('/payments/create-order') ?>', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': csrf },
-      body: new URLSearchParams({
-        csrf_token:     csrf,
-        booking_id:     bookingId,
-        tracking_token: trackingToken || ''
-      })
-    });
-    const order = await orderRes.json();
-    if (!order.success) { showToast(order.message || 'Could not start payment.', 'error'); return; }
-
-    const options = {
-      key: order.key,
-      amount: order.amount,
-      currency: order.currency,
-      name: order.name,
-      description: 'Table Reservation Deposit',
-      order_id: order.order_id,
-      handler: async function (response) {
-        const verifyRes = await fetch('<?= url('/payments/verify') ?>', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': csrf },
-          body: new URLSearchParams({
-            csrf_token:          csrf,
-            booking_id:          bookingId,
-            tracking_token:      trackingToken || '',
-            razorpay_order_id:   response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature:  response.razorpay_signature,
-          })
-        });
-        const verify = await verifyRes.json();
-        showToast(verify.message, verify.success ? 'success' : 'error');
-      },
-      modal: { ondismiss: function () { showToast('Payment cancelled. Your booking is saved but unconfirmed.', 'error'); } },
-      theme: { color: '#C8860A' }
-    };
-    const rzp = new Razorpay(options);
-    rzp.open();
-  } catch (err) {
-    showToast('Could not initiate payment. Please try again.', 'error');
+    btn.disabled = false;
+    txt.textContent = 'REQUEST A TABLE';
+    spn.style.display = 'none';
   }
 }
 </script>
-<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 </body>
 </html>

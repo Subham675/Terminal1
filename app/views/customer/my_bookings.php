@@ -175,8 +175,13 @@ $user = authUser();
       margin-top: 40px;
     }
     @media(max-width: 650px) {
-      .booking-card { grid-template-columns: 1fr; }
-      .header-box { flex-direction: column; align-items: flex-start; }
+      nav { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
+      .nav-links { gap: 14px; }
+      .container { margin: 24px auto; padding: 0 16px; }
+      h1 { font-size: 1.6rem; }
+      .booking-card { grid-template-columns: 1fr; padding: 18px 16px; }
+      .header-box { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .btn-track { text-align: center; display: block; width: 100%; margin-top: 8px; }
     }
   </style>
 </head>

@@ -34,10 +34,10 @@ class AuthController {
             redirect('/auth/login');
         }
 
-        // Validate email format and check for domain typos
-        [$isValidEmail, $emailError, $email] = EmailValidator::validate($rawEmail);
-        if (!$isValidEmail) {
-            flash('login', $emailError, 'error');
+        // Basic format normalization for login (DNS checks are only for registration)
+        $email = trim(strtolower($rawEmail));
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            flash('login', 'Please enter a valid email address format.', 'error');
             redirect('/auth/login');
         }
 
