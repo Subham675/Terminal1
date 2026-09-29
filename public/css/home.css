@@ -1042,21 +1042,20 @@
     .aveline-modal-close {
       position: absolute;
       top: 12px; right: 12px;
-      background: rgba(0, 0, 0, 0.45);
+      background: none;
       border: none;
       color: #FFFFFF;
       width: 36px; height: 36px;
-      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 10;
       padding: 0;
-      transition: background 0.25s ease, transform 0.25s ease;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
+      transition: transform 0.25s ease;
     }
     .aveline-modal-close:hover {
-      background: rgba(0, 0, 0, 0.7);
       transform: rotate(90deg);
     }
     .modal-grid {
