@@ -128,6 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
   enableDragScroll(document.getElementById('dishGrid'));
   enableDragScroll(document.getElementById('guestbookCardsGrid'));
   enableDragScroll(document.getElementById('menuCatFilter'));
+  enableDragScroll(document.getElementById('partyChipsRow'));
+  enableDragScroll(document.getElementById('guestbookFilterTabs'));
 
   restoreBookingDraft();
   const bForm = document.getElementById('avelineBookingForm');

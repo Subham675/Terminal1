@@ -44,7 +44,7 @@
 
     <!-- Segment Filter Tabs & Slidebar Controls -->
     <div class="guestbook-tabs-and-slider">
-      <div class="guestbook-filter-tabs">
+      <div class="guestbook-filter-tabs" id="guestbookFilterTabs">
         <button type="button" class="gb-tab-btn active" id="gbTabAll" onclick="filterGuestbook('all', this)">
           All Reflections (<?= count($reviewsList) ?>)
         </button>

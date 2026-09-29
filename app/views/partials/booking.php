@@ -11,7 +11,7 @@
 
     <!-- Party Size Selector -->
     <span class="party-chips-label">SELECT NUMBER OF GUESTS</span>
-    <div class="party-chips-row">
+    <div class="party-chips-row" id="partyChipsRow">
       <button type="button" class="party-chip-btn active" onclick="setPartySize(this, 2)">2 Diners &bull; Intimate</button>
       <button type="button" class="party-chip-btn" onclick="setPartySize(this, 4)">4 Diners &bull; Bistro</button>
       <button type="button" class="party-chip-btn" onclick="setPartySize(this, 6)">6 Diners &bull; Lounge</button>
