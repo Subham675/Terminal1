@@ -173,23 +173,94 @@ function preselectDish(dishName) {
   }
 }
 
-// ─── 2. CATEGORY FILTERING ───
+// ─── 2. MENU SEARCH & CATEGORY FILTERING ───
+let currentMenuCategory = 'all';
+let currentSearchTerm = '';
+
+function filterMenuDishes() {
+  const cards = document.querySelectorAll('.aveline-dish-card');
+  const term = currentSearchTerm.trim().toLowerCase();
+  const clearBtn = document.getElementById('menuSearchClear');
+  if (clearBtn) {
+    clearBtn.style.display = term ? 'flex' : 'none';
+  }
+
+  let matchCount = 0;
+  cards.forEach(card => {
+    const cardCat = (card.getAttribute('data-category') || '').toLowerCase();
+    const cardName = (card.getAttribute('data-name') || '').toLowerCase();
+    const cardTags = (card.getAttribute('data-tags') || '').toLowerCase();
+    const cardDesc = (card.getAttribute('data-desc') || '').toLowerCase();
+
+    // Check category match
+    const categoryMatches = (currentMenuCategory === 'all' || cardCat === currentMenuCategory.toLowerCase());
+
+    // Check search term match (case-insensitive & partial match support)
+    let searchMatches = true;
+    if (term) {
+      // Split into keywords if multiple words typed
+      const keywords = term.split(/\s+/).filter(Boolean);
+      searchMatches = keywords.every(kw => 
+        cardName.includes(kw) || 
+        cardTags.includes(kw) || 
+        cardDesc.includes(kw) || 
+        cardCat.includes(kw)
+      );
+    }
+
+    if (categoryMatches && searchMatches) {
+      card.style.display = 'flex';
+      matchCount++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // Update live counter
+  const counter = document.getElementById('menuSearchCount');
+  if (counter) {
+    if (term || currentMenuCategory !== 'all') {
+      counter.textContent = `${matchCount} dish${matchCount === 1 ? '' : 'es'} matched`;
+    } else {
+      counter.textContent = `${cards.length} dishes available`;
+    }
+  }
+
+  // Show no-results banner if none found
+  const noResults = document.getElementById('menuNoResults');
+  if (noResults) {
+    noResults.style.display = matchCount === 0 ? 'block' : 'none';
+  }
+}
+
+function clearMenuSearch() {
+  const input = document.getElementById('menuSearchInput');
+  if (input) {
+    input.value = '';
+    currentSearchTerm = '';
+    filterMenuDishes();
+    input.focus();
+  }
+}
+
+// Bind search input
+const menuSearchInput = document.getElementById('menuSearchInput');
+if (menuSearchInput) {
+  menuSearchInput.addEventListener('input', (e) => {
+    currentSearchTerm = e.target.value;
+    filterMenuDishes();
+    const track = document.getElementById('dishGrid');
+    if (track) track.scrollTo({ left: 0, behavior: 'smooth' });
+  });
+}
+
+// Bind category filter buttons
 document.querySelectorAll('.menu-cat-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.menu-cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
-    const cat = btn.getAttribute('data-cat');
-    const cards = document.querySelectorAll('.aveline-dish-card');
-
-    cards.forEach(card => {
-      const cardCat = card.getAttribute('data-category');
-      if (cat === 'all' || cardCat === cat) {
-        card.style.display = 'flex';
-      } else {
-        card.style.display = 'none';
-      }
-    });
+    currentMenuCategory = btn.getAttribute('data-cat') || 'all';
+    filterMenuDishes();
 
     const menuTrack = document.getElementById('dishGrid');
     if (menuTrack) {

@@ -1,7 +1,7 @@
 <?php
 class MenuItem {
     public static function all(): array {
-        return Database::rows('SELECT m.*,c.name as category_name FROM menu_items m LEFT JOIN menu_categories c ON m.category_id=c.id ORDER BY c.sort_order,m.sort_order,m.name');
+        return Database::rows('SELECT m.*,c.name as category_name, c.slug as category_slug FROM menu_items m LEFT JOIN menu_categories c ON m.category_id=c.id ORDER BY c.sort_order,m.sort_order,m.name');
     }
     public static function byCategory(): array {
         $grouped=[];
@@ -16,16 +16,27 @@ class MenuItem {
     }
     public static function create(array $d): void {
         Database::query(
-            'INSERT INTO menu_items (category_id,name,description,price,badge,is_available,is_veg,image_url,sort_order) VALUES (?,?,?,?,?,?,?,?,?)',
-            [$d['category_id']??null,$d['name'],$d['description']??null,(float)$d['price'],$d['badge']??null,isset($d['is_available'])?1:0,isset($d['is_veg'])?1:0,$d['image_url']??null,(int)($d['sort_order']??0)]
+            'INSERT INTO menu_items (category_id,name,description,search_tags,price,badge,is_available,is_veg,image_url,sort_order) VALUES (?,?,?,?,?,?,?,?,?,?)',
+            [$d['category_id']??null,$d['name'],$d['description']??null,$d['search_tags']??null,(float)$d['price'],$d['badge']??null,isset($d['is_available'])?1:0,isset($d['is_veg'])?1:0,$d['image_url']??null,(int)($d['sort_order']??0)]
         );
     }
     public static function update(int $id, array $d): void {
         Database::query(
-            'UPDATE menu_items SET category_id=?,name=?,description=?,price=?,badge=?,is_available=?,is_veg=?,image_url=?,sort_order=?,updated_at=NOW() WHERE id=?',
-            [$d['category_id']??null,$d['name'],$d['description']??null,(float)$d['price'],$d['badge']??null,isset($d['is_available'])?1:0,isset($d['is_veg'])?1:0,$d['image_url']??null,(int)($d['sort_order']??0),$id]
+            'UPDATE menu_items SET category_id=?,name=?,description=?,search_tags=?,price=?,badge=?,is_available=?,is_veg=?,image_url=?,sort_order=?,updated_at=NOW() WHERE id=?',
+            [$d['category_id']??null,$d['name'],$d['description']??null,$d['search_tags']??null,(float)$d['price'],$d['badge']??null,isset($d['is_available'])?1:0,isset($d['is_veg'])?1:0,$d['image_url']??null,(int)($d['sort_order']??0),$id]
         );
     }
     public static function delete(int $id): void { Database::query('DELETE FROM menu_items WHERE id=?',[$id]); }
     public static function count(): int { return (int)Database::row('SELECT COUNT(*) as c FROM menu_items')['c']; }
+    public static function search(string $q): array {
+        $term = '%' . trim($q) . '%';
+        return Database::rows(
+            'SELECT m.*, c.name as category_name, c.slug as category_slug
+             FROM menu_items m
+             LEFT JOIN menu_categories c ON m.category_id=c.id
+             WHERE m.name LIKE ? OR m.description LIKE ? OR m.search_tags LIKE ? OR c.name LIKE ?
+             ORDER BY c.sort_order, m.sort_order, m.name',
+            [$term, $term, $term, $term]
+        );
+    }
 }

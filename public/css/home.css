@@ -682,6 +682,86 @@
       color: #FFFFFF;
     }
 
+    /* Menu Search Box */
+    .menu-search-wrapper {
+      max-width: 520px;
+      margin: 0 0 22px 0;
+      position: relative;
+    }
+    .menu-search-inner {
+      display: flex;
+      align-items: center;
+      background: #FFFFFF;
+      border: 1px solid rgba(20, 19, 18, 0.18);
+      border-radius: 3px;
+      padding: 0 14px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .menu-search-inner:focus-within {
+      border-color: #141312;
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.08);
+    }
+    .menu-search-icon {
+      color: var(--text-dark-dim);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      margin-right: 10px;
+    }
+    .menu-search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 11px 0;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      color: var(--text-dark);
+      outline: none;
+    }
+    .menu-search-input::placeholder {
+      color: var(--text-dark-dim);
+      font-size: 0.82rem;
+    }
+    .menu-search-clear {
+      background: none;
+      border: none;
+      color: var(--text-dark-dim);
+      cursor: pointer;
+      padding: 4px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: color .2s;
+    }
+    .menu-search-clear:hover {
+      color: var(--text-dark);
+    }
+    .menu-search-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 0.74rem;
+      color: var(--text-dark-dim);
+      letter-spacing: 0.04em;
+    }
+    .menu-badge-pill {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: #B45309;
+      color: #FFFFFF;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      z-index: 2;
+    }
+
     .aveline-dish-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
