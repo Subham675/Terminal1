@@ -1044,6 +1044,9 @@
       top: 12px; right: 12px;
       background: none;
       border: none;
+      outline: none;
+      box-shadow: none;
+      -webkit-tap-highlight-color: transparent;
       color: #FFFFFF;
       width: 36px; height: 36px;
       display: flex;
@@ -1052,11 +1055,18 @@
       cursor: pointer;
       z-index: 10;
       padding: 0;
-      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
-      transition: transform 0.25s ease;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.85));
+      transition: color 0.25s ease, transform 0.25s ease;
     }
     .aveline-modal-close:hover {
+      color: var(--gold-accent);
       transform: rotate(90deg);
+    }
+    .aveline-modal-close:focus,
+    .aveline-modal-close:active {
+      outline: none;
+      box-shadow: none;
+      background: none;
     }
     .modal-grid {
       display: grid;
