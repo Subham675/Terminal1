@@ -1,7 +1,12 @@
 <!-- DISH STORY MODAL -->
 <div class="aveline-modal-overlay" id="avelineModal" onclick="closeAvelineModal(event)">
   <div class="aveline-modal-card" onclick="event.stopPropagation()">
-    <button type="button" class="aveline-modal-close" onclick="closeAvelineModal()">&times;</button>
+    <button type="button" class="aveline-modal-close" onclick="closeAvelineModal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
     <div class="modal-grid">
       <div class="modal-photo">
         <img id="mImg" src="<?= asset('images/aveline_plate.png') ?>" alt="Dish Detail">
@@ -31,7 +36,12 @@
 <!-- REVIEW SUBMISSION MODAL (COMPLIMENTS & COMPLAINTS) -->
 <div id="reviewModal" onclick="closeReviewModal(event)">
   <div class="review-modal-box" onclick="event.stopPropagation()">
-    <button type="button" class="review-modal-close" onclick="closeReviewModal()">&times;</button>
+    <button type="button" class="review-modal-close" onclick="closeReviewModal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
     
     <div style="margin-bottom: 20px;">
       <span class="section-eyebrow" style="color:var(--gold-accent); margin-bottom:6px;">GUESTBOOK REFLECTION</span>

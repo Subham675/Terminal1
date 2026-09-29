@@ -1041,18 +1041,26 @@
     }
     .aveline-modal-close {
       position: absolute;
-      top: 16px; right: 16px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border-dark);
+      top: 14px; right: 14px;
+      background: none;
+      border: none;
       color: #FFFFFF;
-      width: 32px; height: 32px;
-      border-radius: 50%;
+      width: 36px; height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 10;
-      font-size: 1rem;
+      font-size: 1.4rem;
+      line-height: 1;
+      padding: 0;
+      opacity: 0.85;
+      transition: color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+    }
+    .aveline-modal-close:hover {
+      color: var(--gold-accent);
+      opacity: 1;
+      transform: rotate(90deg);
     }
     .modal-grid {
       display: grid;
