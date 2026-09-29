@@ -36,3 +36,5 @@ storage/invoices/*
 scratch/
 tests/check_images.php
 tests/convert_webp.py
+decitions.md
+decisions.md
