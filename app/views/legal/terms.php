@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms of Dining | Terminal 1</title>
-  <meta name="description" content="Review the dining terms, table reservations policy, and guest guidelines for Terminal 1 in Cooch Behar.">
+  <title>Terms of Dining | Terminal 1 — The Startup Canteen</title>
+  <meta name="description" content="Review the dining terms, table reservations policy, and guest guidelines for Terminal 1 The Startup Canteen in Cooch Behar.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,20 +110,20 @@
 </head>
 <body>
   <div class="container">
-    <a href="<?= url('/') ?>" class="back-link">&larr; Return to Terminal 1</a>
+    <a href="<?= url('/') ?>" class="back-link">&larr; Return to Terminal 1 The Startup Canteen</a>
     
     <header class="header">
-      <a href="<?= url('/') ?>" class="brand">TERMINAL 1</a>
+      <a href="<?= url('/') ?>" class="brand">TERMINAL 1 <span style="font-size:0.55em;letter-spacing:0.2em;color:#c8860a;display:block;">THE STARTUP CANTEEN</span></a>
       <h1>Terms &amp; Conditions</h1>
-      <div class="meta">Effective Date: September 2026 | Terminal 1: The Restaurant, Cooch Behar</div>
+      <div class="meta">Effective Date: September 2026 | Terminal 1: The Startup Canteen, Cooch Behar</div>
     </header>
 
     <div class="highlight-box">
-      <p style="margin:0;color:#FFFFFF;">Welcome to Terminal 1: The Restaurant. By accessing our website, creating an account, or submitting a reservation request, you agree to comply with and be bound by the following terms, conditions, and reservation guidelines.</p>
+      <p style="margin:0;color:#FFFFFF;">Welcome to Terminal 1: The Startup Canteen. By accessing our website, creating an account, or submitting a reservation request, you agree to comply with and be bound by the following terms, conditions, and reservation guidelines.</p>
     </div>
 
     <h2>1. General Information &amp; Services</h2>
-    <p>Terminal 1: The Restaurant operates a physical dining establishment located in Cooch Behar, West Bengal, India. Our online platform provides table reservation management, advance deposit collection, menu exploration, and live order tracking services for patrons.</p>
+    <p>Terminal 1: The Startup Canteen operates a physical dining establishment located in Cooch Behar, West Bengal, India. Our online platform provides table reservation management, advance deposit collection, menu exploration, and live order tracking services for patrons.</p>
 
     <h2>2. Table Reservations &amp; Seating Policies</h2>
     <ul>
@@ -159,14 +159,14 @@
     <h2>8. Contact Information</h2>
     <p>For questions or reservation support, please contact:</p>
     <p>
-      <strong>Terminal 1: The Restaurant</strong><br>
+      <strong>Terminal 1: The Startup Canteen</strong><br>
       Cooch Behar, West Bengal, India<br>
       Operating Hours: Monday – Sunday, 11:00 AM – 10:00 PM<br>
       Email: <a href="mailto:contact@terminal1.in" style="color:#C8860A;text-decoration:none;">contact@terminal1.in</a>
     </p>
 
     <footer class="footer">
-      <div>&copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved.</div>
+      <div>&copy; <?= date('Y') ?> Terminal 1: The Startup Canteen. All rights reserved.</div>
       <div>
         <a href="<?= url('/privacy') ?>">Privacy Policy</a> &bull;
         <a href="<?= url('/') ?>">Home</a>

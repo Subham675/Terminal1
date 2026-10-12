@@ -29,7 +29,7 @@
           Sign In to Reserve a Table
         </a>
         <div style="font-size:0.78rem; color:var(--text-light-dim); margin-top:16px;">
-          First visit to Terminal 1? <a href="<?= url('/auth/register?redirect=' . urlencode('/#contact')) ?>" style="color:#FFFFFF; text-decoration:underline;">Create an account</a>
+          First visit to Terminal 1 The Startup Canteen? <a href="<?= url('/auth/register?redirect=' . urlencode('/#contact')) ?>" style="color:#FFFFFF; text-decoration:underline;">Create an account</a>
         </div>
       </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 — Page Not Found | Terminal 1</title>
+  <title>404 — Page Not Found | Terminal 1 — The Startup Canteen</title>
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -104,7 +104,7 @@
 </head>
 <body>
   <div class="error-card">
-    <span class="error-eyebrow">TERMINAL 1 &bull; COURSE NOT FOUND</span>
+    <span class="error-eyebrow">TERMINAL 1 — THE STARTUP CANTEEN &bull; COURSE NOT FOUND</span>
     <div class="error-code">404</div>
     <h1 class="error-title">The Requested Course Does Not Exist</h1>
     <p class="error-desc">
@@ -115,7 +115,7 @@
     </a>
   </div>
   <footer>
-    &copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved.
+    &copy; <?= date('Y') ?> Terminal 1: The Startup Canteen. All rights reserved.
   </footer>
 </body>
 </html>

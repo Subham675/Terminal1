@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>500 — Kitchen Delay | Terminal 1</title>
+  <title>500 — Kitchen Delay | Terminal 1 — The Startup Canteen</title>
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -104,7 +104,7 @@
 </head>
 <body>
   <div class="error-card">
-    <span class="error-eyebrow">TERMINAL 1 &bull; UNEXPECTED INTERRUPTION</span>
+    <span class="error-eyebrow">TERMINAL 1 — THE STARTUP CANTEEN &bull; UNEXPECTED INTERRUPTION</span>
     <div class="error-code">500</div>
     <h1 class="error-title">Our Brigade Encountered an Interruption</h1>
     <p class="error-desc">
@@ -115,7 +115,7 @@
     </a>
   </div>
   <footer>
-    &copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved.
+    &copy; <?= date('Y') ?> Terminal 1: The Startup Canteen. All rights reserved.
   </footer>
 </body>
 </html>

@@ -4,7 +4,10 @@
   <div class="hero-parchment-panel">
     <div>
       <div class="parchment-top-bar">
-        <div class="parchment-brand">TERMINAL 1</div>
+        <div>
+          <div class="parchment-brand">TERMINAL 1</div>
+          <div class="parchment-subbrand" style="font-family:var(--font-sans); font-size:0.68rem; font-weight:600; letter-spacing:0.2em; color:var(--text-dark-muted); text-transform:uppercase; margin-top:3px;">THE STARTUP CANTEEN</div>
+        </div>
         <div class="parchment-meta">COOCH BEHAR &bull; EST. 2024</div>
       </div>
 

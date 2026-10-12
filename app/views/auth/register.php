@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Create Account | Terminal 1</title>
-  <meta name="description" content="Register an authenticated guest account at Terminal 1 to unlock fine dining reservations, private banquet suites, and curated dining experiences in Cooch Behar.">
+  <title>Create Account | Terminal 1 — The Startup Canteen</title>
+  <meta name="description" content="Register an authenticated guest account at Terminal 1 The Startup Canteen to unlock reservations, table allocations, and dining in Cooch Behar.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,7 +42,7 @@
 </head>
 <body>
 <div class="box">
-  <div class="box-header"><h1>Create Account</h1><p>TERMINAL 1 &bull; THE RESTAURANT</p></div>
+  <div class="box-header"><h1>Create Account</h1><p>TERMINAL 1 &bull; THE STARTUP CANTEEN</p></div>
   <div class="box-body">
     <?php 
       $redir = $_GET['redirect'] ?? $_SESSION['auth_redirect'] ?? '';

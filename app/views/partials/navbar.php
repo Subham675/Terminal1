@@ -1,6 +1,9 @@
 <!-- Navigation Header -->
 <nav>
-  <a href="<?= url('/') ?>" class="brand-logo">TERMINAL 1</a>
+  <a href="<?= url('/') ?>" class="brand-logo">
+    <span class="brand-main">TERMINAL 1</span>
+    <span class="brand-sub">THE STARTUP CANTEEN</span>
+  </a>
 
   <ul class="nav-center-links">
     <li><a href="#about">About</a></li>
@@ -36,7 +39,10 @@
 <!-- MOBILE SLIDE-IN DRAWER -->
 <div class="mobile-nav-drawer" id="mobileNavDrawer">
   <div class="mobile-drawer-header">
-    <span class="mobile-drawer-brand">Terminal 1</span>
+    <span class="mobile-drawer-brand">
+      Terminal 1
+      <span style="display:block; font-size:0.62rem; letter-spacing:0.18em; color:var(--gold-accent); text-transform:uppercase; font-weight:500; margin-top:2px;">The Startup Canteen</span>
+    </span>
     <button type="button" class="mobile-drawer-close" onclick="closeMobileNav()" aria-label="Close navigation">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -64,6 +70,6 @@
     <?php endif; ?>
   </div>
   <div class="mobile-drawer-footer">
-    <div class="mobile-drawer-footer-text">A Fine Dining Experience</div>
+    <div class="mobile-drawer-footer-text">Terminal 1 — The Startup Canteen</div>
   </div>
 </div>

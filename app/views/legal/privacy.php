@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy | Terminal 1</title>
-  <meta name="description" content="Review the privacy safeguards, diner data policies, and confidentiality practices at Terminal 1.">
+  <title>Privacy Policy | Terminal 1 — The Startup Canteen</title>
+  <meta name="description" content="Review the privacy safeguards, diner data policies, and confidentiality practices at Terminal 1 The Startup Canteen.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,16 +110,16 @@
 </head>
 <body>
   <div class="container">
-    <a href="<?= url('/') ?>" class="back-link">&larr; Return to Terminal 1</a>
+    <a href="<?= url('/') ?>" class="back-link">&larr; Return to Terminal 1 The Startup Canteen</a>
     
     <header class="header">
-      <a href="<?= url('/') ?>" class="brand">TERMINAL 1</a>
+      <a href="<?= url('/') ?>" class="brand">TERMINAL 1 <span style="font-size:0.55em;letter-spacing:0.2em;color:#c8860a;display:block;">THE STARTUP CANTEEN</span></a>
       <h1>Privacy Policy</h1>
-      <div class="meta">Effective Date: September 2026 | Terminal 1: The Restaurant, Cooch Behar</div>
+      <div class="meta">Effective Date: September 2026 | Terminal 1: The Startup Canteen, Cooch Behar</div>
     </header>
 
     <div class="highlight-box">
-      <p style="margin:0;color:#FFFFFF;">Terminal 1: The Restaurant values your privacy. We collect only the information necessary to fulfill table reservations, process billing transactions, and deliver dining services at our premises in Cooch Behar, West Bengal.</p>
+      <p style="margin:0;color:#FFFFFF;">Terminal 1: The Startup Canteen values your privacy. We collect only the information necessary to fulfill table reservations, process billing transactions, and deliver dining services at our premises in Cooch Behar, West Bengal.</p>
     </div>
 
     <h2>1. Information We Collect</h2>
@@ -165,13 +165,13 @@
     <h2>7. Contact Information</h2>
     <p>For questions or requests regarding your data, please contact:</p>
     <p>
-      <strong>Terminal 1: The Restaurant</strong><br>
+      <strong>Terminal 1: The Startup Canteen</strong><br>
       Cooch Behar, West Bengal, India<br>
       Email: <a href="mailto:contact@terminal1.in" style="color:#C8860A;text-decoration:none;">contact@terminal1.in</a>
     </p>
 
     <footer class="footer">
-      <div>&copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved.</div>
+      <div>&copy; <?= date('Y') ?> Terminal 1: The Startup Canteen. All rights reserved.</div>
       <div>
         <a href="<?= url('/terms') ?>">Terms &amp; Conditions</a> &bull;
         <a href="<?= url('/') ?>">Home</a>

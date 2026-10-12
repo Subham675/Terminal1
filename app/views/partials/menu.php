@@ -42,7 +42,6 @@ if (empty($allItems)) {
     </div>
     <div class="menu-search-meta">
       <span id="menuSearchCount"><?= count($allItems) ?> dishes available</span>
-      <span style="font-size:0.72rem; color:var(--text-dark-dim);">Swipe / drag horizontally to browse</span>
     </div>
   </div>
 

@@ -54,8 +54,8 @@ $user = authUser();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Terminal 1 — A New Expression of Fine Dining | Cooch Behar</title>
-  <meta name="description" content="Terminal 1 is an artisanal fine dining destination in Cooch Behar adjacent to the historic Rajbari. Experience curated seasonal tasting menus, clay oven roasts, and bespoke table reservations."/>
+  <title>Terminal 1 — The Startup Canteen | Cooch Behar</title>
+  <meta name="description" content="Terminal 1 The Startup Canteen in Cooch Behar adjacent to the historic Rajbari. Experience curated seasonal menus, clay oven roasts, and bespoke table reservations."/>
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>"/>
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>

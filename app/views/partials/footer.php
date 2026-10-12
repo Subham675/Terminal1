@@ -2,7 +2,10 @@
 <footer>
   <div class="footer-columns-grid">
     <div class="footer-col">
-      <a href="<?= url('/') ?>" class="brand-logo" style="display:block; margin-bottom:14px;">TERMINAL 1</a>
+      <a href="<?= url('/') ?>" class="brand-logo" style="margin-bottom:14px; text-decoration:none;">
+        <span class="brand-main">TERMINAL 1</span>
+        <span class="brand-sub">THE STARTUP CANTEEN</span>
+      </a>
       <p>
         An exquisite journey of flavor, where refined ingredients, thoughtful technique, and timeless elegance come together in perfect harmony.
       </p>
@@ -39,8 +42,8 @@
   </div>
 
   <div class="footer-bottom-strip">
-    <div>&copy; <?= date('Y') ?> TERMINAL 1. ALL RIGHTS RESERVED.</div>
-    <div>AVELINE EDITORIAL RESTAURANT SYSTEM</div>
+    <div>&copy; <?= date('Y') ?> TERMINAL 1 — THE STARTUP CANTEEN. ALL RIGHTS RESERVED.</div>
+    <div>THE STARTUP CANTEEN &bull; COOCH BEHAR</div>
   </div>
 </footer>
 

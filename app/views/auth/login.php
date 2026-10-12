@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Login | Terminal 1</title>
-  <meta name="description" content="Sign in to your Terminal 1 dining account to reserve fine dining tables, track bespoke banquet arrangements, and manage your culinary ledger.">
+  <title>Login | Terminal 1 — The Startup Canteen</title>
+  <meta name="description" content="Sign in to your Terminal 1 The Startup Canteen account to reserve tables, track bookings, and manage your culinary ledger.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +49,7 @@
 <div class="box">
   <div class="box-header">
     <h1>Terminal 1</h1>
-    <p>THE RESTAURANT &bull; ACCOUNT LOGIN</p>
+    <p>THE STARTUP CANTEEN &bull; ACCOUNT LOGIN</p>
   </div>
   <div class="box-body">
     <?php 

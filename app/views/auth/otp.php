@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>OTP Verification | Terminal 1</title>
-  <meta name="description" content="Verify your six-digit one-time passcode to confirm your Terminal 1 dining profile security.">
+  <title>OTP Verification | Terminal 1 — The Startup Canteen</title>
+  <meta name="description" content="Verify your six-digit one-time passcode to confirm your Terminal 1 The Startup Canteen profile security.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">

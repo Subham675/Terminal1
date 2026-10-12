@@ -6,8 +6,8 @@ $user = authUser();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Bookings | Terminal 1</title>
-  <meta name="description" content="Track your real-time table allocation, concierge dining status, and review reservation policies at Terminal 1.">
+  <title>My Bookings | Terminal 1 — The Startup Canteen</title>
+  <meta name="description" content="Track your real-time table allocation, concierge dining status, and review reservation policies at Terminal 1 The Startup Canteen.">
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -190,7 +190,7 @@ $user = authUser();
 </head>
 <body>
   <nav>
-    <a href="<?= url('/') ?>" class="logo">Terminal 1</a>
+    <a href="<?= url('/') ?>" class="logo">Terminal 1 <span style="font-size:0.65rem; color:#c8860a; letter-spacing:0.14em; text-transform:uppercase; font-weight:500;">• The Startup Canteen</span></a>
     <div class="nav-links">
       <a href="<?= url('/') ?>">← Home</a>
       <a href="<?= url('/#menu') ?>">Menu</a>
@@ -361,7 +361,7 @@ $user = authUser();
   </script>
 
   <footer>
-    &copy; <?= date('Y') ?> Terminal 1: The Restaurant. All rights reserved. &bull; <a href="<?= url('/privacy') ?>" style="color:inherit;text-decoration:none;">Privacy Policy</a> &bull; <a href="<?= url('/terms') ?>" style="color:inherit;text-decoration:none;">Terms &amp; Conditions</a>
+    &copy; <?= date('Y') ?> Terminal 1: The Startup Canteen. All rights reserved. &bull; <a href="<?= url('/privacy') ?>" style="color:inherit;text-decoration:none;">Privacy Policy</a> &bull; <a href="<?= url('/terms') ?>" style="color:inherit;text-decoration:none;">Terms &amp; Conditions</a>
   </footer>
 </body>
 </html>

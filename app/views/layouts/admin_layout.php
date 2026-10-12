@@ -14,7 +14,7 @@ try {
 <html lang="en">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title><?= e($pageTitle ?? 'Dashboard') ?> | Terminal 1 Operations</title>
+  <title><?= e($pageTitle ?? 'Dashboard') ?> | Terminal 1 — The Startup Canteen Operations</title>
   <link rel="icon" type="image/svg+xml" href="<?= asset('favicon.svg') ?>">
   <link rel="alternate icon" href="<?= asset('favicon.ico') ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -186,7 +186,7 @@ try {
     <div class="logo-crest">T1</div>
     <div class="logo-text">
       <h1>Terminal 1</h1>
-      <small>Operations Suite</small>
+      <small>The Startup Canteen</small>
     </div>
   </div>
   <div class="nav-section">
@@ -262,7 +262,7 @@ try {
     <div class="topbar-left">
       <button class="btn-menu-toggle" onclick="toggleAdminSidebar()" aria-label="Toggle Navigation">☰</button>
       <div class="breadcrumb">
-        Terminal 1 &nbsp;›&nbsp; <span><?= e($pageTitle ?? 'Dashboard') ?></span>
+        Terminal 1 The Startup Canteen &nbsp;›&nbsp; <span><?= e($pageTitle ?? 'Dashboard') ?></span>
       </div>
     </div>
     <div class="topbar-right">
