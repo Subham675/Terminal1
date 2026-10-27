@@ -29,6 +29,9 @@ if ($scriptDir !== '' && $scriptDir !== '/' && str_starts_with($rawUri, $scriptD
 }
 $uri = rtrim($uri, '/') ?: '/';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+if ($method === 'HEAD') {
+    $method = 'GET';
+}
 
 $routes = [
     'GET' => [

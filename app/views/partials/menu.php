@@ -32,7 +32,7 @@ if (empty($allItems)) {
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
       </div>
-      <input type="text" id="menuSearchInput" class="menu-search-input" placeholder="Search dishes, ingredients (e.g. chicken, biryani, paneer, roll, rice)..." autocomplete="off" />
+      <input type="text" id="menuSearchInput" class="menu-search-input" placeholder="Search dishes, ingredients (e.g. chicken, biryani, paneer, roll, rice)..." autocomplete="off" style="outline:none !important; outline-offset:0 !important; box-shadow:none !important; border:none !important; -webkit-tap-highlight-color:transparent !important;" />
       <button type="button" id="menuSearchClear" class="menu-search-clear" onclick="clearMenuSearch()" title="Clear search">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>

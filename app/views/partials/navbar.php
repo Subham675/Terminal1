@@ -24,6 +24,12 @@
     <?php else: ?>
       <a href="<?= url('/auth/login') ?>" class="btn-nav-auth">Sign In</a>
     <?php endif; ?>
+    <button type="button" class="btn-nav-search" id="navSearchBtn" onclick="focusMenuSearch(event)" aria-label="Search dishes" title="Search dishes" style="background:transparent; border:none; outline:none; box-shadow:none; padding:4px; margin:0; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; -webkit-tap-highlight-color:transparent; -webkit-appearance:none; appearance:none;">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block; stroke:#D4AF37;">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </button>
     <a href="#contact" class="btn-aveline-cta">BOOK A TABLE</a>
     <button type="button" class="btn-mobile-nav-toggle" id="mobileNavToggle" onclick="toggleMobileNav()" aria-label="Toggle navigation">
       <span></span>

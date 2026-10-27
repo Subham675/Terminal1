@@ -145,6 +145,50 @@
     .btn-nav-auth:hover {
       color: #fff;
     }
+    .btn-nav-search,
+    .btn-nav-search:link,
+    .btn-nav-search:visited {
+      appearance: none;
+      -webkit-appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none !important;
+      background-color: transparent !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      color: #D4AF37 !important;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      flex-shrink: 0;
+      padding: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-nav-search svg {
+      display: block;
+      color: #D4AF37 !important;
+      stroke: #D4AF37 !important;
+      transition: transform 0.2s ease, stroke 0.2s ease;
+    }
+    .btn-nav-search:hover,
+    .btn-nav-search:focus-visible,
+    .btn-nav-search:active {
+      background: none !important;
+      background-color: transparent !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      transform: scale(1.15);
+      color: #FFE699 !important;
+    }
+    .btn-nav-search:hover svg,
+    .btn-nav-search:focus-visible svg,
+    .btn-nav-search:active svg {
+      transform: scale(1.15);
+      stroke: #FFE699 !important;
+    }
     .btn-aveline-cta {
       background: #FFFFFF;
       color: #121110;
@@ -729,13 +773,25 @@
     }
     .menu-search-input {
       flex: 1;
-      border: none;
-      background: transparent;
+      border: none !important;
+      background: transparent !important;
       padding: 11px 0;
       font-family: var(--font-sans);
       font-size: 0.88rem;
       color: var(--text-dark);
-      outline: none;
+      outline: none !important;
+      outline-offset: 0 !important;
+      box-shadow: none !important;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+    .menu-search-input:focus,
+    .menu-search-input:focus-visible,
+    .menu-search-input:active {
+      outline: none !important;
+      outline-offset: 0 !important;
+      box-shadow: none !important;
+      border: none !important;
     }
     .menu-search-input::placeholder {
       color: var(--text-dark-dim);
@@ -2082,6 +2138,15 @@
       .btn-nav-auth {
         font-size: 0.72rem;
       }
+      .btn-nav-search {
+        padding: 4px;
+        background: none !important;
+        border: none !important;
+      }
+      .btn-nav-search svg {
+        width: 18px;
+        height: 18px;
+      }
       .btn-aveline-cta {
         padding: 8px 14px;
         font-size: 0.68rem;
@@ -2154,6 +2219,21 @@
       }
       .btn-nav-auth {
         display: none;
+      }
+      .btn-nav-search,
+      .btn-nav-search:link,
+      .btn-nav-search:visited {
+        padding: 4px;
+        background: none !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #D4AF37 !important;
+      }
+      .btn-nav-search svg {
+        width: 17px;
+        height: 17px;
+        stroke: #D4AF37 !important;
       }
       .btn-aveline-cta {
         padding: 7px 12px;

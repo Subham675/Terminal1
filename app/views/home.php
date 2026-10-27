@@ -27,24 +27,46 @@ if (!empty($menuGrouped)) {
 }
 
 // Map dish names to real photos in /images/
+// Map dish names to real photos in /images/ with intelligent variety
 function getDishImage($name, $customUrl = null) {
-    if (!empty($customUrl)) {
+    if (!empty($customUrl) && !str_contains($customUrl, 'aveline_interior')) {
         if (str_starts_with($customUrl, 'http://') || str_starts_with($customUrl, 'https://')) {
             return $customUrl;
         }
         return asset(ltrim($customUrl, '/'));
     }
     $lower = strtolower($name);
-    if (str_contains($lower, 'biryani')) return asset('images/biryani.webp');
-    if (str_contains($lower, 'pulao') || str_contains($lower, 'polao') || str_contains($lower, 'jeera rice') || str_contains($lower, 'steamed rice')) return asset('images/polao.webp');
+    // Drinks & Water
+    if (str_contains($lower, 'water') || str_contains($lower, 'bisleri') || str_contains($lower, 'drink') || str_contains($lower, 'beverage') || str_contains($lower, 'mojito') || str_contains($lower, 'soda')) {
+        return asset('images/beverage.jpg');
+    }
+    // Salad
+    if (str_contains($lower, 'salad')) return asset('images/salad.jpg');
+    // Rolls
+    if (str_contains($lower, 'roll') && !str_contains($lower, 'spring roll')) return asset('images/kathi_roll.jpg');
+    // Breads
+    if (str_contains($lower, 'naan') || str_contains($lower, 'kulcha') || str_contains($lower, 'paratha')) return asset('images/butter_naan.jpg');
+    if (str_contains($lower, 'roti')) return asset('images/food1.webp');
+    // Rice & Biryani
+    if (str_contains($lower, 'biryani')) {
+        return str_contains($lower, 'mutton') ? asset('images/feast.webp') : asset('images/biryani.webp');
+    }
+    if (str_contains($lower, 'pulao') || str_contains($lower, 'polao') || str_contains($lower, 'jeera rice')) return asset('images/polao.webp');
     if (str_contains($lower, 'fried rice')) return asset('images/fried_rice.webp');
     if (str_contains($lower, 'noodle') || str_contains($lower, 'chowmein')) return asset('images/noodles.webp');
-    if (str_contains($lower, 'tikka') || str_contains($lower, 'kebab') || str_contains($lower, 'tandoori') || str_contains($lower, 'lollipop') || str_contains($lower, 'starter') || str_contains($lower, 'wings') || str_contains($lower, 'pakoda')) return asset('images/starters_platter.webp');
-    if (str_contains($lower, 'naan') || str_contains($lower, 'roti') || str_contains($lower, 'kulcha') || str_contains($lower, 'roll') || str_contains($lower, 'chole') || str_contains($lower, 'bhature')) return asset('images/food1.webp');
+    // Starters
+    if (str_contains($lower, 'paneer tikka')) return asset('images/paneer_tikka.jpg');
+    if (str_contains($lower, 'tandoori chicken')) return asset('images/tandoori_chicken.jpg');
+    if (str_contains($lower, 'lollipop') || str_contains($lower, 'drums') || str_contains($lower, 'wings')) return asset('images/chicken_lollipop.jpg');
+    if (str_contains($lower, 'chilli') || str_contains($lower, 'manchurian')) return asset('images/chilli_chicken.jpg');
+    if (str_contains($lower, 'tikka') || str_contains($lower, 'kebab') || str_contains($lower, 'pakoda')) return asset('images/starters_platter.webp');
+    // Main Course Curries
+    if (str_contains($lower, 'dal')) return asset('images/dal_makhani.jpg');
+    if (str_contains($lower, 'paneer') || str_contains($lower, 'kofta') || str_contains($lower, 'navaratna')) return asset('images/paneer_butter_masala.jpg');
+    if (str_contains($lower, 'butter masala') || str_contains($lower, 'tikka masala') || str_contains($lower, 'bharta')) return asset('images/butter_chicken.jpg');
     if (str_contains($lower, 'mutton')) return asset('images/feast.webp');
     if (str_contains($lower, 'chicken')) return asset('images/dhonkami_chicken.webp');
-    if (str_contains($lower, 'salad') || str_contains($lower, 'water') || str_contains($lower, 'bisleri')) return asset('images/aveline_interior.webp');
-    return asset('images/aveline_plate.webp');
+    return asset('images/bowl.webp');
 }
 
 $user = authUser();

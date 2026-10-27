@@ -59,7 +59,7 @@
 
 button:focus-visible,
 a:focus-visible,
-input:focus-visible,
+input:not(.menu-search-input):focus-visible,
 select:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--gold-accent) !important;

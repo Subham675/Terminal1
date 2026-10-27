@@ -243,6 +243,25 @@ function clearMenuSearch() {
   }
 }
 
+function focusMenuSearch(e) {
+  if (e) e.preventDefault();
+  const menuSec = document.getElementById('menu');
+  if (menuSec) {
+    const navHeight = 70;
+    const y = menuSec.getBoundingClientRect().top + window.pageYOffset - navHeight;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+    // On desktop, gently focus the search box for immediate typing without triggering mobile keyboard popup
+    if (window.innerWidth > 768) {
+      setTimeout(() => {
+        const searchInput = document.getElementById('menuSearchInput');
+        if (searchInput) searchInput.focus({ preventScroll: true });
+      }, 400);
+    }
+  } else {
+    window.location.href = '<?= url('/#menu') ?>';
+  }
+}
+
 // Bind search input
 const menuSearchInput = document.getElementById('menuSearchInput');
 if (menuSearchInput) {
